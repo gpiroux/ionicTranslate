@@ -3,19 +3,24 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ folder }}</ion-title>
+    <ion-title>{{ folder }} {{words.length}}</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <ion-searchbar animated mode="ios" spellcheck="true" (ionChange)="onSearchChange($event)"></ion-searchbar>
+  <!-- <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">{{ folder }}</ion-title>
+      <ion-title size="large">{{ folder }} {{words.length}}</ion-title>
     </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong class="capitalize">{{ folder }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  </ion-header> -->
+  <ion-virtual-scroll [items]="words" approxItemHeight="150px">
+    <ion-card mode="md" *virtualItem="let item; let itemBounds = bounds;" style="margin-top: -1px;">
+      <ion-card-content class="word-card-content">
+        <div class="en">{{item.en}}</div> 
+        <div class="fr">{{item.fr}}</div>
+        <div class="type">{{item.type}}</div>
+        <div class="cat">{{item.category | join}}</div>
+      </ion-card-content>
+    </ion-card>
+  </ion-virtual-scroll>
 </ion-content>
