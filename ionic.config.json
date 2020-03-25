@@ -1,5 +1,7 @@
 {
   "name": "iTranslate",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

@@ -32,7 +32,7 @@ export class WordService {
           console.log('Search field empty');
           return this._words$;
         }
-        return this.firestore.collection<Word>('words', ref => ref.where('en', '>=', search).where('en', '<', `${search}\uf8ff`).orderBy('en').limit(10))
+        return this.firestore.collection<Word>('words', ref => ref.where('en', '>=', search).where('en', '<', `${search}\uf8ff`).orderBy('en').limit(25))
           .snapshotChanges()
           .pipe(map(actions => actions.map(a => {
             const data = a.payload.doc.data();

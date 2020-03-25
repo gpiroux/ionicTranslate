@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Word } from '../models/word.model';
 import { WordService } from '../firebase/word.service';
-import { JoinPipe } from '../pipes/join.pipe'
 
 enum Direction {
   asc = 'asc',
@@ -22,12 +21,13 @@ interface OrderBy {
 })
 export class FolderPage implements OnInit {
   public folder: string;
-
-  wordInit: any[];
   words: Word[] = [];
-  orderValue: OrderBy = { key: 'date', direction: Direction.desc };
+  searchString: string;
 
-  constructor(private activatedRoute: ActivatedRoute, private wordService: WordService) { }
+  constructor(
+    private activatedRoute: ActivatedRoute, 
+    private wordService: WordService
+  ) { }
 
   ngOnInit() {
     this.folder = this.activatedRoute.snapshot.paramMap.get('id');
@@ -37,11 +37,11 @@ export class FolderPage implements OnInit {
   }
 
   onSearchChange(event) {
-    let searchString = event.target.value;
-    if (searchString.length == 0) {
+    this.searchString = event.target.value;
+    if (this.searchString.length == 0) {
       this.wordService.search$.next(null);
-    } else if (searchString.length >= 3) {
-      this.wordService.search$.next(event.target.value);
+    } else if (this.searchString.length >= 3) {
+      this.wordService.search$.next(this.searchString.toLowerCase());
     }
   }
 

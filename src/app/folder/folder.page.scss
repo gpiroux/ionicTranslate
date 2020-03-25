@@ -2,6 +2,12 @@ ion-menu-button {
   color: var(--ion-color-primary);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-color-primary: #428cff;
+  }
+}
+
 .word-card-content {
   padding: 6px 10px;
   
@@ -17,12 +23,20 @@ ion-menu-button {
     .type {
       color: darkblue;
     }
-  
+
     .cat {
       text-align: right;
-      padding-left: 6px;
-      background-color: white;
+      padding-left: 4px;
       color: darkred;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .type {
+        color: #4CABFA;
+      }
+      .cat {
+        color: rgb(185, 0, 71);
+      }
     }
   }
 }
