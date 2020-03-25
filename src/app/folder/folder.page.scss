@@ -4,24 +4,25 @@ ion-menu-button {
 
 .word-card-content {
   padding: 6px 10px;
+  
+  .flex-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
 
-  .en {
-    font-weight: bold;
-  }
-
-  .type {
-    color: darkblue;
-    top: 6px;
-    right: 10px;
-    position: fixed;
-  }
-
-  .cat {
-    padding-left: 6px;
-    background-color: white;
-    color: darkred;
-    bottom: 6px;
-    right: 10px;
-    position: fixed;
+    .en {
+      font-weight: bold;
+    }
+  
+    .type {
+      color: darkblue;
+    }
+  
+    .cat {
+      text-align: right;
+      padding-left: 6px;
+      background-color: white;
+      color: darkred;
+    }
   }
 }

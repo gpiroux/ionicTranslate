@@ -13,7 +13,8 @@
       <ion-title size="large">{{ folder }} {{words.length}}</ion-title>
     </ion-toolbar>
   </ion-header> -->
-  <ion-virtual-scroll [items]="words" approxItemHeight="150px">
+
+  <!-- <ion-virtual-scroll [items]="words" approxItemHeight="150px">
     <ion-card mode="md" *virtualItem="let item; let itemBounds = bounds;" style="margin-top: -1px;">
       <ion-card-content class="word-card-content">
         <div class="en">{{item.en}}</div> 
@@ -22,5 +23,20 @@
         <div class="cat">{{item.category | join}}</div>
       </ion-card-content>
     </ion-card>
-  </ion-virtual-scroll>
+  </ion-virtual-scroll> -->
+
+  <ion-list>
+    <ion-card mode="md" *ngFor="let item of words;">
+      <ion-card-content class="word-card-content">
+        <div class="flex-row">
+          <div class="en">{{item.en}}</div> 
+          <div class="type">{{item.type}}</div>
+        </div>
+        <div class="flex-row">
+          <div class="fr">{{item.fr}}</div>
+          <div class="cat">{{item.category | join}}</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>
