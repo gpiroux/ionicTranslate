@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { Word } from '../models/word.model';
-import { WordService } from '../firebase/word.service';
+import { Word } from '../../models/word.model';
+import { WordService } from '../../firebase/word.service';
 
 enum Direction {
   asc = 'asc',
@@ -43,6 +43,15 @@ export class FolderPage implements OnInit {
     } else if (this.searchString.length >= 3) {
       this.wordService.search$.next(this.searchString.toLowerCase());
     }
+  }
+
+  onUpdateTime(item: Word) {
+    Word.updateTimestamp(item);
+    this.wordService.updateWord(item);
+  }
+
+  onDelete(item: Word) {
+    this.wordService.deleteWord(item.id);
   }
 
 }

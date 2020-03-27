@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Word } from 'src/app/models/word.model';
 
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, take, switchMap } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -41,8 +41,6 @@ export class WordService {
           })));
       })
     )
-
-
   }
 
   get words$() {
@@ -58,7 +56,7 @@ export class WordService {
   }
   
   updateWord(word: Word) {
-    delete word.id;
+    Word.updateTimestamp(word);
     return this.firestore.doc<Word>(`words/${word.id}`).update(word);
   }
 

@@ -1,4 +1,5 @@
 import { firestore } from 'firebase';
+import * as _ from 'lodash';
 
 export interface WordJson {
     en: string
@@ -12,7 +13,8 @@ export interface WordJson {
 
 export class Word {
 
-    constructor(word: WordJson) {
+    constructor(word?: WordJson) {
+        if (!word) return
         this.audio = word.audio && word.audio !== 'Not defined' ? word.audio.split(' ') : [];
         this.category = word.cat ? word.cat.split(', ') : [];
         this.en = word.en || '';
@@ -30,4 +32,8 @@ export class Word {
     fr: string;
     date: firestore.Timestamp
     key: number
+
+    static updateTimestamp(word: Word) {
+        word.date = firestore.Timestamp.fromDate(new Date());
+    }
 }

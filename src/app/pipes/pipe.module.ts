@@ -1,10 +1,10 @@
 import { NgModule } from "@angular/core";
 import { IonicModule } from "@ionic/angular";
-import { JoinPipe } from "./pipes";
+import { JoinPipe, FirebaseDate } from "./pipes";
 
 @NgModule({
-  declarations: [JoinPipe],
   imports: [IonicModule],
-  exports: [JoinPipe]
+  exports: [JoinPipe, FirebaseDate],
+  declarations: [JoinPipe, FirebaseDate],
 })
 export class PipesModule {}

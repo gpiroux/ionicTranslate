@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="folder/Inbox"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detail</ion-title>
+    <ion-buttons slot="end">
+      <ion-back-button defaultHref="folder/Inbox" text="Save" (click)="onSave()"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<ion-list>
+  <ion-item>
+    <ion-label position="floating">English</ion-label>
+    <ion-textarea [value]="newWord?.en" (input)="newWord.en = $event.target.value"></ion-textarea>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">French</ion-label>
+    <ion-textarea [value]="newWord?.fr" (input)="newWord.fr = $event.target.value"></ion-textarea>
+  </ion-item>
+  <ion-item>
+    Last update:&nbsp;&nbsp;<span class="date">{{ word?.date | firebaseDate | date:"medium" }}</span>
+  </ion-item>
+</ion-list>
+</ion-content>
