@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="folder/Inbox"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detail</ion-title>
+    <ion-buttons slot="end">
+      <ion-back-button 
+        defaultHref="folder/Inbox" 
+        text="Save" 
+        icon="" 
+        class="save-button" 
+        (click)="onSave()">
+      </ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<ion-list>
+  <ion-item>
+    <ion-label><b>Larousse</b></ion-label>
+    <span class="expression">Go</span>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">English</ion-label>
+    <ion-textarea [(ngModel)]="newWord.en"></ion-textarea>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">French</ion-label>
+    <ion-textarea [(ngModel)]="newWord.fr"></ion-textarea>
+  </ion-item>
+  <ion-item>
+    <ion-label><b>Type</b></ion-label>
+    <ion-select [(ngModel)]="newWord.type">
+      <ion-select-option *ngFor="let opt of typeOptions;" [value]="opt">{{opt}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label><b>Category</b></ion-label>
+    <ion-select [(ngModel)]="newWord.category" interface="popover" multiple="true">
+      <ion-select-option *ngFor="let opt of categoryOptions;" [value]="opt">{{opt}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label><b>Last update</b></ion-label>
+    <span class="expression">{{ word?.date | firebaseDate | date:"medium" }}</span>
+  </ion-item>
+
+</ion-list>
+</ion-content>

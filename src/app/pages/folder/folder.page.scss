@@ -8,6 +8,10 @@ ion-menu-button {
   }
 }
 
+.no-click:active {
+  --ripple-color: transparent
+}
+
 .word-content { 
   width: 100%;
   padding: 5px 0px; 

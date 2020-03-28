@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Word } from '../../models/word.model';
-import { WordService } from '../../firebase/word.service';
+import { WordService } from '../../services/word.service';
 
 enum Direction {
   asc = 'asc',

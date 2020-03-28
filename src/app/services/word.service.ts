@@ -18,7 +18,7 @@ export class WordService {
     
     this._search$ = new BehaviorSubject(null);
     
-    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(100))
+    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(10))
       .snapshotChanges()
       .pipe(map(actions => actions.map(a => {
         const data = a.payload.doc.data();
