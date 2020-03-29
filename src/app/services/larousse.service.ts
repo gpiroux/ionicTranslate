@@ -1,13 +1,22 @@
 import { Injectable } from '@angular/core';
+import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient } from '@angular/common/http'
+
 import { DicoWord, Traduction } from '../models/dicoResult.model';
 import * as _ from 'lodash';
+
+import { environment } from 'src/environments/environment'
 
 @Injectable({
   providedIn: 'root'
 })
 export class LarousseService {
-
-  constructor() { }
+  cache: { [key:string]: DicoWord[] } = {};
+  
+  constructor(
+    private httpNative: HTTP,
+    private httpClient: HttpClient
+  ) { }
 
   private getClassValue(el: Element | ChildNode) {
     return _.get(el, ['attributes', 'class', 'value'], '')
@@ -315,8 +324,6 @@ export class LarousseService {
 
     }
 
-    console.log('result', result) 
-
     return result;
   }
 
@@ -347,4 +354,26 @@ export class LarousseService {
     throw error[0].textContent || 'Parsing error';
   }
 
+  buildUrl(server : string, strippedWord: string) {
+    return `http://${server}/dictionnaires/anglais-francais/${strippedWord}`;
+  }
+
+  load(word: string): Promise<any> {
+    let strippedWord = (word || '').split(' ')[0].split('[')[0];
+
+    if (this.cache[strippedWord]) {
+      return Promise.resolve(this.cache[strippedWord]);
+    }
+    
+    if (environment.production) {
+      let server = 'www.larousse.fr' // 'localhost:8100'
+      return this.httpNative.get(this.buildUrl(server, strippedWord), {}, {})
+        .then(res => this.parse(res.data))
+    } else {
+      let server = 'www.larousse.fr' // 'localhost:8100'
+      //let server = 'localhost:8100';
+      return this.httpClient.get(this.buildUrl(server, strippedWord), {responseType: 'text'}).toPromise()
+        .then(data => this.parse(data))
+    }
+  }
 }

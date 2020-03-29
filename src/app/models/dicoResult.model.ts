@@ -29,29 +29,3 @@ export class Traduction {
     lien: string = ''
     tradList: Traduction[] = [];
 }
-
-
-
-// let result = [];
-// let _audio = [];
-// let _word = null;
-// let _traduction = null;
-// let _tradustion2 = null;
-
-// let initWord = () => {
-//     _word = {
-//         audio: _audio,
-//         categorie: '',
-//         traductions: []
-//     };
-//     result.push(_word);
-//     _traduction = null;
-// }
-
-// let initTraduction = () => {
-//     _traduction = {
-//         traduction: ''
-//     };
-//     _audio = [];
-//     _word.traductions.push(_traduction);
-// }

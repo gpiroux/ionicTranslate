@@ -7,22 +7,19 @@ describe('LarousseService', () => {
 
   it('should be created', (done) => {
     const service: LarousseService = TestBed.get(LarousseService);
+    expect(service).toBeTruthy();
     
-    let file = 'pound.html';
-
     var oReq = new XMLHttpRequest();
-    oReq.onload = function(res) {
-      //console.log('=============> ', this.responseText)
-      
-      
+    oReq.onload = function(res) {      
       let data = this.responseText
-      service.parse(data);
-      done()
+      let result = service.parse(data);
+      console.log('result', result);
+      expect(result.length).toEqual(3)
+      return done()
     };
 
-    oReq.open('get', `https://www.larousse.fr/dictionnaires/anglais-francais/roar/608120`, true);
+    let file = 'roar';
+    oReq.open('get', `https://www.larousse.fr/dictionnaires/anglais-francais/${file}`, true); 
     oReq.send();
-  
-    expect(service).toBeTruthy();
   });
 });

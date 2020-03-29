@@ -8,8 +8,6 @@ import { Word } from 'src/app/models/word.model';
 })
 export class LaroussePage implements OnInit {
 
-  url: string =  'http://www.larousse.fr/dictionnaires/anglais-francais/';
-
   constructor() { }
 
   ngOnInit() {
