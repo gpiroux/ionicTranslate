@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment'
   providedIn: 'root'
 })
 export class LarousseService {
-  cache: { [key:string]: DicoWord[] } = {};
+  cache: { [key:string]: string } = {};
   
   constructor(
     private httpNative: HTTP,
@@ -107,6 +107,7 @@ export class LarousseService {
             if (!word || word.en) {
                 word = new DicoWord(audio)
                 result.push(word);
+                audio = '';
             }
             word.en = e.textContent.trim();
         }
@@ -358,22 +359,28 @@ export class LarousseService {
     return `http://${server}/dictionnaires/anglais-francais/${strippedWord}`;
   }
 
-  load(word: string): Promise<any> {
+  async load(word: string): Promise<any> {
     let strippedWord = (word || '').split(' ')[0].split('[')[0];
+    let server = 'www.larousse.fr';
+    let url = this.buildUrl(server, strippedWord);
 
-    if (this.cache[strippedWord]) {
-      return Promise.resolve(this.cache[strippedWord]);
-    }
+    let data: string = this.cache[strippedWord]
     
-    if (environment.production) {
-      let server = 'www.larousse.fr' // 'localhost:8100'
-      return this.httpNative.get(this.buildUrl(server, strippedWord), {}, {})
-        .then(res => this.parse(res.data))
-    } else {
-      let server = 'www.larousse.fr' // 'localhost:8100'
-      //let server = 'localhost:8100';
-      return this.httpClient.get(this.buildUrl(server, strippedWord), {responseType: 'text'}).toPromise()
-        .then(data => this.parse(data))
+    if (!data) {
+      data = environment.production
+      ? await this.httpNative.get(url, {}, {}).then(res => res.data)
+      : await this.httpClient.get(url, {responseType: 'text'}).toPromise()
+    }
+      
+    // Clear cache
+    this.cache[strippedWord] = undefined;
+
+    try {
+      let parsedData = this.parse(data);
+      this.cache[strippedWord] = data;
+      return parsedData;
+    } catch {
+      throw new Error(`Parsing issue - ${strippedWord}`);
     }
   }
 }
