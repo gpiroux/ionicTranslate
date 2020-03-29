@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 
 import { Word } from 'src/app/models/word.model';
 import { WordService } from 'src/app/services/word.service';
-import { LarousseService } from 'src/app/services/larousse.service';
 import { DicoWord } from 'src/app/models/dicoResult.model';
 
 

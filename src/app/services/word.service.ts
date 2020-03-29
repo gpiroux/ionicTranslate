@@ -4,8 +4,10 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Word, WordJson } from 'src/app/models/word.model';
 
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import * as _ from 'lodash'
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +24,7 @@ export class WordService {
   init() {
     this._search$ = new BehaviorSubject(null);
     
-    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(20))
+    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(100))
       .snapshotChanges()
       .pipe(map(actions => actions.map(a => {
         const data = a.payload.doc.data();
@@ -56,7 +58,7 @@ export class WordService {
   }
 
   createWord(word: Word) {
-    return this.firestore.collection<Word>('words').add(word);
+    return this.firestore.collection<Word>('words').add({...word});
   }
   
   updateWord(word: Word) {
@@ -66,6 +68,25 @@ export class WordService {
 
   deleteWord(id: string) {
     return this.firestore.doc<Word>(`words/${id}`).delete();
+  }
+
+  async generateDatabase() {
+    // import { data } from 'data.js';
+    //
+    // console.log('data', data);
+    // let i = 0
+    // this.words$.pipe(take(1)).subscribe((words: Word[]) => {
+    //   console.log('words', words);
+    //   _.reduce(data as WordJson[], (acc, d) => 
+    //     acc.then(async () => {
+    //       const findedWord = _.find(words, w => w.key === d.key)
+    //       if (findedWord) return
+    //       let word = new Word(d);
+    //       this.generateSearchStrings(word);
+    //       console.log('add', i++ ,word)
+    //       await this.createWord(word).catch(err => console.log('ERROR:', err));
+    //     }), Promise.resolve())
+    // });
   }
 
   generateSearchStrings(word: Word|WordJson) {
