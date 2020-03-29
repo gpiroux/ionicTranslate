@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Word } from 'src/app/models/word.model';
+import { Word, WordJson } from 'src/app/models/word.model';
 
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import * as _ from 'lodash'
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +15,14 @@ export class WordService {
   private _words$: Observable<Word[]>;
   private _searchedWords$: Observable<Word[]>;
   
-  constructor(private firestore: AngularFirestore) {
-    
+  selectedWord: Word;
+
+  constructor(private firestore: AngularFirestore) {}
+
+  init() {
     this._search$ = new BehaviorSubject(null);
     
-    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(10))
+    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(20))
       .snapshotChanges()
       .pipe(map(actions => actions.map(a => {
         const data = a.payload.doc.data();
@@ -64,4 +68,21 @@ export class WordService {
     return this.firestore.doc<Word>(`words/${id}`).delete();
   }
 
+  generateSearchStrings(word: Word|WordJson) {
+    word.search = []
+    let split = _(word.en.split('[')[0].split(' '))
+      .compact()
+      .map(s => s.replace(',', ''))
+      .filter(s => s.length >= 3)
+      .value()
+
+    _.forEach(split, s => {
+      _.forEach([3,4], len => {
+        if (s.length >= len )
+          for (let i = 0; i < s.length - len + 1; i++) 
+            word.search.push(s.substr(i, len));
+      })
+    })
+    return word;
+  }
 }

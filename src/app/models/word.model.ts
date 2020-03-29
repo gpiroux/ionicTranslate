@@ -9,6 +9,7 @@ export interface WordJson {
     date: string
     key: number
     audio: string
+    search: string[]
 }
 
 export class Word {
@@ -21,6 +22,7 @@ export class Word {
         this.fr = word.fr  || '';
         this.type = word.type || '';
         this.key = word.key;
+        this.search = word.search || [];
         this.date = firestore.Timestamp.fromDate(new Date(word.date));
     }
 
@@ -30,8 +32,9 @@ export class Word {
     type: string;
     en: string;
     fr: string;
-    date: firestore.Timestamp
-    key: number
+    date: firestore.Timestamp;
+    key: number;
+    search: string[];
 
     static updateTimestamp(word: Word) {
         word.date = firestore.Timestamp.fromDate(new Date());
