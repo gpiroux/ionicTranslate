@@ -14,8 +14,10 @@ export class DicoWord {
     }
 
     initTraduction() {
-        if (this.currentTraduction && !this.currentTraduction.traduction) {
-            return 
+        if (this.currentTraduction 
+                && !this.currentTraduction.traduction
+                && !this.currentTraduction.tradList.length) {
+            return;
         }
         this.currentTraduction = new Traduction()
         this.traductions.push(this.currentTraduction)
