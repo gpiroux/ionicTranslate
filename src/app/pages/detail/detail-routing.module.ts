@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: DetailPage
+  },
+  {
+    path: 'larousse',
+    loadChildren: () => import('../larousse/larousse.module').then(m => m.LaroussePageModule)
   }
 ];
 

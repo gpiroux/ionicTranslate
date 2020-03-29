@@ -16,7 +16,7 @@
   ></ion-searchbar>
   <ion-list>
     <ion-item-sliding mode="md" *ngFor="let item of words;">
-      <ion-item [routerLink]="['detail', item.id]" class="no-click">
+      <ion-item [routerLink]="['detail', item.id]">
         <div class="word-content">
           <div class="flex-row">
             <div class="en">{{item.en}}</div> 

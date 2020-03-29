@@ -1,9 +1,44 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-title>larousse</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
+  <ion-list>
+    <div *ngFor="let item of wordTraductions;">
+      <ion-item-divider sticky="true" color="light">
+        <ion-label>
+          <b>{{item?.en}} {{item?.phonetique}} {{item?.formeFlechie}}</b>
+        </ion-label>
+        <ion-icon *ngIf="item?.audio.length" class="audio-divider" slot="end" name="volume-high-outline"></ion-icon>
+        <ion-label slot="end" class="category-divider">
+          <b>{{item?.categorie}}</b>
+        </ion-label>
+      </ion-item-divider>
+      <ion-item *ngFor="let trad of item?.traductions">
+        <!-- locution -->
+        <div *ngIf="trad?.locution" class="locution-container">
+          <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
+          <div *ngIf="trad?.locution" class="locution">{{trad.locution}}</div>
+          <div *ngIf="trad?.traduction" class="traduction2">{{trad.traduction}}</div>
+          <div *ngFor="let tradItem of trad?.tradList" class="locution2-container">
+            <span>-</span>&nbsp;
+            <div *ngIf="tradItem?.indicateur" class="indicateur inline">{{tradItem.indicateur}}</div>
+            <div *ngIf="tradItem?.traduction" class="traduction2 inline">{{tradItem.traduction}}</div>
+          </div>
+        </div>
+        <!-- No locution -->
+        <div *ngIf="!trad?.locution" class="traduction-container">
+          <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
+          <div *ngIf="trad?.traduction" class="traduction">{{trad.traduction}}</div>
+        </div>
+      </ion-item>
+    </div>
+  </ion-list>
 
 </ion-content>

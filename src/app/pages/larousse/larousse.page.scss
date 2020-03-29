@@ -1,0 +1,56 @@
+
+.category-divider {
+    margin-left:10px;
+    margin-right:15px;
+}
+
+.audio-divider {
+    margin: 0;
+    height: 18px;
+}
+
+.locution-container {
+    padding-top: 2px;
+    padding-bottom: 4px;
+    color: #444;
+
+    .locution2-container {
+        margin-left: 12px;
+    }
+
+    div {
+        font-size: 90%;
+    }
+    .indicateur {
+        margin-right: 6px;
+        color: green;
+        &.inline {
+            display: inline-block;
+        }
+    }
+    .locution {
+        margin-left: 8px;
+    }
+    .traduction2 {
+        margin-left: 10px;
+        font-style: italic;
+        color: #428cff;
+        &.inline {
+            margin-left: 0;
+            display: inline-block;
+        }
+    }
+}
+
+.traduction-container {
+    .indicateur {
+        margin-right: 6px;
+        display: inline-block;
+        color: green;
+    }
+    .traduction {
+        font-style: italic;
+        display: inline-block;
+        color: #444;
+    }
+}

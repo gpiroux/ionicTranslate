@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+
 import { take } from 'rxjs/operators';
-import { Word } from 'src/app/models/word.model';
-import { WordService } from 'src/app/services/word.service';
 import { zip } from 'rxjs';
 import * as _ from 'lodash';
+
+import { Word } from 'src/app/models/word.model';
+import { WordService } from 'src/app/services/word.service';
+import { LarousseService } from 'src/app/services/larousse.service';
+import { DicoWord } from 'src/app/models/dicoResult.model';
+
 
 @Component({
   selector: 'app-detail',
@@ -13,8 +17,7 @@ import * as _ from 'lodash';
   styleUrls: ['./detail.page.scss'],
 })
 export class DetailPage implements OnInit {
-  
-  word: Word = new Word();
+  traductions: DicoWord[];
   newWord: Word = new Word();
   hasChanged: boolean;
 
@@ -25,7 +28,9 @@ export class DetailPage implements OnInit {
     'adjective',
     'expression',
     'conjunction',
-    'interjection'
+    'interjection',
+    'preposition',
+    'conjunciton'
   ]
 
   categoryOptions = [
@@ -43,8 +48,7 @@ export class DetailPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private wordService: WordService,
-    private location: Location
+    private wordService: WordService
   ) {}
 
   ngOnInit() {
@@ -52,8 +56,9 @@ export class DetailPage implements OnInit {
     zip(this.route.params, this.wordService.words$)
       .pipe(take(1))
       .subscribe(([parms, words]) => {
-        this.word = words.find(w => w.id === parms.id);
-        this.newWord = _.cloneDeep(this.word);
+        let word = words.find(w => w.id === parms.id);
+        this.newWord = _.cloneDeep(word);
+        this.wordService.selectedWord = this.newWord;
       });
   }
 
@@ -61,7 +66,5 @@ export class DetailPage implements OnInit {
     await this.wordService.updateWord(this.newWord);
   }
 
-  test(test) {
-    console.log(test)
-  }
+
 }
