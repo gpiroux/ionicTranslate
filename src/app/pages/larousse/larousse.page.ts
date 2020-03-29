@@ -27,7 +27,7 @@ export class LaroussePage implements OnInit {
   async ngOnInit() {
     const selectedWord = _.get(this.wordService.selectedWord, 'en');
     if (selectedWord)
-      this.load(this.selectedWord.en);
+      this.load(selectedWord);
     else {
       const alert = await this.alertController.create({
         header: 'Error',
