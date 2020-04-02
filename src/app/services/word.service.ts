@@ -19,7 +19,9 @@ export class WordService {
   
   selectedWord: Word;
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore) {
+    //this.init()
+  }
 
   init() {
     this._search$ = new BehaviorSubject(null);

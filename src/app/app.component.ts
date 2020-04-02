@@ -50,7 +50,6 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private wordService: WordService
   ) {
     this.initializeApp();
   }
@@ -59,7 +58,6 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.wordService.init();
     });
   }
 
