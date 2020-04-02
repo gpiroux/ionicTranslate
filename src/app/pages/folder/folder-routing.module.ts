@@ -9,7 +9,11 @@ const routes: Routes = [
     component: FolderPage
   },
   {
-    path: 'detail/:id',
+    path: 'new/:searchString',
+    loadChildren: () => import('../detail/detail.module').then(m => m.DetailPageModule)
+  },
+  {
+    path: 'detail/:wordId',
     loadChildren: () => import('../detail/detail.module').then(m => m.DetailPageModule)
   }
 ];

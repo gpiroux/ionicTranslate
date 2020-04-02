@@ -60,6 +60,7 @@ export class WordService {
   }
 
   createWord(word: Word) {
+    Word.updateTimestamp(word);
     return this.firestore.collection<Word>('words').add({...word});
   }
   

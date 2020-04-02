@@ -21,8 +21,8 @@ interface OrderBy {
 })
 export class FolderPage implements OnInit {
   public folder: string;
-  words: Word[] = [];
-  searchString: string;
+  public words: Word[] = [];
+  private searchString: string = '';
 
   constructor(
     private activatedRoute: ActivatedRoute, 

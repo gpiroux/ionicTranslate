@@ -17,7 +17,7 @@ import { DicoWord } from 'src/app/models/dicoResult.model';
 })
 export class DetailPage implements OnInit {
   traductions: DicoWord[];
-  newWord: Word = new Word();
+  newWord: Word;
   hasChanged: boolean;
 
   typeOptions = [
@@ -48,22 +48,32 @@ export class DetailPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private wordService: WordService
-  ) {}
+  ) {
+    // html page initialwed before ngOnInit()
+    this.newWord = new Word();
+  }
 
   ngOnInit() {
 
     zip(this.route.params, this.wordService.words$)
       .pipe(take(1))
       .subscribe(([parms, words]) => {
-        let word = words.find(w => w.id === parms.id);
-        this.newWord = _.cloneDeep(word);
+        if (parms.wordId) {
+          let word = words.find(w => w.id === parms.wordId);
+          this.newWord = _.cloneDeep(word);
+        } else {
+          this.newWord = new Word()
+          this.newWord.en = parms.searchString
+        }
         this.wordService.selectedWord = this.newWord;
       });
   }
 
   async onSave(): Promise<void> {
-    await this.wordService.updateWord(this.newWord);
+    if (this.newWord.id) {
+      await this.wordService.updateWord(this.newWord);
+    } else {
+      await this.wordService.createWord(this.newWord);
+    }
   }
-
-
 }

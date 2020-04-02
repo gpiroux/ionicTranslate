@@ -6,7 +6,7 @@ import { firestore } from 'firebase';
 })
 export class JoinPipe implements PipeTransform {
   transform(value: string[], ...args: any[]): any {
-    return value.join(', ');
+    return (value || []).join(args[0] || ' ');
   }
 }
 
