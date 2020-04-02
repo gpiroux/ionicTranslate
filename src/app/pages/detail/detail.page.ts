@@ -15,6 +15,7 @@ import { DicoWord } from 'src/app/models/dicoResult.model';
   templateUrl: './detail.page.html',
   styleUrls: ['./detail.page.scss'],
 })
+
 export class DetailPage implements OnInit {
   traductions: DicoWord[];
   newWord: Word;
@@ -66,7 +67,8 @@ export class DetailPage implements OnInit {
           this.newWord = _.cloneDeep(word);
         } else {
           this.newWord = new Word()
-          this.newWord.en = parms.searchString
+          this.newWord.en = (parms.searchString as string || '').toLowerCase()
+          this.newWord.fr = '';
         }
         this.wordService.selectedWord = this.newWord;
       });
