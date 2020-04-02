@@ -7,7 +7,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import * as _ from 'lodash'
 
-
+import { data } from 'data.js';
 
 @Injectable({
   providedIn: 'root'
@@ -73,22 +73,21 @@ export class WordService {
   }
 
   async generateDatabase() {
-    // import { data } from 'data.js';
-    //
-    // console.log('data', data);
-    // let i = 0
-    // this.words$.pipe(take(1)).subscribe((words: Word[]) => {
-    //   console.log('words', words);
-    //   _.reduce(data as WordJson[], (acc, d) => 
-    //     acc.then(async () => {
-    //       const findedWord = _.find(words, w => w.key === d.key)
-    //       if (findedWord) return
-    //       let word = new Word(d);
-    //       this.generateSearchStrings(word);
-    //       console.log('add', i++ ,word)
-    //       await this.createWord(word).catch(err => console.log('ERROR:', err));
-    //     }), Promise.resolve())
-    // });
+    return;
+    console.log('data', data);
+    let i = 0
+    this.words$.pipe(take(1)).subscribe((words: Word[]) => {
+      console.log('words', words);
+      _.reduce(data as WordJson[], (acc, d) => 
+        acc.then(async () => {
+          const findedWord = _.find(words, w => w.key === d.key)
+          if (findedWord) return
+          let word = new Word(d);
+          this.generateSearchStrings(word);
+          console.log('add', i++ ,word)
+          await this.createWord(word).catch(err => console.log('ERROR:', err));
+        }), Promise.resolve())
+    });
   }
 
   generateSearchStrings(word: Word|WordJson) {
@@ -96,6 +95,7 @@ export class WordService {
     let split = _(word.en.split('[')[0].split(' '))
       .compact()
       .map(s => s.replace(',', ''))
+      .map(s => s.toLowerCase())
       .filter(s => s.length >= 3)
       .value()
 
