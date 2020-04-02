@@ -23,22 +23,22 @@
     <span class="expression">GO</span>
   </ion-item>
   <ion-item>
-    <ion-label position="floating">English</ion-label>
-    <ion-textarea [(ngModel)]="newWord.en"></ion-textarea>
+    <ion-label style="margin-top:0;"><b>English</b></ion-label>
+    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.en" auto-grow="true"></ion-textarea>
   </ion-item>
   <ion-item>
-    <ion-label position="floating">French</ion-label>
-    <ion-textarea [(ngModel)]="newWord.fr"></ion-textarea>
+    <ion-label style="margin-top:0;"><b>French</b></ion-label>
+    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.fr" auto-grow="true"></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label><b>Type</b></ion-label>
-    <ion-select [(ngModel)]="newWord.type">
+    <ion-select [(ngModel)]="newWord.type" class="type">
       <ion-select-option *ngFor="let opt of typeOptions;" [value]="opt">{{opt}}</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item>
     <ion-label><b>Category</b></ion-label>
-    <ion-select [(ngModel)]="newWord.category" interface="popover" multiple="true">
+    <ion-select [(ngModel)]="newWord.category" interface="popover" multiple="true" class="category">
       <ion-select-option *ngFor="let opt of categoryOptions;" [value]="opt">{{opt}}</ion-select-option>
     </ion-select>
   </ion-item>

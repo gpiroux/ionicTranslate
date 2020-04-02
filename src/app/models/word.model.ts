@@ -15,7 +15,10 @@ export interface WordJson {
 export class Word {
 
     constructor(word?: WordJson) {
-        if (!word) return
+        if (!word) {
+            this.date = firestore.Timestamp.fromDate(new Date());
+            return
+        }
         this.audio = word.audio && word.audio !== 'Not defined' ? word.audio.split(' ') : [];
         this.category = word.cat ? word.cat.split(', ') : [];
         this.en = word.en || '';

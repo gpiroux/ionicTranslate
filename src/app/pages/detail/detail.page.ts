@@ -55,6 +55,9 @@ export class DetailPage implements OnInit {
 
   ngOnInit() {
 
+    // fix me 
+    // this.activatedRoute.snapshot.paramMap.get('id');
+
     zip(this.route.params, this.wordService.words$)
       .pipe(take(1))
       .subscribe(([parms, words]) => {

@@ -22,7 +22,7 @@ interface OrderBy {
 export class FolderPage implements OnInit {
   public folder: string;
   public words: Word[] = [];
-  private searchString: string = '';
+  public searchString: string = '';
 
   constructor(
     private activatedRoute: ActivatedRoute, 
