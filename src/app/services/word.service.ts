@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, CollectionReference } from '@angular/fire/firestore';
 import { Word, WordJson } from 'src/app/models/word.model';
 
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -25,30 +25,38 @@ export class WordService {
 
   init() {
     this._search$ = new BehaviorSubject(null);
-    
-    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(100))
+
+    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(50))
       .snapshotChanges()
       .pipe(map(actions => actions.map(a => {
         const data = a.payload.doc.data();
         const id = a.payload.doc.id;
-        return { id, ...data } as Word;
+        return new Word({ id, ...data });
       })));
 
     this._searchedWords$ = this._search$.pipe(
       switchMap(search => {
-        if (!search) {
+        if (!search || search.length < 3) {
           console.log('Search field empty');
           return this._words$;
         }
-        return this.firestore.collection<Word>('words', ref => ref.where('en', '>=', search).where('en', '<', `${search}\uf8ff`).orderBy('en').limit(25))
+        return this.firestore.collection<Word>('words', this.filterArray(search))
           .snapshotChanges()
           .pipe(map(actions => actions.map(a => {
             const data = a.payload.doc.data();
             const id = a.payload.doc.id;
-            return { id, ...data } as Word;
+            return new Word({ id, ...data });
           })));
       })
     )
+  }
+
+  private filter(search: string): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
+    return ref => ref.where('en', '>=', search).where('en', '<', `${search}\uf8ff`).orderBy('en').limit(25)
+  }
+
+  private filterArray(search: string): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
+    return ref => ref.where('search', 'array-contains', search).orderBy('en').limit(25)
   }
 
   get words$() {
@@ -60,17 +68,33 @@ export class WordService {
   }
 
   createWord(word: Word) {
-    Word.updateTimestamp(word);
-    return this.firestore.collection<Word>('words').add({...word});
+    word.updateTimestamp();
+    word.generateSearchStrings();
+    return this.firestore.collection<Word>('words').add(word.clean() as Word);
   }
   
   updateWord(word: Word) {
-    Word.updateTimestamp(word);
-    return this.firestore.doc<Word>(`words/${word.id}`).update(word);
+    word.updateTimestamp();
+    word.generateSearchStrings();
+    return this.firestore.doc<Word>(`words/${word.id}`).update(word.clean() as Word);
   }
 
   deleteWord(id: string) {
     return this.firestore.doc<Word>(`words/${id}`).delete();
+  }
+
+  async generateSearchArray(words_: Word[]) {    
+    let i = 0
+    console.log('words', words_);
+    const words = _.cloneDeep(words_)
+    _.reduce(words, (acc, word) => 
+      acc.then(async () => {
+        word.generateSearchStrings();
+        console.log('update', i++ ,word)
+        await this.firestore.doc<Word>(`words/${word.id}`)
+          .update(word.clean() as Word)
+          .catch(err => console.log('ERROR:', err));
+      }), Promise.resolve())
   }
 
   async generateDatabase() {
@@ -83,30 +107,12 @@ export class WordService {
         acc.then(async () => {
           const findedWord = _.find(words, w => w.key === d.key)
           if (findedWord) return
-          let word = new Word(d);
-          this.generateSearchStrings(word);
+          let word = new Word();
+          word.initJson(d);
+          word.generateSearchStrings();
           console.log('add', i++ ,word)
           await this.createWord(word).catch(err => console.log('ERROR:', err));
         }), Promise.resolve())
     });
-  }
-
-  generateSearchStrings(word: Word|WordJson) {
-    word.search = []
-    let split = _(word.en.split('[')[0].split(' '))
-      .compact()
-      .map(s => s.replace(',', ''))
-      .map(s => s.toLowerCase())
-      .filter(s => s.length >= 3)
-      .value()
-
-    _.forEach(split, s => {
-      _.forEach([3,4], len => {
-        if (s.length >= len )
-          for (let i = 0; i < s.length - len + 1; i++) 
-            word.search.push(s.substr(i, len));
-      })
-    })
-    return word;
   }
 }

@@ -15,6 +15,6 @@ export class JoinPipe implements PipeTransform {
 })
 export class FirebaseDate implements PipeTransform {
   transform(value: firestore.Timestamp, ...args: any[]): any {
-    return value && value.toDate()
+      return value && value.toDate && value.toDate()
   }
 }

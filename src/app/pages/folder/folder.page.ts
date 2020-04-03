@@ -47,7 +47,6 @@ export class FolderPage implements OnInit {
   }
 
   onUpdateTime(item: Word) {
-    Word.updateTimestamp(item);
     this.wordService.updateWord(item);
   }
 

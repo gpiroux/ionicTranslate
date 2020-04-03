@@ -14,32 +14,82 @@ export interface WordJson {
 
 export class Word {
 
-    constructor(word?: WordJson) {
+    id: string;
+    en: string;
+    fr: string;
+    type: string;
+    key: number;
+    audio: string[];
+    category: string[];
+    date: firestore.Timestamp;
+    search: string[];
+
+    constructor(word?) {
         if (!word) {
             this.date = firestore.Timestamp.fromDate(new Date());
             return
         }
-        this.audio = word.audio && word.audio !== 'Not defined' ? word.audio.split(' ') : [];
-        this.category = word.cat ? word.cat.split(', ') : [];
+        this.id = word.id
+        this.en = word.en;
+        this.fr = word.fr;
+        this.type = word.type;
+        this.key = word.key;
+        this.audio = word.audio
+        this.category = word.category
+        this.date = word.date;
+        this.search = word.search;
+    }
+
+    initJson(word?: WordJson) {
         this.en = word.en || '';
         this.fr = word.fr  || '';
         this.type = word.type || '';
         this.key = word.key;
-        this.search = word.search || [];
+        this.audio = word.audio && word.audio !== 'Not defined' ? word.audio.split(' ') : [];
+        this.category = word.cat ? word.cat.split(', ') : [];
         this.date = firestore.Timestamp.fromDate(new Date(word.date));
+        this.search = word.search || [];
     }
 
-    id: string;
-    category: string[];
-    audio: string[];
-    type: string;
-    en: string;
-    fr: string;
-    date: firestore.Timestamp;
-    key: number;
-    search: string[];
-
-    static updateTimestamp(word: Word) {
-        word.date = firestore.Timestamp.fromDate(new Date());
+    updateTimestamp() {
+        this.date = firestore.Timestamp.fromDate(new Date());
     }
+
+    generateSearchStrings() {
+        let search = []
+        let split = _(this.en.split(' '))
+          .compact()
+          .filter(s => !s.includes('[') && !s.includes(']'))
+          .map(s => s.replace(/,/g, ''))
+          .map(s => s.replace(/\(/g, ''))
+          .map(s => s.replace(/\)/g, ''))
+          .map(s => s.replace(/\-/g, ''))
+          .map(s => s.toLowerCase())
+          .filter(s => s.length >= 3)
+          .uniq()
+          .value()
+    
+        _.forEach(split, s => {
+          _.forEach([3,4], len => {
+            if (s.length >= len )
+              for (let i = 0; i < s.length - len + 1; i++) 
+                search.push(s.substr(i, len));
+          })
+        })
+        this.search = _.uniq(search);
+    }
+
+    clean(): Object {
+        const result = {};
+        Object.keys(this).forEach(key => {
+            if (this[key] !== undefined) {
+                result[key] = this[key];
+            }
+        });
+        return result; 
+    }
+
 }
+
+
+

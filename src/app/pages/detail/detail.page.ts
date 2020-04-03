@@ -71,6 +71,7 @@ export class DetailPage implements OnInit {
           this.newWord.fr = '';
         }
         this.wordService.selectedWord = this.newWord;
+        console.log(this.newWord)
       });
   }
 
