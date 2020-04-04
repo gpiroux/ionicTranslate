@@ -47,7 +47,7 @@ export class DetailPage implements OnInit {
   ]
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private wordService: WordService
   ) {
     // html page initialwed before ngOnInit()
@@ -57,22 +57,20 @@ export class DetailPage implements OnInit {
   ngOnInit() {
 
     // fix me 
-    // this.activatedRoute.snapshot.paramMap.get('id');
+    const wordId = this.activatedRoute.snapshot.paramMap.get('wordId');
+    const searchString = this.activatedRoute.snapshot.paramMap.get('searchString');
+    const lastWords = this.wordService.lastWords;
 
-    zip(this.route.params, this.wordService.words$)
-      .pipe(take(1))
-      .subscribe(([parms, words]) => {
-        if (parms.wordId) {
-          let word = words.find(w => w.id === parms.wordId);
-          this.newWord = _.cloneDeep(word);
-        } else {
-          this.newWord = new Word()
-          this.newWord.en = (parms.searchString as string || '').toLowerCase()
-          this.newWord.fr = '';
-        }
-        this.wordService.selectedWord = this.newWord;
-        console.log(this.newWord)
-      });
+    if (wordId) {
+      let word = lastWords.find(w => w.id === wordId);
+      this.newWord = _.cloneDeep(word);
+    } else {
+      this.newWord = new Word()
+      this.newWord.en = (searchString || '').toLowerCase()
+      this.newWord.fr = '';
+    }
+    this.wordService.selectedWord = this.newWord;
+    console.log(this.newWord)
   }
 
   async onSave(): Promise<void> {
