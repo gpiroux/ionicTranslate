@@ -9,6 +9,7 @@ import { NavParams } from '@ionic/angular';
 })
 export class FilterPopoverComponent implements OnInit {
   searchString: string
+  isFilterRandom: boolean
   
   constructor(
     private wordService: WordService,
@@ -18,6 +19,7 @@ export class FilterPopoverComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isFilterRandom = this.wordService.isFilterRandom;
   }
 
   onRandomToggleChange(event) {

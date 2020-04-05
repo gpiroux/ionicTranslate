@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>iOSTranslate <span *ngIf="searchString">– {{searchString}}</span></ion-title>
     <ion-buttons slot="primary">
-      <ion-button (click)="onReloadClick($event)" *ngIf="wordService.isFilterRandom">
+      <ion-button (click)="onReloadClick()" *ngIf="isFilterRandom">
         <ion-icon slot="icon-only" ios="reload-outline" md="reload-outline"></ion-icon>
       </ion-button>
       <ion-button (click)="onFilterPopoverClick($event)">

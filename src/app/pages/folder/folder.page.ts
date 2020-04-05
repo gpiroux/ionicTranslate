@@ -27,6 +27,9 @@ export class FolderPage implements OnInit {
   public folder: string;
   public words: Word[] = [];
   public searchString: string = '';
+  public isFilterRandom: boolean;
+
+  private popover: any
 
   constructor(
     private activatedRoute: ActivatedRoute, 
@@ -42,16 +45,22 @@ export class FolderPage implements OnInit {
       this.words = data;
       this.wordService.lastWords = data;
     });
+
+    this.isFilterRandom = this.wordService.isFilterRandom
   }
 
+
   async onFilterPopoverClick(ev: any) {
-    const popover = await this.popoverController.create({
+    this.popover = await this.popoverController.create({
       component: FilterPopoverComponent,
       componentProps: { searchString: this.searchString },
       event: ev,
       translucent: true
     });
-    return await popover.present();
+    this.popover.onWillDismiss().then(() => {
+      this.isFilterRandom = this.wordService.isFilterRandom;
+    })
+    return await this.popover.present();
   }
 
   onReloadClick() {
