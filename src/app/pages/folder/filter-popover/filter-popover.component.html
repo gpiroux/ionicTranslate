@@ -1,3 +1,6 @@
-<p>
-  filter-popover works!
-</p>
+<ion-list>
+  <ion-item>
+    <ion-label>Random</ion-label>
+    <ion-toggle slot="end" [checked]="wordService.isFilterRandom" (ionChange)="onRandomToggleChange($event)"></ion-toggle>
+  </ion-item>
+</ion-list>

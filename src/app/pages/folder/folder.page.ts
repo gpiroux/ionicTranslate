@@ -47,20 +47,20 @@ export class FolderPage implements OnInit {
   async onFilterPopoverClick(ev: any) {
     const popover = await this.popoverController.create({
       component: FilterPopoverComponent,
+      componentProps: { searchString: this.searchString },
       event: ev,
       translucent: true
     });
     return await popover.present();
   }
 
+  onReloadClick() {
+    this.wordService.search$.next(null);
+  }
+
   onSearchChange(event) {
-    this.searchString = event.target.value;
-    if (this.searchString.length == 0) {
-      this.wordService.search$.next(null);
-    } else if (this.searchString.length >= 3) {
-      this.wordService.search$.next(
-        {search: this.searchString.toLowerCase(), filterType: FilterType.enSearch});
-    }
+    this.searchString = event.target.value || '';
+    this.wordService.search$.next(this.searchString.toLowerCase());
   }
 
   onUpdateTime(item: Word) {

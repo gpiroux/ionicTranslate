@@ -15,20 +15,17 @@ export enum FilterType {
   random = 'random'
 }
 
-export interface FilterArgs {
-  search: string;
-  filterType: FilterType
-}
-
 @Injectable({
   providedIn: 'root'
 })
 export class WordService {
-  private _search$: BehaviorSubject<FilterArgs|null>;
+  private _search$: BehaviorSubject<string|null>;
   private _words$: Observable<Word[]>;
   private _searchedWords$: Observable<Word[]>;
   private _lastKey: number;
   private _lastWords: Word[];
+
+  private _isFilterRandom: boolean = false;
 
   private randomCount: number = 6;
   private searchCount: number = 25;
@@ -58,24 +55,23 @@ export class WordService {
       })));
 
     this._searchedWords$ = this._search$.pipe(
-      switchMap((args: FilterArgs) => {
-        
+      switchMap(_search => {
+        let len = 3;
+        const search = _search || '';
+        if (search[0] === '^') len++;
+        if (search[search.length-1] === '$') len++;
+
         // Return all the words
-        if (!args || (!args.filterType && (args.search || '').length < 3)) {
+        if (!this._isFilterRandom && search.length < len) {
           console.log('Search field empty');
           return this._words$;
         }
 
-        const filterFn = args.filterType === FilterType.en
-          ? this.filterEn
-          : args.filterType === FilterType.enSearch
-            ? this.filterEnSearch
-            : args.filterType === FilterType.random
-              ? this.filterEnRandom
-              : null;
+        const filterFn = this._isFilterRandom
+            ? this.filterEnRandom
+            : this.filterEnSearch
 
-        console.log('filter', args.filterType);
-        return this.firestore.collection<Word>('words', filterFn(args.search, this))
+        return this.firestore.collection<Word>('words', filterFn(search, this))
           .snapshotChanges()
           .pipe(map(actions => _(actions).map(a => {
               const data = a.payload.doc.data();
@@ -100,6 +96,13 @@ export class WordService {
   private filterEnRandom(search: string, self: WordService): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
     let randomArray = _.range(10).map(() => Math.ceil(Math.random() * self._lastKey))
     return ref => ref.where('key', 'in', randomArray).limit(self.randomCount)
+  }
+
+  get isFilterRandom() {
+    return this._isFilterRandom;
+  }
+  set isFilterRandom(val) {
+    this._isFilterRandom = val;
   }
 
   get words$() {

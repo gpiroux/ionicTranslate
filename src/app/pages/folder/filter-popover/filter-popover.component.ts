@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { WordService } from 'src/app/services/word.service';
+import { NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'app-filter-popover',
@@ -6,9 +8,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./filter-popover.component.scss'],
 })
 export class FilterPopoverComponent implements OnInit {
+  searchString: string
+  
+  constructor(
+    private wordService: WordService,
+    private navParams: NavParams
+  ) { 
+    this.searchString = this.navParams.get('searchString');
+  }
 
-  constructor() { }
+  ngOnInit() {
+  }
 
-  ngOnInit() {}
+  onRandomToggleChange(event) {
+    this.wordService.isFilterRandom = event.detail.checked;
+    this.wordService.search$.next(this.searchString)
+  }
 
 }
