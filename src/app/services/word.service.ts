@@ -61,7 +61,25 @@ export class WordService {
             ? this.filterEnRandom
             : this.filterEnSearch
 
-        return this.firestore.collection<Word>('words', filterFn(search, this))
+        let len = search.length;
+        let querySearch = search;
+        let nakedSearch = search.replace(/[\^\$]/g, '');
+
+        if (search[0] === '^' && search[len-1] === '$') {
+          querySearch = search
+        } else if (search[0] === '^') {
+          querySearch = search.length > 5 ? search.substr(0, 5) : querySearch = search;
+        } else if (search[len-1] === '$') {
+          querySearch = search.length > 5 ? search.substr(len-5, 5) : querySearch = search;
+        } else if (search.length > 4) {
+          querySearch = search.substr(0, 4);
+        } else {
+          querySearch = search;
+        }
+
+        console.log(querySearch, nakedSearch)
+
+        return this.firestore.collection<Word>('words', filterFn(querySearch, this))
           .snapshotChanges()
           .pipe(map(actions => {
             console.log('_searchedWords$', actions.length)
@@ -70,7 +88,7 @@ export class WordService {
               const id = a.payload.doc.id;
               return new Word({ id, ...data });
             })
-            //.sortBy('en')
+            .filter(w => w.en.includes(nakedSearch))
             .value()
           }));
       })
