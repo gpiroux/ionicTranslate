@@ -7,6 +7,7 @@ import { WordService, FilterType } from '../../services/word.service';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
 
 import * as _ from 'lodash';
+import { combineLatest } from 'rxjs';
 
 enum Direction {
   asc = 'asc',
@@ -24,8 +25,7 @@ interface OrderBy {
   styleUrls: ['./folder.page.scss']
 })
 export class FolderPage implements OnInit {
-  public folder: string;
-  public words: Word[] = [];
+  public displayedWords: Word[] = [];
   public searchString: string = '';
   public isFilterRandom: boolean;
 
@@ -38,14 +38,12 @@ export class FolderPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.folder = this.activatedRoute.snapshot.paramMap.get('id');
-
     console.log('ngOnInit');
-    this.wordService.words$.subscribe(data => {
-      this.words = data;
-      this.wordService.lastWords = data;
-    });
-
+    combineLatest(this.wordService.words$, this.wordService.searchedWords$)
+      .subscribe(([words, searchWords]) => {
+        this.displayedWords = this.searchString || this.wordService.isFilterRandom ? searchWords : words;
+        this.wordService.displayedWords = this.displayedWords;
+      });
     this.isFilterRandom = this.wordService.isFilterRandom
   }
 
@@ -79,5 +77,4 @@ export class FolderPage implements OnInit {
   onDelete(item: Word) {
     this.wordService.deleteWord(item.id);
   }
-
 }

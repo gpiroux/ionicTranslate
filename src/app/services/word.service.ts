@@ -22,6 +22,7 @@ export class WordService {
   private _search$: BehaviorSubject<string|null>;
   private _words$: Observable<Word[]>;
   private _searchedWords$: Observable<Word[]>;
+
   private _lastKey: number;
   private _lastWords: Word[];
 
@@ -34,10 +35,6 @@ export class WordService {
   selectedWord: Word;
 
   constructor(private firestore: AngularFirestore) {
-    this.init()
-  }
-
-  init() {
     this._search$ = new BehaviorSubject(null);
 
     // Last key used
@@ -48,39 +45,34 @@ export class WordService {
 
     this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
       .snapshotChanges()
-      .pipe(map(actions => actions.map(a => {
-        const data = a.payload.doc.data();
-        const id = a.payload.doc.id;
-        return new Word({ id, ...data });
-      })));
+      .pipe(map(actions => {
+        console.log('_words$', actions.length)
+        return actions.map(a => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return new Word({ id, ...data });
+        })
+    }));
 
     this._searchedWords$ = this._search$.pipe(
       switchMap(_search => {
-        let len = 3;
         const search = _search || '';
-        if (search[0] === '^') len++;
-        if (search[search.length-1] === '$') len++;
-
-        // Return all the words
-        if (!this._isFilterRandom && search.length < len) {
-          console.log('Search field empty');
-          return this._words$;
-        }
-
         const filterFn = this._isFilterRandom
             ? this.filterEnRandom
             : this.filterEnSearch
 
         return this.firestore.collection<Word>('words', filterFn(search, this))
           .snapshotChanges()
-          .pipe(map(actions => _(actions).map(a => {
+          .pipe(map(actions => {
+            console.log('_searchedWords$', actions.length)
+            return _(actions).map(a => {
               const data = a.payload.doc.data();
               const id = a.payload.doc.id;
               return new Word({ id, ...data });
             })
             //.sortBy('en')
             .value()
-          ));
+          }));
       })
     )
   }
@@ -106,6 +98,10 @@ export class WordService {
   }
 
   get words$() {
+    return this._words$;
+  }
+
+  get searchedWords$() {
     return this._searchedWords$;
   }
 
@@ -113,10 +109,10 @@ export class WordService {
     return this._search$;
   }
 
-  get lastWords() {
+  get displayedWords() {
     return this._lastWords;
   }
-  set lastWords(val) {
+  set displayedWords(val) {
     this._lastWords = val
   }
 
