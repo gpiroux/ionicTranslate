@@ -29,8 +29,8 @@ export class WordService {
   private _isFilterRandom: boolean = false;
 
   private randomCount: number = 6;
-  private searchCount: number = 25;
-  private wordsCount: number = 50;
+  private searchCount: number = 50;
+  private wordsCount: number = 100;
 
   selectedWord: Word;
 
@@ -148,20 +148,20 @@ export class WordService {
   }
 
   async generateDatabase() {
-    return;
     console.log('data', data);
     let i = 0
     this.words$.pipe(take(1)).subscribe((words: Word[]) => {
       console.log('words', words);
       _.reduce(data as WordJson[], (acc, d) => 
         acc.then(async () => {
+          if (!d.key) d.key = this._lastKey + 1;
           const findedWord = _.find(words, w => w.key === d.key)
           if (findedWord) return
           let word = new Word();
           word.initJson(d);
           word.generateSearchStrings();
           console.log('add', i++ ,word)
-          await this.createWord(word).catch(err => console.log('ERROR:', err));
+          await this.firestore.collection<Word>('words').add(word.clean() as Word).catch(err => console.log('ERROR:', err));
         }), Promise.resolve())
     });
   }
