@@ -58,23 +58,24 @@ export class Word {
     generateSearchStrings() {
         let search = []
         let split = _(this.en.split(' '))
-          .compact()  // remove empty string
-          .filter(s => !s.includes('[') && !s.includes(']'))
-          .map(s => s.replace(/[,\-\(\)\:]/g, ''))  // remove , - ( ) :
-          .map(s => s.toLowerCase())
-          .filter(s => s.length >= 3)
-          .uniq()
-          .value()
+            .compact()  // remove empty string
+            .filter(s => !s.includes('[') && !s.includes(']'))
+            .map(s => s.replace(/[,\-\(\)\:]/g, ''))  // remove , - ( ) :
+            .map(s => s.toLowerCase())
+            .filter(s => s.length >= 3)
+            .uniq()
+            .value()
     
         _.forEach(split, s => {
-          _.forEach([3,4], len => {
-            if (s.length >= len )
-              for (let i = 0; i < s.length - len + 1; i++) {
-                  if (i === 0) search.push('^' + s.substr(i, len));
-                  if (i === (s.length - len)) search.push(s.substr(i, len) + '$');
-                  search.push(s.substr(i, len));
-              }
-          })
+            search.push('^' + s + '$');
+            _.forEach([3,4], len => {
+                if (s.length >= len )
+                for (let i = 0; i < s.length - len + 1; i++) {
+                    if (i === 0) search.push('^' + s.substr(i, len));
+                    if (i === (s.length - len)) search.push(s.substr(i, len) + '$');
+                    search.push(s.substr(i, len));
+                }
+            })
         })
         this.search = _.uniq(search);
     }
