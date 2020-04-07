@@ -2,10 +2,15 @@ import { Injectable } from '@angular/core';
 import { HTTP } from '@ionic-native/http/ngx';
 import { HttpClient } from '@angular/common/http'
 
-import { DicoWord, Traduction } from '../models/dicoResult.model';
+import { DicoWord, Traduction, OtherTraduction } from '../models/dicoResult.model';
 import * as _ from 'lodash';
 
 import { environment } from 'src/environments/environment'
+
+interface ParseResult { 
+  dicoWords : DicoWord[], 
+  otherTradutions: OtherTraduction[] 
+}
 
 @Injectable({
   providedIn: 'root'
@@ -34,17 +39,22 @@ export class LarousseService {
     return _.get(el, ['attributes', 'link', 'value'], '')
   }
 
-  private extendedTrim(str: string) {
-    // 160 => 32
+  private extraTrim(str: string) {
     return str.trim()
-        .replace(/\n/g,'')
-        .replace(/\s+/g, ' ') // char 160
-        .replace(/  +/g, ' ')
-        .replace(/\( /g,'(')
-        .replace(/ \)/g,')');
+      .replace(/[^a-zA-Z\u00C0-\u017F\-,\(\)\[\] ]/g, '')
+      .replace(/\( +/g,'(')
+      .replace(/ +\)/g,')')
+      .replace(/ +/g, ' ');
   }
 
-  private parseElements(elements: HTMLCollection, type?: string) {
+  private globalTrim(str: string) {
+    return this.extraTrim(str)
+      .replace(/ *, *, */g, ', ')  // replace    " , , " => ", "
+      .replace(/ *, */g, ', ')     // replace    " , " => ", "
+      .replace(/ *, *$/, '')       // remove end "," => ""
+  }
+
+  private parseElements(elements: HTMLCollection) {
     let result: DicoWord[] = [];
     let word: DicoWord;
     let audio: string;
@@ -101,7 +111,7 @@ export class LarousseService {
 
          */
 
-        // Mot englais
+        // Mot anglais
         if (e.nodeName == 'H1' && this.getClassValue(e).indexOf('Adresse') > -1) {
             // Create a new entry if needed
             if (!word || word.en) {
@@ -131,7 +141,7 @@ export class LarousseService {
                   word.audio.push(this.getHrefValue(ee).split('/').pop());
                 }
             });
-            word.formeFlechie = this.extendedTrim(word.formeFlechie);
+            word.formeFlechie = this.extraTrim(word.formeFlechie);
         }
 
         // Categorie grammaticale principale (avant traduction)
@@ -166,19 +176,16 @@ export class LarousseService {
 
         // Ex 'grey' & 'goose'
         var indicateurs = ['Indicateur', 'IndicateurDomaine'];
-        
-        // TODO
-        // if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
-        //     if (!_word.categorie) {
-        //         _word.metalangue = e.textContent.trim();
-        //     } else {
-        //         indicateurs.push('Metalangue');
-        //     }
-        // }
+        if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
+            if (!word.categorie) {
+                word.metalangue = e.textContent.trim();  // (US) vs (UK)
+            } else {
+                indicateurs.push('Metalangue');
+            }
+        }
 
         // Indicateur:
         // <span class="Indicateur"> [car, motorcycle, engine]</span>
-        var indicateurs = ['Indicateur', 'IndicateurDomaine'];
         if (e.nodeName == 'SPAN' && indicateurs.indexOf(this.getClassValue(e)) > -1) {
           word.initTraduction();
           word.currentTraduction.indicateur += e.textContent;
@@ -204,7 +211,9 @@ export class LarousseService {
 
           _.forEach(e.childNodes, ee => {
               if (ee.nodeName == 'A' && ['lienarticle2'].indexOf(this.getClassValue(ee)) > -1) {
-                word.currentTraduction.traduction += ` ${this.extendedTrim(ee.textContent)}`.trim()
+                word.currentTraduction.traduction += `${this.extraTrim(ee.textContent)}`.trim()
+              } else if (ee.nodeName == 'SPAN' && ['Genre'].indexOf(this.getClassValue(ee)) > -1) { 
+                word.currentTraduction.traduction +=  ee.textContent.includes(',') ? ', ' : '';
               } else if (ee.nodeName == 'SMALL' && ['oubien'].indexOf(this.getClassValue(ee)) > -1) {
                 word.currentTraduction.traduction += 'OU';
               } else if (ee.nodeType === 3) {
@@ -294,7 +303,7 @@ export class LarousseService {
         }
     }
 
-    function parseCorrector (e) {
+    let parseCorrector = (e: Element) => {
         // if (e.nodeName === 'UL') {
         //     initWord();
         //     _word.categorie = 'Suggestions';
@@ -317,18 +326,44 @@ export class LarousseService {
         // }
     }
 
-    if (!type) {
-        _.forEach(elements, parseElement);
-    }
-    if (type == 'corrector') {
-        _.forEach(elements, parseCorrector);
+    _.forEach(elements, parseElement);
+    
+    // Clean dicoWord
+    _.forEach(result, r => {
+      _.forEach(r.traductions, tr => {
+        tr.traduction = this.globalTrim(tr.traduction)
+      })
+    })
+    return result;
+    
+    
+    // if (type == 'corrector') {
+    //     _.forEach(elements, parseCorrector);
+    // } 
+  }
 
-    }
+  private parseSearchElements(elements: HTMLCollection) {
+    let result: OtherTraduction[] = [];
 
+    let parseElement = (e: Element) => {
+      let trad = new OtherTraduction()
+      result.push(trad);
+      
+      if (e.nodeName === 'ARTICLE' && this.getClassValue(e) === 'sel') {
+        trad.selected = true;
+      }
+      let link = e.childNodes[0].childNodes[0];
+      trad.word = link.textContent;
+      trad.href = this.getHrefValue(link);
+    }
+    _.forEach(elements, parseElement);
+    
     return result;
   }
 
+
   parse(data: string) {
+    let result: ParseResult = {dicoWords: null, otherTradutions: null};
     let parser = new DOMParser();
     let htmlDoc = parser.parseFromString(data, "text/html");
     
@@ -337,34 +372,39 @@ export class LarousseService {
     let article = _.find(articles, a => this.getRoleValue(a) === 'article');
 
     if (article) {
-        // <div class="article_bilingue">
-        let article_bilingue = _.find(article.children, a => this.getClassValue(a) === 'article_bilingue')
+      // <div class="article_bilingue">
+      let article_bilingue = _.find(article.children, a => this.getClassValue(a) === 'article_bilingue')
 
-        let domElements = article_bilingue.children;
-        return this.parseElements(domElements);
+      let domElements = article_bilingue.children;
+      result.dicoWords = this.parseElements(domElements);
     }
 
-    // <section class="corrector">
-    let corrector = htmlDoc.getElementsByClassName('corrector');
-    if (corrector) {
-        let domElements = corrector[0].children;
-        return this.parseElements(domElements, 'corrector');
+    // <div class="wrapper-search">
+    let navs = htmlDoc.getElementsByTagName('div');
+    let wrapperSearch = _.find(navs, a => this.getClassValue(a) === 'wrapper-search');
+
+    if (wrapperSearch) {
+      let domElements = wrapperSearch.children;
+      result.otherTradutions = this.parseSearchElements(domElements);
     }
+
+    return result;
+
+    // // <section class="corrector">
+    // let corrector = htmlDoc.getElementsByClassName('corrector');
+    // if (corrector) {
+    //     let domElements = corrector[0].children;
+    //     return this.parseElements(domElements, 'corrector');
+    // }
 
     var error = htmlDoc.getElementsByClassName('err');
     throw error[0].textContent || 'Parsing error';
   }
 
-  buildUrl(server : string, strippedWord: string) {
-    return `http://${server}/dictionnaires/anglais-francais/${strippedWord}`;
-  }
+  async load(href: string): Promise<ParseResult> {
+    let url = `http://www.larousse.fr/${href}`;
 
-  async load(word: string): Promise<any> {
-    let strippedWord = (word || '').split(' ')[0].split('[')[0];
-    let server = 'www.larousse.fr';
-    let url = this.buildUrl(server, strippedWord);
-
-    let data: string = this.cache[strippedWord]
+    let data: string = this.cache[href]
     
     if (!data) {
       data = environment.production
@@ -373,14 +413,14 @@ export class LarousseService {
     }
       
     // Clear cache
-    this.cache[strippedWord] = undefined;
+    this.cache[href] = undefined;
 
     try {
       let parsedData = this.parse(data);
-      this.cache[strippedWord] = data;
+      this.cache[href] = data;
       return parsedData;
     } catch {
-      throw new Error(`Parsing issue - ${strippedWord}`);
+      throw new Error(`Parsing issue - ${href}`);
     }
   }
 }

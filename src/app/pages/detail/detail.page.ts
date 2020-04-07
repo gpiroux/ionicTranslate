@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { take } from 'rxjs/operators';
-import { zip } from 'rxjs';
-import * as _ from 'lodash';
-
 import { Word } from 'src/app/models/word.model';
 import { WordService } from 'src/app/services/word.service';
 import { DicoWord } from 'src/app/models/dicoResult.model';
 
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-detail',

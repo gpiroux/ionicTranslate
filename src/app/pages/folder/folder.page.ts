@@ -32,9 +32,8 @@ export class FolderPage implements OnInit {
   private popover: any
 
   constructor(
-    private activatedRoute: ActivatedRoute, 
     private wordService: WordService,
-    public popoverController: PopoverController
+    private popoverController: PopoverController
   ) { }
 
   ngOnInit() {

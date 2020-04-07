@@ -77,7 +77,7 @@ export class WordService {
           querySearch = search;
         }
 
-        console.log(querySearch, nakedSearch)
+        // console.log('search', querySearch, nakedSearch)
 
         return this.firestore.collection<Word>('words', filterFn(querySearch, this))
           .snapshotChanges()

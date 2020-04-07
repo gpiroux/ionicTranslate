@@ -4,6 +4,7 @@ export class DicoWord {
     en: string = '';
     phonetique: string = '';
     categorie: string = '';
+    metalangue: string = '';
     formeFlechie: string = '';
 
     traductions: Traduction[] = [];
@@ -30,4 +31,10 @@ export class Traduction {
     indicateur: string = ''
     lien: string = ''
     tradList: Traduction[] = [];
+}
+
+export class OtherTraduction {
+    href: string = '';
+    word: string = '';
+    selected: boolean;
 }

@@ -18,17 +18,16 @@
 
 <ion-content>
 <ion-list>
-  <ion-item [routerLink]="['larousse']">
+  <ion-item [routerLink]="['larousse']" detail>
     <ion-label><b>Larousse</b></ion-label>
-    <span class="expression">GO</span>
   </ion-item>
   <ion-item>
     <ion-label style="margin-top:0;"><b>English</b></ion-label>
-    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.en" auto-grow="true"></ion-textarea>
+    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.en"></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label style="margin-top:0;"><b>French</b></ion-label>
-    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.fr" auto-grow="true"></ion-textarea>
+    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.fr"></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label><b>Type</b></ion-label>

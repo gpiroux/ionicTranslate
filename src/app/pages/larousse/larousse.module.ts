@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { LaroussePageRoutingModule } from './larousse-routing.module';
 
 import { LaroussePage } from './larousse.page';
+import { OtherTraductionPopoverComponent } from './other-traduction-popover/other-traduction-popover.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { LaroussePage } from './larousse.page';
     IonicModule,
     LaroussePageRoutingModule
   ],
-  declarations: [LaroussePage]
+  entryComponents: [OtherTraductionPopoverComponent],
+  declarations: [LaroussePage, OtherTraductionPopoverComponent]
 })
 export class LaroussePageModule {}
