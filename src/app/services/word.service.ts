@@ -56,11 +56,12 @@ export class WordService {
 
     this._searchedWords$ = this._search$.pipe(
       switchMap(_search => {
-        const search = _search || '';
+        
         const filterFn = this._isFilterRandom
-            ? this.filterEnRandom
-            : this.filterEnSearch
-
+          ? this.filterEnRandom
+          : this.filterEnSearch
+        
+        const search = _search || '';
         let len = search.length;
         let querySearch = search;
         let nakedSearch = search.replace(/[\^\$]/g, '');
@@ -77,7 +78,7 @@ export class WordService {
           querySearch = search;
         }
 
-        // console.log('search', querySearch, nakedSearch)
+        console.log('search', querySearch, nakedSearch)
 
         return this.firestore.collection<Word>('words', filterFn(querySearch, this))
           .snapshotChanges()

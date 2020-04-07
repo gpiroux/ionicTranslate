@@ -417,6 +417,11 @@ export class LarousseService {
 
     try {
       let parsedData = this.parse(data);
+      // Update cache
+      let cacheHref = _.find(parsedData.otherTradutions, tr => tr.selected)
+      if (cacheHref) {
+        this.cache[cacheHref.href] = data;
+      } 
       this.cache[href] = data;
       return parsedData;
     } catch {

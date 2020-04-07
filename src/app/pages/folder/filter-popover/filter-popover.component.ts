@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { WordService } from 'src/app/services/word.service';
-import { NavParams } from '@ionic/angular';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-filter-popover',
@@ -8,23 +6,15 @@ import { NavParams } from '@ionic/angular';
   styleUrls: ['./filter-popover.component.scss'],
 })
 export class FilterPopoverComponent implements OnInit {
-  searchString: string
-  isFilterRandom: boolean
+  @Input() isFilterRandom: boolean;
+  @Input() dismiss: (val: boolean) => {}
   
-  constructor(
-    private wordService: WordService,
-    private navParams: NavParams
-  ) { 
-    this.searchString = this.navParams.get('searchString');
-  }
+  constructor() {}
 
-  ngOnInit() {
-    this.isFilterRandom = this.wordService.isFilterRandom;
-  }
+  ngOnInit() {}
 
   onRandomToggleChange(event) {
-    this.wordService.isFilterRandom = event.detail.checked;
-    this.wordService.search$.next(this.searchString)
+    this.dismiss(event.detail.checked);
   }
 
 }
