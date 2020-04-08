@@ -41,7 +41,7 @@ export class LarousseService {
 
   private extraTrim(str: string) {
     return str.trim()
-      .replace(/[^a-zA-Z\u00C0-\u017F\-,\(\)\[\] ]/g, '')
+      .replace(/[^a-zA-Z\u00C0-\u017F\-\'\,\(\)\[\] ]/g, '')
       .replace(/\( +/g,'(')
       .replace(/ +\)/g,')')
       .replace(/ +/g, ' ');
