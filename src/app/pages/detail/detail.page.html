@@ -42,6 +42,10 @@
     </ion-select>
   </ion-item>
   <ion-item>
+    <ion-label><b>Audio</b></ion-label>
+    {{newWord.audio.join(' ')}}
+  </ion-item>
+  <ion-item>
     <ion-label><b>Last update</b></ion-label>
     <span class="expression">{{ newWord?.date | firebaseDate | date:"medium" }}</span>
   </ion-item>

@@ -6,7 +6,7 @@
     <ion-title style="padding-left: 12px;">
       <span style="font-size: 85%;">{{selectedWord.en}}</span>
     </ion-title>
-    <ion-buttons slot="primary">
+    <ion-buttons slot="primary" *ngIf="otherTraductions?.length > 1">
       <ion-button (click)="onOtherTraductionPopoverClick($event)">
         <ion-icon slot="icon-only" ios="list-outline" md="list-outline"></ion-icon>
       </ion-button>
@@ -21,7 +21,7 @@
   <ion-list>
     <ion-spinner style="display: block; margin: 80px auto;" *ngIf="!wordTraductions" name="lines"></ion-spinner>
     <div *ngFor="let item of wordTraductions;">
-      <ion-item-divider sticky="true" color="light">
+      <ion-item-divider button sticky="true" color="light" (click)="onWordClick(item)">
         <ion-label>
           <b>{{item?.en}} {{item?.phonetique}} {{item?.formeFlechie}} {{item?.metalangue}}</b>
         </ion-label>
@@ -30,7 +30,7 @@
           <b>{{item | wordTypeMap }}</b>
         </ion-label>
       </ion-item-divider>
-      <ion-item *ngFor="let trad of item?.traductions">
+      <ion-item *ngFor="let trad of item?.traductions" (click)="onTraductionClick(trad)">
         <!-- locution -->
         <div *ngIf="trad?.locution" class="locution-container">
           <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>

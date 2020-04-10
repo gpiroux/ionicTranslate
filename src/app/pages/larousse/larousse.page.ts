@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, PopoverController } from '@ionic/angular';
 
-import { Word } from 'src/app/models/word.model';
-import { DicoWord, OtherTraduction } from 'src/app/models/dicoResult.model';
+import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.model';
+import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
 
 import { LarousseService } from 'src/app/services/larousse.service';
 import { WordService } from 'src/app/services/word.service';
@@ -64,6 +64,23 @@ export class LaroussePage implements OnInit {
         });    
         await alert.present();
       });
+  }
+
+  onWordClick(word: DicoWord) {
+    this.selectedWord.en = `${word.en} ${word.phonetique} ${word.formeFlechie}`.trim();
+    this.selectedWord.audio = word.audio;
+    this.selectedWord.type = word.mapWordType(WordTypeMapType.short);
+  }
+
+  onTraductionClick(traduction: Traduction) {
+    if (traduction.tradList.length || traduction.locution) return;
+    const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
+    const tradSplit = _.map(traduction.traduction.split(','), s => s.trim());
+    _.forEach(tradSplit, t => {
+      if (frSplit.includes(t)) _.remove(frSplit, s => s === t);
+      frSplit.push(t)
+    });
+    this.selectedWord.fr = _.compact(frSplit).join(', ');
   }
 
   async onOtherTraductionPopoverClick(ev: any) {
