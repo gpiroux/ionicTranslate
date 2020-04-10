@@ -27,7 +27,7 @@
         </ion-label>
         <ion-icon *ngIf="item?.audio.length" class="audio-divider" slot="end" name="volume-high-outline"></ion-icon>
         <ion-label slot="end" class="category-divider">
-          <b>{{item?.categorie}}</b>
+          <b>{{item | wordTypeMap }}</b>
         </ion-label>
       </ion-item-divider>
       <ion-item *ngFor="let trad of item?.traductions">

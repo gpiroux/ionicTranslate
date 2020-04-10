@@ -1,3 +1,5 @@
+import { CategoryMapType, wordTypes } from './word.model';
+import * as _ from 'lodash';
 
 export class DicoWord {
     audio: string[] = [];
@@ -22,6 +24,21 @@ export class DicoWord {
         }
         this.currentTraduction = new Traduction()
         this.traductions.push(this.currentTraduction)
+    }
+
+    mapWordType(type: CategoryMapType): string {
+        const intransitive = 'intransitive';
+        const transitive = 'transitive';
+        let shortCategory = _.find(wordTypes, c => this.categorie.includes(c));
+        
+        if (type === CategoryMapType.short) {
+            return shortCategory;
+        } else if (this.categorie.includes(intransitive)) {
+            return `intr. ${shortCategory}`
+        } else if (this.categorie.includes(transitive)) {
+            return `tr. ${shortCategory}`
+        }
+        return this.categorie;
     }
 }
 

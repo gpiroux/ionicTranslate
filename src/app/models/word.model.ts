@@ -1,6 +1,24 @@
 import { firestore } from 'firebase';
 import * as _ from 'lodash';
 
+export const wordTypes = [
+    'noun',
+    'verb',
+    'adverb',
+    'adjective',
+    'expression',
+    'conjunction',
+    'interjection',
+    'preposition',
+    'conjunciton',
+    'compound'
+  ]
+
+export enum CategoryMapType {
+    short,
+    long
+}
+
 export interface WordJson {
     en: string
     cat: string 
@@ -89,7 +107,6 @@ export class Word {
         });
         return result; 
     }
-
 }
 
 

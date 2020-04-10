@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { Word } from 'src/app/models/word.model';
+import { Word, wordTypes } from 'src/app/models/word.model';
 import { WordService } from 'src/app/services/word.service';
 import { DicoWord } from 'src/app/models/dicoResult.model';
 
@@ -18,17 +18,7 @@ export class DetailPage implements OnInit {
   newWord: Word;
   hasChanged: boolean;
 
-  typeOptions = [
-    'noun',
-    'verb',
-    'adverb',
-    'adjective',
-    'expression',
-    'conjunction',
-    'interjection',
-    'preposition',
-    'conjunciton'
-  ]
+  typeOptions: string[] = wordTypes;
 
   categoryOptions = [
     'other',
