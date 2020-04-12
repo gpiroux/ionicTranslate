@@ -36,9 +36,14 @@ export class FolderPage implements OnInit {
 
   ngOnInit() {
     console.log('ngOnInit');
-    combineLatest(this.wordService.words$, this.wordService.searchedWords$)
-      .subscribe(([words, searchWords]) => {
-        this.displayedWords = this.searchString || this.isFilterRandom ? searchWords : words;
+    combineLatest(this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$)
+      .subscribe(([words, searchWords, randomWords]) => {
+        console.log('combineLatest')
+        this.displayedWords = this.searchString 
+          ? searchWords 
+          : this.isFilterRandom
+            ? randomWords
+            : words
         this.wordService.displayedWords = this.displayedWords;
       });
   }
@@ -50,15 +55,20 @@ export class FolderPage implements OnInit {
     this.wordService.isFilterRandom = val;
   }
 
+  trackByFn(index: number, item: Word) {
+    return item.id;
+  }
+
   async onFilterPopoverClick(ev: any) {
     this.popover = await this.popoverController.create({
       component: FilterPopoverComponent,
       componentProps: { 
-        searchString: this.searchString,
-        isFilterRandom: this.isFilterRandom,
         dismiss: (isFilterRandom: boolean) => {
           this.isFilterRandom = isFilterRandom;
-          this.wordService.search$.next(this.searchString)
+          if (isFilterRandom) 
+            this.wordService.random$.next(null)
+          else 
+            this.wordService.search$.next(this.searchString)
           this.popover.dismiss();
         }
       },
@@ -69,7 +79,7 @@ export class FolderPage implements OnInit {
   }
 
   onReloadClick() {
-    this.wordService.search$.next(this.searchString);
+    this.wordService.random$.next(null);
   }
 
   onSearchChange(event) {

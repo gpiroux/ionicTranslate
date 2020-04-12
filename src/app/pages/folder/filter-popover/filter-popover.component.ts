@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { WordService } from 'src/app/services/word.service';
 
 @Component({
   selector: 'app-filter-popover',
@@ -6,10 +7,12 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./filter-popover.component.scss'],
 })
 export class FilterPopoverComponent implements OnInit {
-  @Input() isFilterRandom: boolean;
   @Input() dismiss: (val: boolean) => {}
   
-  constructor() {}
+  isFilterRandom: boolean;
+  constructor(private wordService: WordService) {
+    this.isFilterRandom = this.wordService.isFilterRandom;
+  }
 
   ngOnInit() {}
 

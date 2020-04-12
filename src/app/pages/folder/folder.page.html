@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>iOSTranslate <span *ngIf="searchString">– {{searchString}}</span></ion-title>
+    <ion-title>iOSTranslate</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="onReloadClick()" *ngIf="isFilterRandom">
         <ion-icon slot="icon-only" ios="reload-outline" md="reload-outline"></ion-icon>
@@ -20,13 +20,13 @@
 <ion-content [fullscreen]="true">
   <ion-searchbar 
     animated 
-    debounce="100"
+    debounce="250"
     mode="ios" 
     spellcheck="true" 
     (ionChange)="onSearchChange($event)"
   ></ion-searchbar>
   <ion-list>
-    <ion-item-sliding mode="md" *ngFor="let item of displayedWords;">
+    <ion-item-sliding mode="md" *ngFor="let item of displayedWords; trackBy:trackByFn ">
       <ion-item [routerLink]="['detail', item.id]">
         <div class="word-content">
           <div class="flex-row">
