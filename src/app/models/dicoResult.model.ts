@@ -12,9 +12,7 @@ export class DicoWord {
     traductions: Traduction[] = [];
     currentTraduction: Traduction = null;
     
-    constructor(audio: string) {
-        this.audio.push(audio);
-    }
+    constructor() {}
 
     initTraduction() {
         if (this.currentTraduction 
@@ -47,6 +45,7 @@ export class Traduction {
     locution: string = ''
     indicateur: string = ''
     lien: string = ''
+    audio: string = ''
     tradList: Traduction[] = [];
 }
 
