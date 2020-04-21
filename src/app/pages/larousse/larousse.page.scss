@@ -1,11 +1,18 @@
 
 .category-divider {
-    margin-left:10px;
-    margin-right:15px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .audio-divider {
-    margin: 0;
+    margin-left: 0px;
+    margin-right: 5px;
+    height: 18px;
+}
+
+.audio {
+    margin-left: 0px;
+    margin-right: -10px;
     height: 18px;
 }
 
