@@ -23,25 +23,29 @@ export class LarousseService {
     private httpClient: HttpClient
   ) { }
 
-  private getClassValue(el: Element | ChildNode) {
+  private getClassValue(el: Element | ChildNode): string {
     return _.get(el, ['attributes', 'class', 'value'], '')
   }
 
-  private getRoleValue(el: Element | ChildNode) {
+  private getRoleValue(el: Element | ChildNode): string {
     return _.get(el, ['attributes', 'role', 'value'], '')
   }
 
-  private getHrefValue(el: Element | ChildNode) {
+  private getHrefValue(el: Element | ChildNode): string {
     return _.get(el, ['attributes', 'href', 'value'], '')
   }
 
-  private getLinkValue(el: Element | ChildNode) {
+  private getSrcValue(el: Element | ChildNode): string {
+    return _.get(el, ['attributes', 'src', 'value'], '')
+  }
+
+  private getLinkValue(el: Element | ChildNode): string {
     return _.get(el, ['attributes', 'link', 'value'], '')
   }
 
   private extraTrim(str: string) {
     return str.trim()
-      .replace(/[^a-zA-Z\u00C0-\u017F\-\'\,\(\)\[\] ]/g, '')
+      .replace(/[^a-zA-Z\u00C0-\u017F\-\—\'\,\(\)\[\]\ ]/g, '')
       .replace(/\( +/g,'(')
       .replace(/ +\)/g,')')
       .replace(/ +/g, ' ');
@@ -57,7 +61,7 @@ export class LarousseService {
   private parseElements(elements: HTMLCollection) {
     let result: DicoWord[] = [];
     let word: DicoWord;
-    let audio: string;
+    let audio: { type: string, value: string }
 
     let parseElement = (e: Element) => {
 
@@ -82,8 +86,14 @@ export class LarousseService {
 
          */
 
-        if (e.nodeName == 'A' && this.getClassValue(e) === 'lienson') {
-            audio = this.getHrefValue(e).split('/').pop();
+        // Deprecated
+        if (e.nodeName == 'SPAN' && ['lienson', 'lienson3'].includes(this.getClassValue(e))) {
+          console.log('lienson', e)
+          audio = { type: this.getClassValue(e), value: null }
+        }
+        if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais') && audio) {
+          audio.value = this.getSrcValue(e).split('/').pop();
+          console.log("AUDIO", audio.value)
         }
 
         /* ### Word ###
@@ -113,13 +123,16 @@ export class LarousseService {
 
         // Mot anglais
         if (e.nodeName == 'H1' && this.getClassValue(e).indexOf('Adresse') > -1) {
-            // Create a new entry if needed
-            if (!word || word.en) {
-                word = new DicoWord(audio)
-                result.push(word);
-                audio = '';
-            }
-            word.en = e.textContent.trim();
+          console.log("H1", e)
+          word = new DicoWord()
+          result.push(word);
+          word.en = e.textContent.trim();
+          
+          // Need to wait creation of the word !
+          if (audio && audio.type === 'lienson' && audio.value) {
+            word.audio.push(audio.value)
+            audio = null;
+          }
         }
 
         // Phonetique principale
@@ -134,14 +147,13 @@ export class LarousseService {
                 if (ee.nodeName == 'SPAN' && ['Phonetique'].indexOf(this.getClassValue(ee)) > -1) {
                     word.formeFlechie += ee.textContent;
                 } else if (ee.nodeType === 3) {
-                    word.formeFlechie += ee.textContent;
+                    word.formeFlechie += this.extraTrim(ee.textContent);
                 }
 
-                if (ee.nodeName == 'A' && this.getClassValue(ee) === 'lienson') {
-                  word.audio.push(this.getHrefValue(ee).split('/').pop());
+                if (ee.nodeName == 'AUDIO' && this.getSrcValue(ee).includes('anglais')) {
+                  word.audio.push(this.getSrcValue(ee).split('/').pop());
                 }
             });
-            word.formeFlechie = this.extraTrim(word.formeFlechie);
         }
 
         // Categorie grammaticale principale (avant traduction)
@@ -197,6 +209,10 @@ export class LarousseService {
         if (e.nodeName == 'SPAN' && locutions.indexOf(this.getClassValue(e)) > -1) {
           word.initTraduction();
           word.currentTraduction.locution += e.textContent;
+          if (audio && audio.type === 'lienson3' && audio.value) {
+            word.currentTraduction.audio = audio.value
+            audio = null;
+          }
         }
 
         // Traduction
@@ -276,7 +292,7 @@ export class LarousseService {
 
             _.forEach(e.children, ee => {
 
-                if (ee.nodeName == 'SPAN' && 'Indicateur' === this.getClassValue(ee)) {
+                if (ee.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(ee))) {
                   tradustion2.indicateur = ee.textContent;
                 }
 
@@ -457,8 +473,9 @@ export class LarousseService {
       } 
       this.cache[href] = data;
       return parsedData;
-    } catch {
-      throw new Error(`Parsing issue - ${href}`);
+    } catch(err) {
+      console.log('Err', err);
+      throw new Error(`Parsing issue - ${href} - Err: ${err}`);
     }
   }
 }
