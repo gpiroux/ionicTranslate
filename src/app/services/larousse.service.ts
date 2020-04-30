@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HTTP } from '@ionic-native/http/ngx';
 import { HttpClient } from '@angular/common/http'
+import { Platform } from '@ionic/angular';
 
 import { DicoWord, Traduction, OtherTraduction } from '../models/dicoResult.model';
 import * as _ from 'lodash';
-
-import { environment } from 'src/environments/environment'
 
 interface ParseResult { 
   dicoWords : DicoWord[], 
@@ -20,7 +19,8 @@ export class LarousseService {
   
   constructor(
     private httpNative: HTTP,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private platform: Platform
   ) { }
 
   private getClassValue(el: Element | ChildNode): string {
@@ -456,9 +456,9 @@ export class LarousseService {
     let data: string = this.cache[href]
     
     if (!data) {
-      data = environment.production
-      ? await this.httpNative.get(url, {}, {}).then(res => res.data)
-      : await this.httpClient.get(url, {responseType: 'text'}).toPromise()
+      data = this.platform.is('ios')
+        ? await this.httpNative.get(url, {}, {}).then(res => res.data)
+        : await this.httpClient.get(url, {responseType: 'text'}).toPromise()
     }
       
     // Clear cache

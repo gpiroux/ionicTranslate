@@ -41,8 +41,9 @@
       <ion-select-option *ngFor="let opt of categoryOptions;" [value]="opt">{{opt}}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item>
+  <ion-item (click)="playAudio(newWord.audio)">
     <ion-label><b>Audio</b></ion-label>
+    <ion-spinner *ngIf="audioPlaying"></ion-spinner> &nbsp;
     {{newWord.audio?.join(' ')}}
   </ion-item>
   <ion-item>
