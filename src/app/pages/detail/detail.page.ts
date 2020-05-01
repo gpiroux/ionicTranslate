@@ -9,7 +9,6 @@ import { DicoWord } from 'src/app/models/dicoResult.model';
 import * as _ from 'lodash';
 import { HTTP } from '@ionic-native/http/ngx';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { FileSystemService } from 'src/app/services/file-system.service';
 
 @Component({
