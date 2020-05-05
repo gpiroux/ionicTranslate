@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+
+import { AuthService } from './services/auth.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-root',
@@ -13,44 +18,53 @@ export class AppComponent implements OnInit {
   public selectedIndex = 0;
   public appPages = [
     {
-      title: 'Inbox',
-      url: '/folder/Inbox',
-      icon: 'mail'
+      hidden: false,
+      title: 'Login',
+      url: '/login',
+      icon: 'log-in'
     },
     {
-      title: 'Outbox',
-      url: '/folder/Outbox',
-      icon: 'paper-plane'
-    },
-    {
-      title: 'Favorites',
-      url: '/folder/Favorites',
-      icon: 'heart'
-    },
-    {
-      title: 'Archived',
-      url: '/folder/Archived',
+      hidden: false,
+      title: 'Folder',
+      url: '/folder',
       icon: 'archive'
     },
     {
-      title: 'Trash',
-      url: '/folder/Trash',
-      icon: 'trash'
-    },
-    {
-      title: 'Spam',
-      url: '/folder/Spam',
-      icon: 'warning'
+      hidden: false,
+      title: 'Logout',
+      url: '/logout',
+      icon: 'log-out'
     }
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+  
+  public user: firebase.User;
 
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
+    private auth: AuthService,
+    private location: Location, 
+    private router: Router
   ) {
     this.initializeApp();
+
+    this.auth.user$.subscribe(user => {
+      const loginPage = _.find(this.appPages, p => p.title === 'Login')
+      const logoutPage = _.find(this.appPages, p => p.title === 'Logout')
+      loginPage.hidden = !!user;
+      logoutPage.hidden = !user;
+      this.user = user;
+    })
+
+    this.router.events.subscribe(val => {
+      if (this.location.path()) {
+        const path = this.location.path();
+        this.selectedIndex = 
+          _.findIndex(this.appPages, p => path.toLowerCase().includes(p.title.toLowerCase()));
+      }
+    });
   }
 
   initializeApp() {
@@ -60,10 +74,5 @@ export class AppComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    const path = window.location.pathname.split('folder/')[1];
-    if (path !== undefined) {
-      this.selectedIndex = this.appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
-    }
-  }
+  ngOnInit() {}
 }

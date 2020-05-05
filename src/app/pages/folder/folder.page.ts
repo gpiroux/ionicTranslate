@@ -22,7 +22,8 @@ interface OrderBy {
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.page.html',
-  styleUrls: ['./folder.page.scss']
+  styleUrls: ['./folder.page.scss'],
+  providers: [WordService],
 })
 export class FolderPage implements OnInit {
   public displayedWords: Word[] = [];
@@ -52,6 +53,7 @@ export class FolderPage implements OnInit {
   }
 
   ngOnDestroy(): void {
+    console.log('Page ngOnDestroy')
     this.destroy$.next();
     this.destroy$.complete();
   }

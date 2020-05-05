@@ -16,14 +16,15 @@ import { PipesModule } from './pipes/pipe.module'
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
-import { WordService } from './services/word.service';
 import { FileSystemService } from './services/file-system.service';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { FileSystemService } from './services/file-system.service';
     SplashScreen,
     AlertController,
     AngularFirestore,
-    WordService,
+    AngularFireAuth,
+    AuthService,
     FileSystemService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

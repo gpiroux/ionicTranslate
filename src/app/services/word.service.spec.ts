@@ -22,16 +22,16 @@ describe('WordService', () => {
     
     const word = new Word()
     word.en = "liability [ˌlaɪəˈbɪlətɪ] (liabilities)"
-    service.generateSearchStrings(word);
+    word.generateSearchStrings();
     expect(word.search.length).toBe(13)
 
     word.en = "This is a challange [ˌlaɪəˈbɪlətɪ] (liabilities)"
-    service.generateSearchStrings(word);
+    word.generateSearchStrings();
     expect(word.search.length).toBe(16)  
     expect(word.search[2]).toBe('This')  
 
     word.en = "challenge, testing [ˌlaɪəˈbɪlətɪ] (liabilities)"
-    service.generateSearchStrings(word);
+    word.generateSearchStrings();
     expect(word.search.length).toBe(22);  
     expect(word.search[7]).toBe('chal');
 

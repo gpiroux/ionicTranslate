@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import { AngularFirestore, CollectionReference, DocumentChangeAction } from '@angular/fire/firestore';
 import { Word, WordJson } from 'src/app/models/word.model';
 
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import { map, switchMap, take, takeLast, takeUntil } from 'rxjs/operators';
+import { map, switchMap, take, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash'
 
 import { data } from 'data.js';
@@ -15,10 +15,8 @@ export enum FilterType {
   random = 'random'
 }
 
-@Injectable({
-  providedIn: 'root'
-})
-export class WordService {
+@Injectable()
+export class WordService implements OnDestroy {
   private _search$: BehaviorSubject<string|null>;
   private _random$: BehaviorSubject<string|null>;
   private _words$: Observable<Word[]>;
