@@ -6,7 +6,8 @@ import { WordService } from '../../services/word.service';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
 
 import * as _ from 'lodash';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 enum Direction {
   asc = 'asc',
@@ -28,7 +29,8 @@ export class FolderPage implements OnInit {
   public searchString: string = '';
 
   private popover: any
-
+  private destroy$: Subject<void> = new Subject();
+  
   constructor(
     private wordService: WordService,
     private popoverController: PopoverController
@@ -37,6 +39,7 @@ export class FolderPage implements OnInit {
   ngOnInit() {
     console.log('ngOnInit');
     combineLatest(this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$)
+      .pipe(takeUntil(this.destroy$))
       .subscribe(([words, searchWords, randomWords]) => {
         console.log('combineLatest')
         this.displayedWords = this.searchString 
@@ -47,6 +50,12 @@ export class FolderPage implements OnInit {
         this.wordService.displayedWords = this.displayedWords;
       });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   get isFilterRandom() {
     return this.wordService.isFilterRandom;
   }

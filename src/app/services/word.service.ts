@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, CollectionReference, DocumentChangeAction } from '@angular/fire/firestore';
 import { Word, WordJson } from 'src/app/models/word.model';
 
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { map, switchMap, take, takeLast, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash'
 
 import { data } from 'data.js';
@@ -34,6 +34,8 @@ export class WordService {
   private searchCount: number = 50;
   private wordsCount: number = 100;
 
+  private destroy$: Subject<void> = new Subject();
+
   selectedWord: Word;
 
   constructor(private firestore: AngularFirestore) {
@@ -43,11 +45,13 @@ export class WordService {
     // Last key used
     this.firestore.collection<Word>('words', ref => ref.orderBy('key', 'desc').limit(1))
       .snapshotChanges()
-      .pipe(map(actions => {
-        console.log('_lastKey$', actions.length)
-        return actions.map(a => a.payload.doc.data().key)[0]
-      }))
-      .subscribe(keys => this._lastKey = keys);
+      .pipe(
+        map(actions => {
+          console.log('_lastKey$', actions.length)
+          return actions.map(a => a.payload.doc.data().key)[0]
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe(keys => this._lastKey = keys);
 
     this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
       .snapshotChanges()
@@ -104,6 +108,11 @@ export class WordService {
           }));  
       })
     )
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private mapToWords(actions: DocumentChangeAction<Word>[]) {
