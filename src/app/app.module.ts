@@ -25,6 +25,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { FileSystemService } from './services/file-system.service';
 import { AuthService } from './services/auth.service';
+import { WordService } from './services/word.service';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { AuthService } from './services/auth.service';
     AngularFirestore,
     AngularFireAuth,
     AuthService,
+    WordService,
     FileSystemService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

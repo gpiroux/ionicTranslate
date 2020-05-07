@@ -1,13 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { AngularFirestore, CollectionReference, DocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestore, CollectionReference, DocumentChangeAction, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
 import { Word, WordJson } from 'src/app/models/word.model';
 
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import { map, switchMap, take, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash'
 
-import { data } from 'data.js';
+import { AuthService } from './auth.service';
 
 export enum FilterType {
   en = 'en',
@@ -17,6 +17,8 @@ export enum FilterType {
 
 @Injectable()
 export class WordService implements OnDestroy {
+  private destroy$: Subject<void>;
+  
   private _search$: BehaviorSubject<string|null>;
   private _random$: BehaviorSubject<string|null>;
   private _words$: Observable<Word[]>;
@@ -32,16 +34,27 @@ export class WordService implements OnDestroy {
   private searchCount: number = 50;
   private wordsCount: number = 100;
 
-  private destroy$: Subject<void> = new Subject();
+  public selectedWord: Word;
+  userDoc: AngularFirestoreDocument;
 
-  selectedWord: Word;
-
-  constructor(private firestore: AngularFirestore) {
+  constructor(
+    private firestore: AngularFirestore,
+    private auth: AuthService
+  ) {
     this._search$ = new BehaviorSubject(null);
     this._random$ = new BehaviorSubject(null);
+  }
+
+  async initialise() {
+    this.destroy$ = new Subject();
+    
+    this.userDoc = await this.auth.getUserDoc();
+    if (!this.userDoc) {
+      throw new Error('No user found!');
+    }
 
     // Last key used
-    this.firestore.collection<Word>('words', ref => ref.orderBy('key', 'desc').limit(1))
+    this.userDoc.collection<Word>('dicoEn', ref => ref.orderBy('key', 'desc').limit(1))
       .snapshotChanges()
       .pipe(
         map(actions => {
@@ -49,22 +62,18 @@ export class WordService implements OnDestroy {
           return actions.map(a => a.payload.doc.data().key)[0]
         }),
         takeUntil(this.destroy$)
-      ).subscribe(keys => this._lastKey = keys);
+      ).subscribe(keys => this._lastKey = keys ||   0);
 
-    this._words$ = this.firestore.collection<Word>('words', ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
+    this._words$ = this.userDoc.collection<Word>('dicoEn', ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
       .snapshotChanges()
       .pipe(map(actions => {
         console.log('_words$', actions.length)
-        return actions.map(a => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          return new Word({ id, ...data });
-        })
+        return this.mapToWords(actions);
     }));
 
     this._randomWords$ = this._random$.pipe(
       switchMap(() => {
-        return this.firestore.collection<Word>('words', this.filterEnRandom(this._lastKey, this))
+        return this.userDoc.collection<Word>('dicoEn', this.filterEnRandom(this._lastKey, this))
           .snapshotChanges()
           .pipe(map(actions => {
             console.log('_randomWords$', actions.length)
@@ -93,7 +102,7 @@ export class WordService implements OnDestroy {
         }
 
         console.log('search', querySearch, nakedSearch)
-        return this.firestore.collection<Word>('words', this.filterEnSearch(querySearch, this))
+        return this.userDoc.collection<Word>('dicoEn', this.filterEnSearch(querySearch, this))
           .snapshotChanges()
           .pipe(map(actions => {
             console.log('_searchedWords$', actions.length)
@@ -108,9 +117,13 @@ export class WordService implements OnDestroy {
     )
   }
 
-  ngOnDestroy(): void {
+  reset() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  ngOnDestroy(): void {
+    this.reset();
   }
 
   private mapToWords(actions: DocumentChangeAction<Word>[]) {
@@ -133,6 +146,23 @@ export class WordService implements OnDestroy {
     let randomArray = _.range(10).map(() => Math.ceil(Math.random() * (lastKey || 0)))
     console.log(randomArray)
     return ref => ref.where('key', 'in', randomArray).limit(self.randomCount)
+  }
+
+  createWord(word: Word): Promise<DocumentReference> {
+    word.updateTimestamp();
+    word.generateSearchStrings();
+    word.key = this._lastKey + 1
+    return this.userDoc.collection<Word>('dicoEn').add(word.clean() as Word);
+  }
+  
+  updateWord(word: Word): Promise<void> {
+    word.updateTimestamp();
+    word.generateSearchStrings();
+    return this.userDoc.collection<Word>('dicoEn').doc(word.id).update(word.clean() as Word);
+  }
+
+  deleteWord(id: string): Promise<void> {
+    return this.userDoc.collection<Word>('dicoEn').doc(id).delete();
   }
 
   get isFilterRandom() {
@@ -167,55 +197,5 @@ export class WordService implements OnDestroy {
   }
   set displayedWords(val) {
     this._lastWords = val
-  }
-
-  createWord(word: Word) {
-    word.updateTimestamp();
-    word.generateSearchStrings();
-    word.key = this._lastKey + 1
-    return this.firestore.collection<Word>('words').add(word.clean() as Word);
-  }
-  
-  updateWord(word: Word) {
-    word.updateTimestamp();
-    word.generateSearchStrings();
-    return this.firestore.doc<Word>(`words/${word.id}`).update(word.clean() as Word);
-  }
-
-  deleteWord(id: string) {
-    return this.firestore.doc<Word>(`words/${id}`).delete();
-  }
-
-  async generateSearchArray(words_: Word[]) {    
-    let i = 0
-    console.log('words', words_);
-    const words = _.cloneDeep(words_)
-    _.reduce(words, (acc, word) => 
-      acc.then(async () => {
-        word.generateSearchStrings();
-        console.log('update', i++ ,word)
-        await this.firestore.doc<Word>(`words/${word.id}`)
-          .update(word.clean() as Word)
-          .catch(err => console.log('ERROR:', err));
-      }), Promise.resolve())
-  }
-
-  async generateDatabase() {
-    console.log('data', data);
-    let i = 0
-    this.words$.pipe(take(1)).subscribe((words: Word[]) => {
-      console.log('words', words);
-      _.reduce(data as WordJson[], (acc, d) => 
-        acc.then(async () => {
-          if (!d.key) d.key = this._lastKey + 1;
-          const findedWord = _.find(words, w => w.key === d.key)
-          if (findedWord) return
-          let word = new Word();
-          word.initJson(d);
-          word.generateSearchStrings();
-          console.log('add', i++ ,word)
-          await this.firestore.collection<Word>('words').add(word.clean() as Word).catch(err => console.log('ERROR:', err));
-        }), Promise.resolve())
-    });
   }
 }

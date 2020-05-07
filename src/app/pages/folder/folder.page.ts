@@ -22,8 +22,7 @@ interface OrderBy {
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.page.html',
-  styleUrls: ['./folder.page.scss'],
-  providers: [WordService],
+  styleUrls: ['./folder.page.scss']
 })
 export class FolderPage implements OnInit {
   public displayedWords: Word[] = [];
@@ -37,8 +36,9 @@ export class FolderPage implements OnInit {
     private popoverController: PopoverController
   ) { }
 
-  ngOnInit() {
-    console.log('ngOnInit');
+  async ngOnInit() {
+    await this.wordService.initialise();
+
     combineLatest(this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$)
       .pipe(takeUntil(this.destroy$))
       .subscribe(([words, searchWords, randomWords]) => {
@@ -56,6 +56,7 @@ export class FolderPage implements OnInit {
     console.log('Page ngOnDestroy')
     this.destroy$.next();
     this.destroy$.complete();
+    this.wordService.reset();
   }
 
   get isFilterRandom() {
