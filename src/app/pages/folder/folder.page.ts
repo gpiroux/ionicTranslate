@@ -8,6 +8,7 @@ import { FilterPopoverComponent } from './filter-popover/filter-popover.componen
 import * as _ from 'lodash';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 enum Direction {
   asc = 'asc',
@@ -32,12 +33,15 @@ export class FolderPage implements OnInit {
   private destroy$: Subject<void> = new Subject();
   
   constructor(
+    private activatedRoute: ActivatedRoute,
     private wordService: WordService,
     private popoverController: PopoverController
   ) { }
 
   async ngOnInit() {
-    await this.wordService.initialise();
+    const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
+
+    await this.wordService.initialise(dicoName);
 
     combineLatest(this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$)
       .pipe(takeUntil(this.destroy$))

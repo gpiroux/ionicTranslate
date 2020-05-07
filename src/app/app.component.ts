@@ -25,9 +25,15 @@ export class AppComponent implements OnInit {
     },
     {
       hidden: false,
-      title: 'Folder',
-      url: '/folder',
-      icon: 'archive'
+      title: 'Dico En',
+      url: '/folder/dicoEn',
+      icon: 'documents'
+    },
+    {
+      hidden: false,
+      title: 'Dico NL',
+      url: '/folder/dicoNl',
+      icon: 'document-text'
     },
     {
       hidden: false,
@@ -62,7 +68,7 @@ export class AppComponent implements OnInit {
       if (this.location.path()) {
         const path = this.location.path();
         this.selectedIndex = 
-          _.findIndex(this.appPages, p => path.toLowerCase().includes(p.title.toLowerCase()));
+          _.findIndex(this.appPages, p => path.toLowerCase().includes(p.url.toLowerCase()));
       }
     });
   }
