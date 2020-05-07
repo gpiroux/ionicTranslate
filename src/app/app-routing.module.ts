@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from './guards/auth.guard';
+import { LogoutGuard } from './guards/logout.guard';
 
 const routes: Routes = [
   {
@@ -15,7 +16,8 @@ const routes: Routes = [
   },
   {
     path: 'logout',
-    loadChildren: () => import('./pages/logout/logout.module').then(m => m.LogoutPageModule)
+    canActivate: [LogoutGuard],
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'folder',
@@ -28,7 +30,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  providers: [AuthGuard],
+  providers: [AuthGuard, LogoutGuard],
   exports: [RouterModule]
 })
 export class AppRoutingModule {}

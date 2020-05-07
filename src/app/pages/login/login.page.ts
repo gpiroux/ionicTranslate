@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
-import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,21 +10,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
+  loginError: string
   constructor(private afAuth: AngularFireAuth, private router: Router) { }
 
-  ngOnInit() {
-    this.signInWithGoogle();
-  }
+  ngOnInit() {}
 
-  signInWithEmailAndPassword(email: string, password: string){
+  signInWithEmailAndPassword(email, password){
     return this.afAuth.auth.signInWithEmailAndPassword(email, password)
       .then(() => {
         this.router.navigateByUrl('/folder');
-      });
+      })
+      .catch(err => this.loginError = err.message)
   }
 
-  sendResetP(email: string) {
+  sendResetPawword(email: string) {
     return this.afAuth.auth.sendPasswordResetEmail(email)
   }
 

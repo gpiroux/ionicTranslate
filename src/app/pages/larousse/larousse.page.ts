@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 
 import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.model';
 import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
@@ -9,6 +9,7 @@ import { WordService } from 'src/app/services/word.service';
 
 import * as _ from 'lodash'
 import { OtherTraductionPopoverComponent } from './other-traduction-popover/other-traduction-popover.component';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-larousse',
@@ -25,10 +26,9 @@ export class LaroussePage implements OnInit {
 
   constructor(
     private larousseService: LarousseService, 
-    private alertController: AlertController,
     private wordService: WordService,
-    private popoverController: PopoverController
-
+    private popoverController: PopoverController,
+    private notification: NotificationsService
   ) { }
 
   async ngOnInit() {
@@ -40,12 +40,7 @@ export class LaroussePage implements OnInit {
       this.load(`/dictionnaires/anglais-francais/${strippedWord}`);
     
     } else {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'Pas de mot sélectionné !',
-        buttons: ['OK']
-      });    
-      await alert.present();
+      this.notification.error('Pas de mot sélectionné !');
     }
   }
 
@@ -57,12 +52,7 @@ export class LaroussePage implements OnInit {
         console.log(result)
       })
       .catch(async err => {
-        const alert = await this.alertController.create({
-          header: 'Error',
-          message: err.message || err,
-          buttons: ['OK']
-        });    
-        await alert.present();
+        this.notification.error(err.message || err);
       });
   }
 
