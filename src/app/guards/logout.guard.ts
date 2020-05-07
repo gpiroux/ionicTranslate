@@ -9,7 +9,7 @@ import { NotificationsService } from '../services/notifications.service';
 })
 export class LogoutGuard implements CanActivate {
   constructor(
-    private afAuth: AngularFireAuth, 
+    private fireauth: AngularFireAuth, 
     private router: Router,
     private notifications: NotificationsService
   ) {}
@@ -19,7 +19,7 @@ export class LogoutGuard implements CanActivate {
     state: RouterStateSnapshot): Promise<boolean | UrlTree> {
 
       console.log('CanActivate logout guard !')
-      return this.afAuth.auth.signOut()
+      return this.fireauth.auth.signOut()
         .then(() => {
           console.log('logout sucess')
           return this.router.navigateByUrl('/login')
