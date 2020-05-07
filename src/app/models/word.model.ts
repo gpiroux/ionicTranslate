@@ -101,7 +101,7 @@ export class Word {
     clean(): Object {
         const result = {};
         Object.keys(this).forEach(key => {
-            if (this[key] !== undefined) {
+            if (key !== 'id' && this[key] !== undefined) {
                 result[key] = this[key];
             }
         });
