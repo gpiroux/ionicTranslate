@@ -28,6 +28,7 @@ interface OrderBy {
 export class FolderPage implements OnInit {
   public displayedWords: Word[] = [];
   public searchString: string = '';
+  public dicoName: string;
 
   private popover: any
   private destroy$: Subject<void> = new Subject();
@@ -40,6 +41,7 @@ export class FolderPage implements OnInit {
 
   async ngOnInit() {
     const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
+    this.dicoName = dicoName;
 
     await this.wordService.initialise(dicoName);
 
