@@ -34,10 +34,10 @@ export class AuthService {
       cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
     });
     this.firestore.firestore.enablePersistence()
-      .then(() => console.log('enablePersistence OK'))
+      .then(() => console.log('Enable persistence OK'))
       .catch(err => {
-        this.notifications.error('enablePersistence KO')
-        console.log('enablePersistence KO', err)
+        this.notifications.error('Enable persistence KO: ' + err.message || err)
+        console.error('enablePersistence KO', err)
       });
     
   }
