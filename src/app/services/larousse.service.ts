@@ -451,7 +451,7 @@ export class LarousseService {
   }
 
   async load(href: string): Promise<ParseResult> {
-    let url = `http://www.larousse.fr/${href}`;
+    let url = `https://www.larousse.fr/${href}`;
 
     let data: string = this.cache[href]
     

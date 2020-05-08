@@ -98,7 +98,7 @@ export class DetailPage implements OnInit {
   }
 
   async fetchAudioAndPlay(audio: string) {
-    const url = `http://voix.larousse.fr/anglais/${audio}.mp3`;
+    const url = `https://voix.larousse.fr/anglais/${audio}.mp3`;
     let data;
 
     try {
