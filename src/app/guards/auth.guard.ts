@@ -9,7 +9,6 @@ import { take, map } from 'rxjs/operators';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    console.log('AuthGuard - user', this.authService.user)
     return this.authService.user$
       .pipe(
         take(1), 
