@@ -84,7 +84,7 @@ export class DetailPage implements OnInit {
     const audio = audioArray[this.audioIdx % audioArray.length];
 
     try {
-      const blobURL = await this.fileSystem.loadMP3(audio) as string;
+      const blobURL = await this.fileSystem.loadMP3(audio);
       console.log('########## PLAY FROM LOCAL FILE ##########');
       const player = new Audio();
       player.src = blobURL;
@@ -99,7 +99,7 @@ export class DetailPage implements OnInit {
 
   async fetchAudioAndPlay(audio: string) {
     const url = `https://voix.larousse.fr/anglais/${audio}.mp3`;
-    let data;
+    let data: Blob;
 
     try {
       data = this.platform.is('cordova')

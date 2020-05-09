@@ -88,7 +88,6 @@ export class LarousseService {
 
         // Deprecated
         if (e.nodeName == 'SPAN' && ['lienson', 'lienson3'].includes(this.getClassValue(e))) {
-          console.log('lienson', e)
           audio = { type: this.getClassValue(e), value: null }
         }
         if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais') && audio) {
@@ -123,7 +122,6 @@ export class LarousseService {
 
         // Mot anglais
         if (e.nodeName == 'H1' && this.getClassValue(e).indexOf('Adresse') > -1) {
-          console.log("H1", e)
           word = new DicoWord()
           result.push(word);
           word.en = e.textContent.trim();

@@ -12,14 +12,18 @@ export class FileSystemService {
     private platform: Platform
   ) {}
 
-  async loadMP3(fileName: string) {
-    const deferred = new Deferred<string | ArrayBuffer>();
+  async loadMP3(fileName: string): Promise<string> {
+    if (!this.platform.is('cordova')) {
+      return Promise.reject('Cordiva not installed')
+    }
+
+    const deferred = new Deferred<string>();
     try {
       const directoryEntry = await this.file.resolveDirectoryUrl(this.file.documentsDirectory);
       const fileEntry = await this.file.getFile(directoryEntry, `${fileName}.mp3`, {});
       fileEntry.file(file => {
         const reader = new FileReader();
-        reader.onloadend = () => deferred.resolve(reader.result);
+        reader.onloadend = () => deferred.resolve(reader.result as string);
         reader.readAsDataURL(file);
       });
     } catch(err) {
@@ -29,9 +33,8 @@ export class FileSystemService {
   }
 
   async writeMP3(fileName: string, blob: Blob): Promise<void> {
-    if (!this.platform.is('ios')) {
-      console.log('Not iOS')
-      return
+    if (!this.platform.is('cordova')) {
+      return Promise.reject('Cordiva not installed');
     }
 
     const deferred = new Deferred<void>();
@@ -47,9 +50,7 @@ export class FileSystemService {
     }
     return deferred.promise;
   }
-
 }
-
 
 export class Deferred<T> {
   promise: Promise<T>;

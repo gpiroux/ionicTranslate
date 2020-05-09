@@ -37,7 +37,7 @@ export class LaroussePage implements OnInit {
     
     if (selectedWord) {
       let strippedWord = (selectedWord || '').trim().split(' ')[0].split('[')[0];
-      this.load(`/dictionnaires/anglais-francais/${strippedWord}`);
+      this.load(`dictionnaires/anglais-francais/${strippedWord}`);
     
     } else {
       this.notification.error('Pas de mot sélectionné !');
