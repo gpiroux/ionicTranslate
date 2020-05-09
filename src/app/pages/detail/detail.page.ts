@@ -102,7 +102,7 @@ export class DetailPage implements OnInit {
     let data;
 
     try {
-      data = this.platform.is('ios')
+      data = this.platform.is('cordova')
         ? await this.httpNative.sendRequest(url, {method: 'get', responseType: 'blob'}).then(res => res.data)
         : await this.httpClient.get(url, {responseType: 'blob'}).toPromise();
     } catch(err) {
