@@ -456,7 +456,7 @@ export class LarousseService {
     let data: string = this.cache[href]
     
     if (!data) {
-      data = this.platform.is('ios')
+      data = this.platform.is('cordova')
         ? await this.httpNative.get(url, {}, {}).then(res => res.data)
         : await this.httpClient.get(url, {responseType: 'text'}).toPromise()
     }
