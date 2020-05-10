@@ -49,9 +49,8 @@ export class LaroussePage implements OnInit {
       .then(result => {
         this.wordTraductions = result.dicoWords;
         this.otherTraductions = result.otherTradutions;
-        console.log(result)
       })
-      .catch(async err => {
+      .catch(err => {
         this.notification.error(err.message || err);
       });
   }
@@ -67,7 +66,7 @@ export class LaroussePage implements OnInit {
     const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
     const tradSplit = _.map(traduction.traduction.split(','), s => s.trim());
     _.forEach(tradSplit, t => {
-      if (frSplit.includes(t)) _.remove(frSplit, s => s === t);
+      if (frSplit.includes(t)) return;
       frSplit.push(t)
     });
     this.selectedWord.fr = _.compact(frSplit).join(', ');

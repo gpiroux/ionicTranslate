@@ -5,57 +5,19 @@ import { Platform } from '@ionic/angular';
 
 import { DicoWord, Traduction, OtherTraduction } from '../models/dicoResult.model';
 import * as _ from 'lodash';
-
-interface ParseResult { 
-  dicoWords : DicoWord[], 
-  otherTradutions: OtherTraduction[] 
-}
+import { genericDico, ParseResult } from '../models/genericDico';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LarousseService {
-  cache: { [key:string]: string } = {};
-  
+export class LarousseService extends genericDico {
+
   constructor(
-    private httpNative: HTTP,
-    private httpClient: HttpClient,
-    private platform: Platform
-  ) { }
-
-  private getClassValue(el: Element | ChildNode): string {
-    return _.get(el, ['attributes', 'class', 'value'], '')
-  }
-
-  private getRoleValue(el: Element | ChildNode): string {
-    return _.get(el, ['attributes', 'role', 'value'], '')
-  }
-
-  private getHrefValue(el: Element | ChildNode): string {
-    return _.get(el, ['attributes', 'href', 'value'], '')
-  }
-
-  private getSrcValue(el: Element | ChildNode): string {
-    return _.get(el, ['attributes', 'src', 'value'], '')
-  }
-
-  private getLinkValue(el: Element | ChildNode): string {
-    return _.get(el, ['attributes', 'link', 'value'], '')
-  }
-
-  private extraTrim(str: string) {
-    return str.trim()
-      .replace(/[^a-zA-Z\u00C0-\u017F\-\—\'\,\(\)\[\]\ ]/g, '')
-      .replace(/\( +/g,'(')
-      .replace(/ +\)/g,')')
-      .replace(/ +/g, ' ');
-  }
-
-  private globalTrim(str: string) {
-    return this.extraTrim(str)
-      .replace(/ *, *, */g, ', ')  // replace    " , , " => ", "
-      .replace(/ *, */g, ', ')     // replace    " , " => ", "
-      .replace(/ *, *$/, '')       // remove end "," => ""
+    protected httpNative: HTTP,
+    protected httpClient: HttpClient,
+    protected platform: Platform
+  ) { 
+    super(httpNative, httpClient, platform, 'https://www.larousse.fr');
   }
 
   private parseElements(elements: HTMLCollection) {
@@ -408,8 +370,7 @@ export class LarousseService {
     return result;
   }
 
-
-  parse(data: string) {
+  parse(data: string): ParseResult {
     let result: ParseResult = {dicoWords: null, otherTradutions: null};
     let parser = new DOMParser();
     let htmlDoc = parser.parseFromString(data, "text/html");
@@ -448,32 +409,4 @@ export class LarousseService {
     throw error[0].textContent || 'Parsing error';
   }
 
-  async load(href: string): Promise<ParseResult> {
-    let url = `https://www.larousse.fr/${href}`;
-
-    let data: string = this.cache[href]
-    
-    if (!data) {
-      data = this.platform.is('cordova')
-        ? await this.httpNative.get(url, {}, {}).then(res => res.data)
-        : await this.httpClient.get(url, {responseType: 'text'}).toPromise()
-    }
-      
-    // Clear cache
-    this.cache[href] = undefined;
-
-    try {
-      let parsedData = this.parse(data);
-      // Update cache
-      let cacheHref = _.find(parsedData.otherTradutions, tr => tr.selected)
-      if (cacheHref) {
-        this.cache[cacheHref.href] = data;
-      } 
-      this.cache[href] = data;
-      return parsedData;
-    } catch(err) {
-      console.log('Err', err);
-      throw new Error(`Parsing issue - ${href} - Err: ${err}`);
-    }
-  }
 }
