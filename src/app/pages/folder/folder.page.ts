@@ -2,23 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 
 import { Word } from '../../models/word.model';
-import { WordService } from '../../services/word.service';
+import { WordService, Dico, dicoList } from '../../services/word.service';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
 
 import * as _ from 'lodash';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-
-enum Direction {
-  asc = 'asc',
-  desc = 'desc'
-}
-
-interface OrderBy {
-  key: string;
-  direction: Direction; 
-}
 
 @Component({
   selector: 'app-folder',
@@ -28,22 +18,22 @@ interface OrderBy {
 export class FolderPage implements OnInit {
   public displayedWords: Word[] = [];
   public searchString: string = '';
-  public dicoName: string;
+  public dico: Dico;
 
-  private popover: any
+  private popover: HTMLIonPopoverElement;
   private destroy$: Subject<void> = new Subject();
   
   constructor(
     private activatedRoute: ActivatedRoute,
     private wordService: WordService,
     private popoverController: PopoverController
-  ) { }
+  ) {}
 
   async ngOnInit() {
     const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
-    this.dicoName = dicoName;
+    this.dico = dicoList[dicoName];
 
-    await this.wordService.initialise(dicoName);
+    await this.wordService.initialise(this.dico);
 
     combineLatest(this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$)
       .pipe(takeUntil(this.destroy$))
