@@ -61,8 +61,8 @@ export class VanDaleService extends genericDico {
     } 
 
     function parseChildrenOfElementF0(el: Element, idx: number) {
-      if (idx === 0 && this.getClassValue(el) === 'fq' && el.textContent.includes('(')) {
-        mainTraduction = true;
+      if (idx === 0 && this.getClassValue(el) === 'fq') {
+        mainTraduction = el.textContent.includes('(');
       }
       if (idx === 0 && this.getClassValue(el) === 'fr') {
         mainTraduction = true;
