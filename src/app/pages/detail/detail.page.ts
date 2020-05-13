@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Platform } from '@ionic/angular';
 
 import { Word, wordTypes } from 'src/app/models/word.model';
-import { WordService } from 'src/app/services/word.service';
+import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
 import { DicoWord } from 'src/app/models/dicoResult.model';
 
 import * as _ from 'lodash';
@@ -23,6 +23,9 @@ export class DetailPage implements OnInit {
 
   audioIdx = 0;
   audioPlaying = false;
+
+  isLarousseDico: boolean;
+  isVandaleDico: boolean;
 
   typeOptions: string[] = wordTypes;
   categoryOptions = [
@@ -50,23 +53,25 @@ export class DetailPage implements OnInit {
     this.newWord = new Word();
   }
 
-  ngOnInit() {
-
-    // fix me 
+  ngOnInit() {    
+    const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
+    this.isLarousseDico = dicoList[dicoName].dico === DicoWebsite.Larousse;
+    this.isVandaleDico = dicoList[dicoName].dico === DicoWebsite.Vandale;
+    
+    const displayedWords = this.wordService.displayedWords;
+    
     const wordId = this.activatedRoute.snapshot.paramMap.get('wordId');
     const searchString = this.activatedRoute.snapshot.paramMap.get('searchString');
-    const displayedWords = this.wordService.displayedWords;
-
     if (wordId) {
       let word = displayedWords.find(w => w.id === wordId);
       this.newWord = _.cloneDeep(word);
     } else {
       this.newWord = new Word()
-      this.newWord.en = (searchString || '').toLowerCase()
+      this.newWord.en = (searchString || '').trim().replace(/^\^|\$$/g,'').toLowerCase()
       this.newWord.fr = '';
     }
     this.wordService.selectedWord = this.newWord;
-    console.log(this.newWord)
+    console.log('Detail world', this.newWord)
   }
 
   async onSave(): Promise<void> {
@@ -78,7 +83,7 @@ export class DetailPage implements OnInit {
   }
 
   async playAudio(audioArray: string[]) {
-    if (this.audioPlaying) return;
+    if (this.audioPlaying || !audioArray || !audioArray.length) return;
     this.audioPlaying = true;
 
     const audio = audioArray[this.audioIdx % audioArray.length];

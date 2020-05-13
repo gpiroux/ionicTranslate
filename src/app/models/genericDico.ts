@@ -13,12 +13,12 @@ export interface ParseResult {
 
 export abstract class genericDico {
     cache: { [key:string]: string } = {};
-
+    webSite: string;
+    
     constructor(
         protected httpNative: HTTP,
         protected httpClient: HttpClient,
-        protected platform: Platform,
-        protected webSite: string
+        protected platform: Platform
     ) {}
 
     protected getClassValue(el: Element | ChildNode): string {
@@ -83,7 +83,7 @@ export abstract class genericDico {
             // Update cache
             this.cache[href] = data;
             return parsedData;
-            
+
         } catch(err) {
             console.log('Err', err);
             throw new Error(`Parsing issue - ${href} - Err: ${err}`);

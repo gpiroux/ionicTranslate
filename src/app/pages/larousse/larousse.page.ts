@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 
-import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.model';
-import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
+import { OtherTraductionPopoverComponent } from './other-traduction-popover/other-traduction-popover.component';
 
 import { LarousseService } from 'src/app/services/larousse.service';
 import { WordService } from 'src/app/services/word.service';
+import { NotificationsService } from 'src/app/services/notifications.service';
+
+import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.model';
+import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
 
 import * as _ from 'lodash'
-import { OtherTraductionPopoverComponent } from './other-traduction-popover/other-traduction-popover.component';
-import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-larousse',
@@ -36,9 +37,8 @@ export class LaroussePage implements OnInit {
     const selectedWord = _.get(this.selectedWord, 'en');
     
     if (selectedWord) {
-      let strippedWord = (selectedWord || '').trim().split(' ')[0].split('[')[0];
+      let strippedWord = selectedWord.trim().split(' ')[0].split('[')[0];
       this.load(`dictionnaires/anglais-francais/${strippedWord}`);
-    
     } else {
       this.notification.error('Pas de mot sélectionné !');
     }

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,11 @@ import { Router } from '@angular/router';
 })
 export class LoginPage implements OnInit {
   loginError: string
-  constructor(private fireauth: AngularFireAuth, private router: Router) { }
+  constructor(
+    private fireauth: AngularFireAuth, 
+    private platform: Platform, 
+    private router: Router
+  ) {}
 
   ngOnInit() {}
 

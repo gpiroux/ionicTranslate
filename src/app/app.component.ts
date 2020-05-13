@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
     {
       hidden: false,
       title: 'Dico NL',
-      url: '/folder/dicoNl',
+      url: '/folder/dicoNL',
       icon: 'document-text'
     },
     {

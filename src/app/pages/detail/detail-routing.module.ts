@@ -11,6 +11,10 @@ const routes: Routes = [
   {
     path: 'larousse',
     loadChildren: () => import('../larousse/larousse.module').then(m => m.LaroussePageModule)
+  },
+  {
+    path: 'vandale',
+    loadChildren: () => import('../vandale/vandale.module').then(m => m.VandalePageModule)
   }
 ];
 

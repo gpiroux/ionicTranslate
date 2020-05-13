@@ -17,7 +17,8 @@ export class LarousseService extends genericDico {
     protected httpClient: HttpClient,
     protected platform: Platform
   ) { 
-    super(httpNative, httpClient, platform, 'https://www.larousse.fr');
+    super(httpNative, httpClient, platform);
+    this.webSite = 'https://www.larousse.fr';
   }
 
   private parseElements(elements: HTMLCollection) {
@@ -371,28 +372,28 @@ export class LarousseService extends genericDico {
   }
 
   parse(data: string): ParseResult {
-    let result: ParseResult = {dicoWords: null, otherTradutions: null};
-    let parser = new DOMParser();
-    let htmlDoc = parser.parseFromString(data, "text/html");
+    const result: ParseResult = { dicoWords: null, otherTradutions: null };
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(data, "text/html");
     
     // <article role="article">
-    let articles = htmlDoc.getElementsByTagName('article');
-    let article = _.find(articles, a => this.getRoleValue(a) === 'article');
+    const articles = htmlDoc.getElementsByTagName('article');
+    const article = _.find(articles, a => this.getRoleValue(a) === 'article');
 
     if (article) {
       // <div class="article_bilingue">
-      let article_bilingue = _.find(article.children, a => this.getClassValue(a) === 'article_bilingue')
+      const article_bilingue = _.find(article.children, a => this.getClassValue(a) === 'article_bilingue')
 
-      let domElements = article_bilingue.children;
+      const domElements = article_bilingue.children;
       result.dicoWords = this.parseElements(domElements);
     }
 
     // <div class="wrapper-search">
-    let navs = htmlDoc.getElementsByTagName('div');
-    let wrapperSearch = _.find(navs, a => this.getClassValue(a) === 'wrapper-search');
+    const navs = htmlDoc.getElementsByTagName('div');
+    const wrapperSearch = _.find(navs, a => this.getClassValue(a) === 'wrapper-search');
 
     if (wrapperSearch) {
-      let domElements = wrapperSearch.children;
+      const domElements = wrapperSearch.children;
       result.otherTradutions = this.parseSearchElements(domElements);
     }
 

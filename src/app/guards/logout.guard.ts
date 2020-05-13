@@ -21,8 +21,9 @@ export class LogoutGuard implements CanActivate {
       console.log('CanActivate logout guard !')
       return this.fireauth.auth.signOut()
         .then(() => {
-          console.log('logout sucess')
-          return this.router.navigateByUrl('/login')
+          console.log('logout sucess');
+          this.router.navigateByUrl('/login');
+          return false;
         })
         .catch(err => {
           this.notifications.error(err.message || err)

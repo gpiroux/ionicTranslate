@@ -17,7 +17,7 @@ const routes: Routes = [
   {
     path: 'logout',
     canActivate: [LogoutGuard],
-    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
+    component: class DummyComponent {}
   },
   {
     path: 'folder/:dicoName',

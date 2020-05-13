@@ -18,8 +18,11 @@
 
 <ion-content>
 <ion-list>
-  <ion-item [routerLink]="['larousse']" detail>
+  <ion-item *ngIf="isLarousseDico" [routerLink]="['larousse']" detail>
     <ion-button expand="full">Larousse</ion-button>
+  </ion-item>
+  <ion-item *ngIf="isVandaleDico" [routerLink]="['vandale']" detail>
+    <ion-button expand="full">Vandale</ion-button>
   </ion-item>
   <ion-item>
     <ion-label style="margin-top:0;"><b>English</b></ion-label>
@@ -41,7 +44,7 @@
       <ion-select-option *ngFor="let opt of categoryOptions;" [value]="opt">{{opt}}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item (click)="playAudio(newWord.audio)">
+  <ion-item button (click)="playAudio(newWord.audio)">
     <ion-label><b>Audio</b></ion-label>
     <ion-spinner *ngIf="audioPlaying"></ion-spinner> &nbsp;
     {{newWord.audio?.join(' ')}}

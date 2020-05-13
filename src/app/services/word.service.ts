@@ -17,20 +17,28 @@ export enum FilterType {
 
 export interface Dico {
   title: string,
-  collection: string
+  collection: string,
+  dico: DicoWebsite
 }
 export interface DicoList { 
   [key: string]: Dico 
 }
 
+export enum DicoWebsite {
+  Larousse,
+  Vandale
+}
+
 export const dicoList: DicoList = {
   'dicoEn': {
     title: 'Dico En',
-    collection: 'dicoEn'
+    collection: 'dicoEn',
+    dico: DicoWebsite.Larousse
   },
-  'dicoNl': {
+  'dicoNL': {
     title: 'Dico NL',
-    collection: 'dicoNl'
+    collection: 'dicoNL',
+    dico: DicoWebsite.Vandale
   },
 }
 
