@@ -5,7 +5,7 @@ import { WordService } from 'src/app/services/word.service';
 import { NotificationsService } from 'src/app/services/notifications.service';
 
 import { Word } from 'src/app/models/word.model';
-import { DicoWord } from 'src/app/models/dicoResult.model';
+import { DicoWord, Traduction } from 'src/app/models/dicoResult.model';
 
 import * as _ from 'lodash';
 
@@ -45,6 +45,22 @@ export class VandalePage implements OnInit {
       .catch(err => {
         this.notification.error(err.message || err);
       });
+  }
+
+  onWordClick(word: DicoWord) {
+    this.selectedWord.en = `${word.en} ${word.phonetique} ${word.formeFlechie}`.trim();
+    //this.selectedWord.type = word.mapWordType(WordTypeMapType.short);
+  }
+
+  onTraductionClick(traduction: Traduction) {
+    if (traduction.tradList.length || traduction.locution) return;
+    const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
+    const tradSplit = _.map(traduction.traduction.split(','), s => s.trim());
+    _.forEach(tradSplit, t => {
+      if (frSplit.includes(t)) return;
+      frSplit.push(t)
+    });
+    this.selectedWord.fr = _.compact(frSplit).join(', ');
   }
 
 }

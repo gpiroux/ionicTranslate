@@ -77,8 +77,8 @@ export class VanDaleService extends genericDico {
       }
 
       if (mainTraduction) {
-        traduction.traduction += el.textContent;
-        console.log(el.textContent)
+        if (el.textContent !== 'v' && el.textContent !== 'm')
+          traduction.traduction += el.textContent;
       } else if (this.getClassValue(el) === 'fr') {
         traduction.traduction += el.textContent;
       } else if (this.getClassValue(el) === 'fq') {
@@ -87,13 +87,13 @@ export class VanDaleService extends genericDico {
     }
 
     _.forEach(elements, parseElement.bind(this));
-    
+
     // Clean dicoWord
-    // _.forEach(result, r => {
-    //   _.forEach(r.traductions, tr => {
-    //     tr.traduction = this.globalTrim(tr.traduction)
-    //   })
-    // })
+    _.forEach(result, r => {
+      _.forEach(r.traductions, tr => {
+        tr.traduction = this.globalTrim(tr.traduction)
+      })
+    })
     return result;
   }
 
