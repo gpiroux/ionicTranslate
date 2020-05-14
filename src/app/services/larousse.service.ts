@@ -26,7 +26,7 @@ export class LarousseService extends genericDico {
     let word: DicoWord;
     let audio: { type: string, value: string }
 
-    let parseElement = (e: Element) => {
+    function parseElement(e: Element) {
 
         /*
          *  ### Lienson ###
@@ -224,7 +224,7 @@ export class LarousseService extends genericDico {
         // Tables
         if (e.nodeName == 'TABLE') {
             var domElements = e.children[0].children[0].children[1].children;
-            _.forEach(domElements, parseElement);
+            _.forEach(domElements, parseElement.bind(this));
         }
 
 
@@ -276,11 +276,11 @@ export class LarousseService extends genericDico {
 
          */
         if (e.nodeName == 'SPAN' && this.getLinkValue(e)) {
-            _.forEach(e.children, parseElement);
+            _.forEach(e.children, parseElement.bind(this));
         }
     }
 
-    let parseCorrector = (e: Element) => {
+    function parseCorrector(e: Element) {
         // if (e.nodeName === 'UL') {
         //     initWord();
         //     _word.categorie = 'Suggestions';
@@ -303,7 +303,7 @@ export class LarousseService extends genericDico {
         // }
     }
 
-    _.forEach(elements, parseElement);
+    _.forEach(elements, parseElement.bind(this));
     
     // Clean dicoWord
     _.forEach(result, r => {
@@ -345,10 +345,10 @@ export class LarousseService extends genericDico {
 
     */
 
-    let parseElement = (e: Element) => {
+    function parseElement(e: Element) {
       // Sub section: "autres résultats"
       if (e.nodeName === 'SECTION') {
-        _.forEach(e.children, parseElement);
+        _.forEach(e.children, parseElement.bind(this));
       }
       
       if (e.nodeName === 'ARTICLE') {
@@ -366,7 +366,7 @@ export class LarousseService extends genericDico {
       }
     }
 
-    _.forEach(elements, parseElement);
+    _.forEach(elements, parseElement.bind(this));
     
     return result;
   }

@@ -111,7 +111,7 @@ export class WordService implements OnDestroy {
             return this.mapToWords(actions)
           })); 
       })
-    )
+    );
 
     this._searchedWords$ = this._search$.pipe(
       switchMap(_search => {
