@@ -5,6 +5,7 @@
         <ion-list id="inbox-list">
           <ion-list-header>ionicTranslate&nbsp;<span class="version">(v0.0.2)</span></ion-list-header>
           <ion-note>{{user?.email || 'Not authenticated'}}</ion-note>
+          <ion-note *ngIf="newVersionAvailable">New version available !</ion-note>
 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item *ngIf="!p.hidden" (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">

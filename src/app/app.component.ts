@@ -5,6 +5,7 @@ import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
 
 import { AuthService } from './services/auth.service';
 import * as _ from 'lodash';
@@ -45,6 +46,7 @@ export class AppComponent implements OnInit {
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   
   public user: firebase.User;
+  newVersionAvailable: boolean;
 
   constructor(
     private platform: Platform,
@@ -53,6 +55,7 @@ export class AppComponent implements OnInit {
     private auth: AuthService,
     private location: Location, 
     private router: Router,
+    private deploy: Deploy
   ) {
     this.initializeApp();
 
@@ -77,6 +80,10 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+      this.deploy.checkForUpdate().then(response => {
+        this.newVersionAvailable = response.available;
+      })
     });
   }
 
