@@ -8,6 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
 
 import { AuthService } from './services/auth.service';
+import { NotificationsService } from './services/notifications.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -53,10 +54,11 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private auth: AuthService,
     private location: Location, 
     private router: Router,
-    private deploy: Deploy
+    private deploy: Deploy,
+    private auth: AuthService,
+    private notificationService: NotificationsService
   ) {
     this.initializeApp();
 
@@ -78,16 +80,25 @@ export class AppComponent implements OnInit {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
-
-    this.platform.resume.subscribe(() => {
-      this.deploy.checkForUpdate().then(response => {
-        this.newVersionAvailable = response.available;
+    this.platform.ready()
+      .then(() => {
+        this.statusBar.styleDefault();
+        this.splashScreen.hide();
       });
-    });
+  }
+
+  checkForUpdate() {
+    this.deploy.checkForUpdate()
+      .then(response => {
+        this.newVersionAvailable = response.available;
+        const message = response.available
+          ? 'Update available'
+          : 'No update available';
+        this.notificationService.message(message, 'Check for update');
+      })
+      .catch(err => {
+        this.notificationService.error(err.message || err);
+      });
   }
 
   async updateApp() {

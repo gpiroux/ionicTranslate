@@ -18,4 +18,13 @@ export class NotificationsService {
     });    
     await alert.present();
   }
+
+  async message(message: string, header = '') {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK']
+    });    
+    await alert.present();
+  }
 }
