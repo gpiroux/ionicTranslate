@@ -23,6 +23,9 @@
             <ion-label>{{ label }}</ion-label>
           </ion-item>
         </ion-list>
+        <ion-button expand="full" *ngIf="newVersionAvailable" (click)="updateApp()">
+          Update App <span *ngIf="progress != null">&nbsp;{{progress}}%</span>
+        </ion-button>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>

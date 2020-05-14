@@ -47,6 +47,7 @@ export class AppComponent implements OnInit {
   
   public user: firebase.User;
   newVersionAvailable: boolean;
+  progress: number = null;
 
   constructor(
     private platform: Platform,
@@ -87,6 +88,16 @@ export class AppComponent implements OnInit {
         this.newVersionAvailable = response.available;
       });
     });
+  }
+
+  async updateApp() {
+    await this.deploy.downloadUpdate((progress) => {
+      this.progress = progress;
+    })
+    await this.deploy.extractUpdate((progress) => {
+      this.progress = progress;
+    })
+    await this.deploy.reloadApp();
   }
 
   ngOnInit() {}
