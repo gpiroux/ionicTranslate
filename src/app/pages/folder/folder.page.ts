@@ -30,6 +30,7 @@ export class FolderPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    console.log('Page ngOnInit')
     const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
     this.dico = dicoList[dicoName];
 
@@ -52,7 +53,6 @@ export class FolderPage implements OnInit {
     console.log('Page ngOnDestroy')
     this.destroy$.next();
     this.destroy$.complete();
-    this.wordService.reset();
   }
 
   get isFilterRandom() {

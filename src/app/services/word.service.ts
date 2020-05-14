@@ -3,8 +3,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { CollectionReference, DocumentChangeAction, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
 import { Word } from 'src/app/models/word.model';
 
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash'
 
 import { AuthService } from './auth.service';
@@ -44,17 +44,15 @@ export const dicoList: DicoList = {
 
 @Injectable()
 export class WordService implements OnDestroy {
-  private destroy$: Subject<void>;
   
-  private _search$: BehaviorSubject<string|null>;
-  private _random$: BehaviorSubject<string|null>;
+  private _search$ = new BehaviorSubject<string|null>(null);
+  private _random$ = new BehaviorSubject<string|null>(null);
+  
   private _words$: Observable<Word[]>;
   private _searchedWords$: Observable<Word[]>;
   private _randomWords$: Observable<Word[]>;
 
-  private _lastKey: number;
   private _lastWords: Word[];
-
   private _isFilterRandom: boolean = false;
 
   private randomCount: number = 6;
@@ -65,37 +63,21 @@ export class WordService implements OnDestroy {
   public selectedWord: Word;
   public userDoc: AngularFirestoreDocument;
 
-
   constructor(
     private auth: AuthService
-  ) {
-    this._search$ = new BehaviorSubject(null);
-    this._random$ = new BehaviorSubject(null);
-  }
+  ) {}
 
   async initialise(dico: Dico) {
-    this.destroy$ = new Subject();
     this.dicoCollection = dico.collection;
-    const dicoCollection = this.dicoCollection;
-
+    console.log('initialise', this.dicoCollection);
+    
     this.userDoc = await this.auth.getUserDoc();
     if (!this.userDoc) {
       this.dicoCollection = null;
       throw new Error('No user found!');
     }
 
-    // Last key used
-    this.userDoc.collection<Word>(dicoCollection, ref => ref.orderBy('key', 'desc').limit(1))
-      .snapshotChanges()
-      .pipe(
-        map(actions => {
-          console.log('_lastKey$', actions.length)
-          return actions.map(a => a.payload.doc.data().key)[0]
-        }),
-        takeUntil(this.destroy$)
-      ).subscribe(keys => this._lastKey = keys ||   0);
-
-    this._words$ = this.userDoc.collection<Word>(dicoCollection, ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
+    this._words$ = this.userDoc.collection<Word>(this.dicoCollection, ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
       .snapshotChanges()
       .pipe(map(actions => {
         console.log('_words$', actions.length)
@@ -103,8 +85,9 @@ export class WordService implements OnDestroy {
     }));
 
     this._randomWords$ = this._random$.pipe(
-      switchMap(() => {
-        return this.userDoc.collection<Word>(dicoCollection, this.filterEnRandom(this._lastKey, this))
+      switchMap(() => this.getLastKey()),
+      switchMap(lastKey => {
+        return this.userDoc.collection<Word>(this.dicoCollection, this.filterEnRandom(lastKey, this))
           .snapshotChanges()
           .pipe(map(actions => {
             console.log('_randomWords$', actions.length)
@@ -133,7 +116,7 @@ export class WordService implements OnDestroy {
         }
 
         console.log('search', querySearch, nakedSearch)
-        return this.userDoc.collection<Word>(dicoCollection, this.filterEnSearch(querySearch, this))
+        return this.userDoc.collection<Word>(this.dicoCollection, this.filterEnSearch(querySearch, this))
           .snapshotChanges()
           .pipe(map(actions => {
             console.log('_searchedWords$', actions.length)
@@ -148,14 +131,7 @@ export class WordService implements OnDestroy {
     )
   }
 
-  reset() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  ngOnDestroy(): void {
-    this.reset();
-  }
+  ngOnDestroy() {}
 
   private mapToWords(actions: DocumentChangeAction<Word>[]) {
     return _.map(actions, a => {
@@ -179,20 +155,27 @@ export class WordService implements OnDestroy {
     return ref => ref.where('key', 'in', randomArray).limit(self.randomCount)
   }
 
-  createWord(word: Word): Promise<DocumentReference> {
+  getLastKey() {
+    return this.userDoc.collection<Word>(this.dicoCollection, ref => ref.orderBy('key', 'desc').limit(1))
+      .get()
+      .pipe(map(res => res.docs[0].data().key));
+  }
+
+  async createWord(word: Word): Promise<DocumentReference> {
+    const lastKey = await this.getLastKey().toPromise();
     word.updateTimestamp();
     word.generateSearchStrings();
-    word.key = this._lastKey + 1
-    return this.userDoc.collection<Word>(this.dicoCollection).add(word.clean() as Word);
+    word.key = lastKey + 1
+    return this.userDoc.collection<Word>(this.dicoCollection).add(word.clean() as Word);    
   }
   
-  updateWord(word: Word): Promise<void> {
+  async updateWord(word: Word): Promise<void> {
     word.updateTimestamp();
     word.generateSearchStrings();
     return this.userDoc.collection<Word>(this.dicoCollection).doc(word.id).update(word.clean() as Word);
   }
 
-  deleteWord(id: string): Promise<void> {
+  async deleteWord(id: string): Promise<void> {
     return this.userDoc.collection<Word>(this.dicoCollection).doc(id).delete();
   }
 
