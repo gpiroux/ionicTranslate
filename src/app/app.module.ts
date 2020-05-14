@@ -11,6 +11,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { Deploy } from 'plugins/cordova-plugin-ionic/dist/ngx';
 
 import { PipesModule } from './pipes/pipe.module'
 import { AngularFireModule } from '@angular/fire';
@@ -45,6 +46,7 @@ import { WordService } from './services/word.service';
   providers: [
     HTTP,
     File,
+    Deploy,
     StatusBar,
     SplashScreen,
     AlertController,
