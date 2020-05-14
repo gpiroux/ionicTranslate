@@ -80,10 +80,12 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+    });
 
+    this.platform.resume.subscribe(() => {
       this.deploy.checkForUpdate().then(response => {
         this.newVersionAvailable = response.available;
-      })
+      });
     });
   }
 
