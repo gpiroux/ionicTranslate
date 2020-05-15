@@ -3,9 +3,8 @@
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>ionicTranslate&nbsp;<span class="version">(v0.0.5)</span></ion-list-header>
+          <ion-list-header>ionicTranslate&nbsp;<span class="version">(v0.0.6)</span></ion-list-header>
           <ion-note>{{user?.email || 'Not authenticated'}}</ion-note>
-          <ion-note *ngIf="newVersionAvailable">New version available !</ion-note>
 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item *ngIf="!p.hidden" (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
@@ -23,12 +22,15 @@
             <ion-label>{{ label }}</ion-label>
           </ion-item>
         </ion-list>
-        <ion-button color="medium" expand="full" *ngIf="!newVersionAvailable" (click)="checkForUpdate()">
+
+        <!-- Update App controls -->
+        <ion-button color="medium" expand="full" *ngIf="!progress" (click)="checkForUpdate()">
           Check for update
         </ion-button>
-        <ion-button expand="full" *ngIf="newVersionAvailable" (click)="updateApp()">
-          Update App <span *ngIf="progress != null">&nbsp;{{progress}}%</span>
-        </ion-button>
+        <div *ngIf="progress">
+          <ion-item>Update progress &nbsp;&nbsp;<ion-spinner name="dots"></ion-spinner></ion-item>
+          <ion-progress-bar *ngIf="progress" color="medium" [value]="progress"></ion-progress-bar>
+        </div>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>

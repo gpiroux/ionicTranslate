@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { Platform } from '@ionic/angular';
+import { Platform, AlertController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
@@ -47,8 +47,7 @@ export class AppComponent implements OnInit {
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   
   public user: firebase.User;
-  newVersionAvailable: boolean;
-  progress: number = null;
+  public progress: number = null;
 
   constructor(
     private platform: Platform,
@@ -58,7 +57,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     private deploy: Deploy,
     private auth: AuthService,
-    private notificationService: NotificationsService
+    private notificationService: NotificationsService,
+    private alertController: AlertController
   ) {
     this.initializeApp();
 
@@ -77,7 +77,19 @@ export class AppComponent implements OnInit {
           _.findIndex(this.appPages, p => path.toLowerCase().includes(p.url.toLowerCase()));
       }
     });
+
+    // this.progress = 0.0
+    // const self = this;
+    // function timout() {
+    //   setTimeout(() => {
+    //     self.progress += 0.1;
+    //     if (self.progress < 1) timout();
+    //   }, 500)
+    // }
+    // timout();
   }
+
+  ngOnInit() {}
 
   initializeApp() {
     this.platform.ready()
@@ -90,15 +102,34 @@ export class AppComponent implements OnInit {
   checkForUpdate() {
     this.deploy.checkForUpdate()
       .then(response => {
-        this.newVersionAvailable = response.available;
-        const message = response.available
-          ? 'Update available'
-          : 'No update available';
-        this.notificationService.message(message, 'Check for update');
+        if (response.available) {
+          return this.openUpdateAppAlert()
+        }
+        const message = 'No update available';
+        const header = 'Check for update';
+        return this.notificationService.message(message, header);
       })
       .catch(err => {
         this.notificationService.error(err.message || err);
       });
+  }
+
+  async openUpdateAppAlert() {
+    const alert = await this.alertController.create({
+      header: 'Check for update',
+      message: 'Update available',
+      buttons: [
+        {
+          text: 'Cancel',
+          cssClass: 'secondary',
+        }, 
+        {
+          text: 'Install',
+          handler: () => this.updateApp()
+        }
+      ]
+    });
+    await alert.present();
   }
 
   async updateApp() {
@@ -110,6 +141,4 @@ export class AppComponent implements OnInit {
     })
     await this.deploy.reloadApp();
   }
-
-  ngOnInit() {}
 }
