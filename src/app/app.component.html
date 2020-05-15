@@ -3,7 +3,7 @@
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>ionicTranslate&nbsp;<span class="version">(v0.0.4)</span></ion-list-header>
+          <ion-list-header>ionicTranslate&nbsp;<span class="version">(v0.0.5)</span></ion-list-header>
           <ion-note>{{user?.email || 'Not authenticated'}}</ion-note>
           <ion-note *ngIf="newVersionAvailable">New version available !</ion-note>
 
@@ -23,7 +23,7 @@
             <ion-label>{{ label }}</ion-label>
           </ion-item>
         </ion-list>
-        <ion-button expand="full" *ngIf="!newVersionAvailable" (click)="checkForUpdate()">
+        <ion-button color="medium" expand="full" *ngIf="!newVersionAvailable" (click)="checkForUpdate()">
           Check for update
         </ion-button>
         <ion-button expand="full" *ngIf="newVersionAvailable" (click)="updateApp()">

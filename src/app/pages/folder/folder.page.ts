@@ -34,7 +34,9 @@ export class FolderPage implements OnInit {
     const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
     this.dico = dicoList[dicoName];
 
+    
     await this.wordService.initialise(this.dico);
+    localStorage.setItem('folder', dicoName);
 
     combineLatest(this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$)
       .pipe(takeUntil(this.destroy$))

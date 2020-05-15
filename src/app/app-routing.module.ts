@@ -3,11 +3,12 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from './guards/auth.guard';
 import { LogoutGuard } from './guards/logout.guard';
+import { FolderGuard } from './guards/folder.guard';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'folder/dicoEn',
+    redirectTo: 'folder',
     pathMatch: 'full'
   },
   {
@@ -17,6 +18,11 @@ const routes: Routes = [
   {
     path: 'logout',
     canActivate: [LogoutGuard],
+    component: class DummyComponent {}
+  },
+  {
+    path: 'folder',
+    canActivate: [FolderGuard],
     component: class DummyComponent {}
   },
   {
