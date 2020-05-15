@@ -33,13 +33,12 @@ export class AuthService {
     this.firestore.firestore.settings({
       cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
     });
-    this.firestore.firestore.enablePersistence()
+    this.firestore.firestore.enablePersistence({synchronizeTabs: true})
       .then(() => console.log('Enable persistence OK'))
       .catch(err => {
         this.notifications.error('Enable persistence KO: ' + err.message || err)
         console.error('enablePersistence KO', err)
       });
-    
   }
 
   async migrateData() {
