@@ -25,12 +25,13 @@
     <ion-button>Vandale</ion-button>
   </ion-item>
   <ion-item>
-    <ion-label style="margin-top:0;"><b>English</b></ion-label>
-    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.en"></ion-textarea>
+    <ion-label *ngIf="isLarousseDico" style="margin-top:0;"><b>English</b></ion-label>
+    <ion-label *ngIf="isVandaleDico" style="margin-top:0;"><b>Dutch</b></ion-label>
+    <ion-textarea style="margin-top:0;" auto-grow="true" [(ngModel)]="newWord.en"></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label style="margin-top:0;"><b>French</b></ion-label>
-    <ion-textarea style="margin-top:0;" [(ngModel)]="newWord.fr"></ion-textarea>
+    <ion-textarea style="margin-top:0;" auto-grow="true" [(ngModel)]="newWord.fr"></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label><b>Type</b></ion-label>
@@ -47,7 +48,9 @@
   <ion-item button (click)="playAudio(newWord.audio)">
     <ion-label><b>Audio</b></ion-label>
     <ion-spinner *ngIf="audioPlaying"></ion-spinner> &nbsp;
-    {{newWord.audio?.join(' ')}}
+    <ion-chip *ngFor="let audio of newWord.audio" color="primary" outline="false">
+      <ion-label>{{audio}}</ion-label>
+    </ion-chip>
   </ion-item>
   <ion-item>
     <ion-label><b>Last update</b></ion-label>
