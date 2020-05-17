@@ -78,15 +78,6 @@ export class AppComponent implements OnInit {
       }
     });
 
-    // this.progress = 0.0
-    // const self = this;
-    // function timout() {
-    //   setTimeout(() => {
-    //     self.progress += 0.1;
-    //     if (self.progress < 1) timout();
-    //   }, 500)
-    // }
-    // timout();
   }
 
   ngOnInit() {}
@@ -96,15 +87,18 @@ export class AppComponent implements OnInit {
       .then(() => {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
+
+        this.checkForUpdate(true);
       });
   }
 
-  checkForUpdate() {
+  checkForUpdate(silentMode: boolean) {
     this.deploy.checkForUpdate()
       .then(response => {
         if (response.available) {
           return this.openUpdateAppAlert()
         }
+        if (silentMode) return;
         const message = 'No update available';
         const header = 'Check for update';
         return this.notificationService.message(message, header);
@@ -133,11 +127,12 @@ export class AppComponent implements OnInit {
   }
 
   async updateApp() {
+    this.progress = 0;
     await this.deploy.downloadUpdate((progress) => {
-      this.progress = progress;
+      this.progress = progress / 100;
     })
     await this.deploy.extractUpdate((progress) => {
-      this.progress = progress;
+      this.progress = progress / 100;
     })
     await this.deploy.reloadApp();
   }
