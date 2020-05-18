@@ -57,7 +57,7 @@ export class WordService implements OnDestroy {
 
   private randomCount: number = 6;
   private searchCount: number = 50;
-  private wordsCount: number = 15; //100;
+  private wordsCount: number = 100;
 
   private dicoCollection: string;
   public selectedWord: Word;
