@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 
 import { Word } from '../../models/word.model';
@@ -13,7 +13,8 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.page.html',
-  styleUrls: ['./folder.page.scss']
+  styleUrls: ['./folder.page.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class FolderPage implements OnInit {
   public displayedWords: Word[] = [];

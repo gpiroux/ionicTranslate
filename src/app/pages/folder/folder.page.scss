@@ -2,6 +2,12 @@ ion-menu-button {
   color: var(--ion-color-primary);
 }
 
+mark {
+  background-color: inherit;
+  font-style: italic;
+  color: #666;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --ion-color-primary: #428cff;
