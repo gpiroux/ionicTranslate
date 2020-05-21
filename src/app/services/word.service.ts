@@ -158,7 +158,7 @@ export class WordService implements OnDestroy {
   getLastKey() {
     return this.userDoc.collection<Word>(this.dicoCollection, ref => ref.orderBy('key', 'desc').limit(1))
       .get()
-      .pipe(map(res => res.docs[0].data().key));
+      .pipe(map(res => res.docs[0].data()?.key || 0 ));
   }
 
   async createWord(word: Word): Promise<DocumentReference> {
