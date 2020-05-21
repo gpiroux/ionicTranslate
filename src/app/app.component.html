@@ -3,7 +3,7 @@
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>ionicTranslate&nbsp;<span class="version">(v0.0.11)</span></ion-list-header>
+          <ion-list-header>ionicTranslate&nbsp;<span class="version">(v{{version}})</span></ion-list-header>
           <ion-note>{{user?.email || 'Not authenticated'}}</ion-note>
 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">

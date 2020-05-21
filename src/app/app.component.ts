@@ -9,7 +9,9 @@ import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
 
 import { AuthService } from './services/auth.service';
 import { NotificationsService } from './services/notifications.service';
+
 import * as _ from 'lodash';
+import * as packageJson from '../../package.json'
 
 @Component({
   selector: 'app-root',
@@ -48,6 +50,7 @@ export class AppComponent implements OnInit {
   
   public user: firebase.User;
   public progress: number = null;
+  public version: string;
 
   constructor(
     private platform: Platform,
@@ -78,6 +81,7 @@ export class AppComponent implements OnInit {
       }
     });
 
+    this.version = packageJson.version;
   }
 
   ngOnInit() {}
@@ -92,7 +96,7 @@ export class AppComponent implements OnInit {
       });
   }
 
-  checkForUpdate(silentMode: boolean) {
+  checkForUpdate(silentMode: boolean = false) {
     this.deploy.checkForUpdate()
       .then(response => {
         if (response.available) {

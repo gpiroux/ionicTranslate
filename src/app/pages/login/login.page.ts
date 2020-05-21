@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +15,9 @@ export class LoginPage implements OnInit {
   loginError: string
   constructor(
     private fireauth: AngularFireAuth, 
-    private platform: Platform, 
-    private router: Router
+    private router: Router,
+    private notification: NotificationsService,
+    public ngZone: NgZone 
   ) {}
 
   ngOnInit() {}
@@ -25,7 +27,7 @@ export class LoginPage implements OnInit {
       .then(() => {
         this.router.navigateByUrl('');
       })
-      .catch(err => this.loginError = err.message)
+      .catch(err => this.notification.error(err.message))
   }
 
   sendResetPawword(email: string) {
@@ -38,8 +40,9 @@ export class LoginPage implements OnInit {
     provider.addScope('email');
     return this.fireauth.auth.signInWithPopup(provider)
       .then(() => {
-        this.router.navigateByUrl('');
-      });
+        this.ngZone.run(() => this.router.navigateByUrl(''))
+      })
+      .catch(err => this.notification.error(err.message))
   }
 
 }
