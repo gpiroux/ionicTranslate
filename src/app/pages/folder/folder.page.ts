@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, IonItemSliding } from '@ionic/angular';
 
 import { Word } from '../../models/word.model';
 import { WordService, Dico, dicoList } from '../../services/word.service';
@@ -98,7 +98,8 @@ export class FolderPage implements OnInit {
     this.wordService.search$.next(this.searchString.toLowerCase());
   }
 
-  onUpdateTime(item: Word) {
+  onUpdateTime(item: Word, slidingItem: IonItemSliding) {
+    slidingItem.close();
     this.wordService.updateWord(item);
   }
 

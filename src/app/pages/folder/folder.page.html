@@ -26,7 +26,7 @@
     (ionChange)="onSearchChange($event)"
   ></ion-searchbar>
   <ion-list>
-    <ion-item-sliding mode="md" *ngFor="let item of displayedWords; trackBy:trackByFn ">
+    <ion-item-sliding mode="md" *ngFor="let item of displayedWords; trackBy:trackByFn " #slidingItem>
       <ion-item [routerLink]="['detail', item.id]">
         <div class="word-content">
           <div class="flex-row">
@@ -44,8 +44,8 @@
           Delete
         </ion-item-option>
       </ion-item-options>
-      <ion-item-options side="start">
-        <ion-item-option color="primary" (click)="onUpdateTime(item)">
+      <ion-item-options side="start" (ionSwipe)="onUpdateTime(item, slidingItem)">
+        <ion-item-option color="primary" expandable="true" (click)="onUpdateTime(item, slidingItem)">
           Update
         </ion-item-option>
       </ion-item-options>
