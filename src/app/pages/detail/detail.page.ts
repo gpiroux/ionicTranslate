@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Platform } from '@ionic/angular';
+import { Platform, IonTextarea } from '@ionic/angular';
 
 import { Word, wordTypes } from 'src/app/models/word.model';
 import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
@@ -18,6 +18,9 @@ import { FileSystemService } from 'src/app/services/file-system.service';
 })
 
 export class DetailPage implements OnInit {
+  @ViewChild('textAreaEn', {static: true}) textAreaEn: IonTextarea;
+  @ViewChild('textAreaFr', {static: true}) textAreaFr: IonTextarea;
+
   traductions: DicoWord[];
   newWord: Word;
 
@@ -71,7 +74,7 @@ export class DetailPage implements OnInit {
       this.newWord.fr = '';
     }
     this.wordService.selectedWord = this.newWord;
-    console.log('Detail world', this.newWord)
+    console.log('Detail world', this.newWord);
   }
 
   async onSave(): Promise<void> {
@@ -127,5 +130,20 @@ export class DetailPage implements OnInit {
     player.addEventListener('ended', () => URL.revokeObjectURL(player.src));
     player.play();
     this.audioIdx++;
+  }
+
+  async checkTextArea(textAreaComp: IonTextarea) {
+    const textArea = await textAreaComp.getInputElement();
+    if (textArea.parentElement.style.height === '0px') {
+      setTimeout(() => {
+        const height = Math.max(52, textArea.scrollHeight)
+        textArea.parentElement.style.height = height + 'px';
+        textArea.style.height = height + 'px';
+      }, 50);
+    }
+  }
+
+  valueChanged() {
+    setTimeout(() => this.checkTextArea(this.textAreaFr), 50);
   }
 }

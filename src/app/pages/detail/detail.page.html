@@ -25,13 +25,13 @@
     <ion-label><b>Dictionary</b></ion-label><ion-button>Vandale</ion-button>
   </ion-item>
   <ion-item>
-    <ion-label *ngIf="isLarousseDico" style="margin-top:0;"><b>English</b></ion-label>
-    <ion-label *ngIf="isVandaleDico" style="margin-top:0;"><b>Dutch</b></ion-label>
-    <ion-textarea style="margin-top:0;" auto-grow="true" [(ngModel)]="newWord.en"></ion-textarea>
+    <ion-label *ngIf="isLarousseDico" position="floating"><b>English</b></ion-label>
+    <ion-label *ngIf="isVandaleDico" position="floating"><b>Dutch</b></ion-label>
+    <ion-textarea #textAreaEn style="margin-top:5px; color: #666;" auto-grow="true" [(ngModel)]="newWord.en"></ion-textarea>
   </ion-item>
   <ion-item>
-    <ion-label style="margin-top:0;"><b>French</b></ion-label>
-    <ion-textarea style="margin-top:0;" auto-grow="true" [(ngModel)]="newWord.fr"></ion-textarea>
+    <ion-label position="floating"><b>French</b></ion-label>
+    <ion-textarea #textAreaFr style="margin-top:5px; color: #666;" auto-grow="true" [(ngModel)]="newWord.fr" (ionChange)=valueChanged()></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label><b>Type</b></ion-label>
