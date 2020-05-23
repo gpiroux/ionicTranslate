@@ -6,16 +6,10 @@
     <ion-title style="padding-left: 12px;">
       <span style="font-size: 85%;">{{selectedWord.en}}</span>
     </ion-title>
-    <!-- <ion-buttons slot="primary" *ngIf="otherTraductions?.length > 1">
-      <ion-button (click)="onOtherTraductionPopoverClick($event)">
-        <ion-icon slot="icon-only" ios="list-outline" md="list-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons> -->
   </ion-toolbar>
 </ion-header>
 <ion-item>
-  <ion-label style="margin-top:0;"><b>French</b></ion-label>
-  <ion-textarea style="margin-top:4px;" [(ngModel)]="selectedWord.fr" auto-grow="true" rows="1"></ion-textarea>
+  <ion-textarea style="margin-top: 4px;" [(ngModel)]="selectedWord.fr" auto-grow="true" rows="1" placeholder="French"></ion-textarea>
 </ion-item>
 <ion-content>
   <ion-list>
