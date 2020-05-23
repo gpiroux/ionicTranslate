@@ -51,6 +51,7 @@ export class AppComponent implements OnInit {
   public user: firebase.User;
   public progress: number = null;
   public version: string;
+  public isCordova: boolean;
 
   constructor(
     private platform: Platform,
@@ -93,6 +94,8 @@ export class AppComponent implements OnInit {
         this.splashScreen.hide();
 
         this.checkForUpdate(true);
+
+        this.isCordova = this.platform.is('cordova')
       });
   }
 

@@ -24,7 +24,7 @@
         </ion-list>
 
         <!-- Update App controls -->
-        <ion-button color="medium" expand="full" *ngIf="!progress" (click)="checkForUpdate()">
+        <ion-button color="medium" expand="full" *ngIf="!progress && isCordova" (click)="checkForUpdate()">
           Check for update
         </ion-button>
         <div *ngIf="progress">
