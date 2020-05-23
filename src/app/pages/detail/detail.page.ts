@@ -18,9 +18,7 @@ import { FileSystemService } from 'src/app/services/file-system.service';
 })
 
 export class DetailPage implements OnInit {
-  @ViewChild('textAreaEn', {static: true}) textAreaEn: IonTextarea;
-  @ViewChild('textAreaFr', {static: true}) textAreaFr: IonTextarea;
-
+  
   traductions: DicoWord[];
   newWord: Word;
 
@@ -132,8 +130,8 @@ export class DetailPage implements OnInit {
     this.audioIdx++;
   }
 
-  async checkTextArea(textAreaComp: IonTextarea) {
-    const textArea = await textAreaComp.getInputElement();
+  async checkTextArea(textAreaView: IonTextarea) {
+    const textArea = await textAreaView.getInputElement();
     if (textArea.parentElement.style.height === '0px') {
       setTimeout(() => {
         const height = Math.max(52, textArea.scrollHeight)
@@ -143,7 +141,7 @@ export class DetailPage implements OnInit {
     }
   }
 
-  valueChanged() {
-    setTimeout(() => this.checkTextArea(this.textAreaFr), 50);
+  valueChanged(textArea: IonTextarea) {
+    setTimeout(() => this.checkTextArea(textArea), 50);
   }
 }
