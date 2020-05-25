@@ -47,7 +47,7 @@
   </ion-item>
   <ion-item button (click)="playAudio(newWord.audio)">
     <ion-label><b>Audio</b></ion-label>
-    <ion-spinner *ngIf="audioPlaying"></ion-spinner> &nbsp;
+    <ion-spinner *ngIf="fetchAudio"></ion-spinner> &nbsp;
     <ion-chip *ngFor="let audio of newWord.audio" color="primary" outline="false">
       <ion-label>{{audio}}</ion-label>
     </ion-chip>

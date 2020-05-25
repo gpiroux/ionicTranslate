@@ -22,7 +22,7 @@ export class DetailPage implements OnInit {
   newWord: Word;
 
   audioIdx = 0;
-  audioPlaying = false;
+  fetchAudio = false;
 
   isLarousseDico: boolean;
   isVandaleDico: boolean;
@@ -80,9 +80,8 @@ export class DetailPage implements OnInit {
   }
 
   async playAudio(audioArray: string[]) {
-    if (this.audioPlaying || !audioArray || !audioArray.length) return;
-    this.audioPlaying = true;
-
+    if (this.fetchAudio || !audioArray || !audioArray.length) return;
+    
     const audio = audioArray[this.audioIdx % audioArray.length];
     
     const blobURL = await this.audioService.loadAudio(audio)
@@ -90,6 +89,7 @@ export class DetailPage implements OnInit {
       this.audioService.playAudio(blobURL);
       this.audioIdx++
     } else {
+      this.fetchAudio = true;
       const data = await this.audioService.fetchAudio(audio);
       if (data) {
         this.audioService.saveAudio(audio , data);
@@ -97,7 +97,7 @@ export class DetailPage implements OnInit {
         this.audioIdx++
       }
     }
-    this.audioPlaying = false; 
+    this.fetchAudio = false; 
   }
 
   async checkTextArea(textAreaView: IonTextarea) {

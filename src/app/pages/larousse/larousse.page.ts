@@ -25,7 +25,7 @@ export class LaroussePage implements OnInit {
   otherTraductions: OtherTraduction[];
 
   private popover: any;
-  public audioPlaying: number;
+  public fetchAudio: number;
 
   constructor(
     private larousseService: LarousseService, 
@@ -70,19 +70,19 @@ export class LaroussePage implements OnInit {
   async onTraductionClick(traduction: Traduction, idx: number) {
     if (traduction.tradList.length || traduction.locution) {
       const audio = traduction.audio;
-      if (audio && !this.audioPlaying) {
-        this.audioPlaying = idx;
+      if (audio && !this.fetchAudio) {
         const blobURL = await this.audioService.loadAudio(audio)
         if (blobURL) {
           await this.audioService.playAudio(blobURL);
         } else {
+          this.fetchAudio = idx;
           const data = await this.audioService.fetchAudio(audio);
           if (data) {
             this.audioService.saveAudio(audio , data);
             await this.audioService.playAudio(data);
           }
         }
-        this.audioPlaying = undefined;
+        this.fetchAudio = undefined;
       }
       return;
     };
