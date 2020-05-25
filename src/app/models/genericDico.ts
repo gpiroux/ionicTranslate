@@ -42,8 +42,11 @@ export abstract class genericDico {
     }
 
     protected extraTrim(str: string) {
+        // https://stackoverflow.com/questions/20690499/concrete-javascript-regex-for-accented-characters-diacritics
         return str.trim()
-            .replace(/[^a-zA-Z\u00C0-\u017F\-\—\'\,\.\'\(\)\[\]\+\ ]/g, '')
+            .replace(new RegExp(String.fromCharCode(160), 'g'), ' ') // &nbsp
+            .replace(new RegExp(String.fromCharCode(8212), 'g'), '-') // '\—'
+            .replace(/[^\ -\~\u00C0-\u017F]/g, '')  // ASCII: '\ ' code: 32  => '\~' code: 127
             .replace(/\( +/g,'(')
             .replace(/ +\)/g,')')
             .replace(/ +/g, ' ');
