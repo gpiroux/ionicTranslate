@@ -12,6 +12,7 @@ import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.mo
 import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
 
 import * as _ from 'lodash'
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-larousse',
@@ -32,7 +33,8 @@ export class LaroussePage implements OnInit {
     private wordService: WordService,
     private popoverController: PopoverController,
     private notification: NotificationsService,
-    private audioService: AudioService
+    private audioService: AudioService,
+    private router: Router
   ) { }
 
   async ngOnInit() {
@@ -46,6 +48,7 @@ export class LaroussePage implements OnInit {
       let strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
       this.load(`dictionnaires/anglais-francais/${strippedWord}`);
     } else {
+      this.router.navigateByUrl('');
       this.notification.error('Pas de mot sélectionné !');
     }
   }
