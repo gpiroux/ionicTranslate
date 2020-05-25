@@ -1,15 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Platform, IonTextarea } from '@ionic/angular';
+import { IonTextarea } from '@ionic/angular';
 
+import { AudioService } from 'src/app/services/audio.service';
 import { Word, wordTypes } from 'src/app/models/word.model';
 import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
 import { DicoWord } from 'src/app/models/dicoResult.model';
 
 import * as _ from 'lodash';
-import { HTTP } from '@ionic-native/http/ngx';
-import { HttpClient } from '@angular/common/http';
-import { FileSystemService } from 'src/app/services/file-system.service';
+
 
 @Component({
   selector: 'app-detail',
@@ -18,7 +17,7 @@ import { FileSystemService } from 'src/app/services/file-system.service';
 })
 
 export class DetailPage implements OnInit {
-  
+
   traductions: DicoWord[];
   newWord: Word;
 
@@ -45,10 +44,7 @@ export class DetailPage implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private wordService: WordService,
-    private httpNative: HTTP,
-    private httpClient: HttpClient,
-    private fileSystem: FileSystemService,
-    private platform: Platform
+    private audioService: AudioService
   ) {
     // html page initialwed before ngOnInit()
     this.newWord = new Word();
@@ -88,46 +84,20 @@ export class DetailPage implements OnInit {
     this.audioPlaying = true;
 
     const audio = audioArray[this.audioIdx % audioArray.length];
-
-    try {
-      const blobURL = await this.fileSystem.loadMP3(audio);
-      console.log('########## PLAY FROM LOCAL FILE ##########');
-      const player = new Audio();
-      player.src = blobURL;
-      player.play();
-      this.audioIdx++;
-    } catch(err) {
-      console.error('LOAD - ', err.message || err);
-      await this.fetchAudioAndPlay(audio);
+    
+    const blobURL = await this.audioService.loadAudio(audio)
+    if (blobURL) {
+      this.audioService.playAudio(blobURL);
+      this.audioIdx++
+    } else {
+      const data = await this.audioService.fetchAudio(audio);
+      if (data) {
+        this.audioService.saveAudio(audio , data);
+        await this.audioService.playAudio(data);
+        this.audioIdx++
+      }
     }
-    this.audioPlaying = false;
-  }
-
-  async fetchAudioAndPlay(audio: string) {
-    const url = `https://voix.larousse.fr/anglais/${audio}.mp3`;
-    let data: Blob;
-
-    try {
-      data = this.platform.is('cordova')
-        ? await this.httpNative.sendRequest(url, {method: 'get', responseType: 'blob'}).then(res => res.data)
-        : await this.httpClient.get(url, {responseType: 'blob'}).toPromise();
-    } catch(err) {
-      console.error("HTTP - ", err.message || err);
-      return
-    }
-
-    try {
-      await this.fileSystem.writeMP3(audio, data);
-    } catch(err) {
-      console.error("WRITE - ", err.message || err);
-    }
-
-    console.log('########## PLAY FROM REMOTE FILE ##########');
-    const player = new Audio();
-    player.src = URL.createObjectURL(data);
-    player.addEventListener('ended', () => URL.revokeObjectURL(player.src));
-    player.play();
-    this.audioIdx++;
+    this.audioPlaying = false; 
   }
 
   async checkTextArea(textAreaView: IonTextarea) {

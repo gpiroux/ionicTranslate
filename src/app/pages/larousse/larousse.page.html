@@ -29,9 +29,10 @@
         </ion-label>
         <ion-icon *ngIf="item?.audio.length" class="audio-divider" slot="end" name="volume-high-outline"></ion-icon>
       </ion-item-divider>
-      <ion-item *ngFor="let trad of item?.traductions" (click)="onTraductionClick(trad)">
+      <ion-item *ngFor="let trad of item?.traductions; let idx = index" (click)="onTraductionClick(trad, idx)">
         <!-- locution -->
-        <ion-icon slot="end" *ngIf="trad?.audio" class="audio" name="volume-high-outline"></ion-icon>
+        <ion-spinner *ngIf="audioPlaying === idx" slot="end"></ion-spinner> &nbsp;
+        <ion-icon *ngIf="trad?.audio" slot="end" class="audio" name="volume-high-outline"></ion-icon>
         <div *ngIf="trad?.locution" class="locution-container">
           <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
           <div *ngIf="trad?.locution" class="locution">{{trad.locution}}</div>

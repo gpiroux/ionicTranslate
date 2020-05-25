@@ -38,6 +38,7 @@ export class Word {
     type: string;
     key: number;
     audio: string[];
+    href: string;
     category: string[];
     date: firestore.Timestamp;
     search: string[];
@@ -52,8 +53,9 @@ export class Word {
         this.fr = word.fr;
         this.type = word.type;
         this.key = word.key;
-        this.audio = word.audio
-        this.category = word.category
+        this.audio = word.audio;
+        this.href = word.href;
+        this.category = word.category;
         this.date = word.date;
         this.search = word.search;
     }
