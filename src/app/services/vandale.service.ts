@@ -28,6 +28,7 @@ export class VanDaleService extends genericDico {
     let word: DicoWord;
     let traduction: Traduction;
     let mainTraduction: boolean;
+    let indicator: boolean;
 
     function parseElement(e: Element) {
       if (this.getClassValue(e) !== 'f0f') {
@@ -79,8 +80,21 @@ export class VanDaleService extends genericDico {
       }
 
       if (mainTraduction) {
-        if (el.textContent !== 'v' && el.textContent !== 'm')
+        if (this.getClassValue(el) === 'fq' && el.textContent.includes('(')) {
+          indicator = true;
+          if (traduction.traduction) {
+            traduction = new Traduction();
+            word.traductions.push(traduction);
+          }
+        }
+        if (indicator) {
+          traduction.indicateur += el.textContent;
+          if (this.getClassValue(el) === 'fq' && el.textContent.includes(')')) {
+            indicator = false;
+          }
+        } else if (this.getClassValue(el) === 'fr') {
           traduction.traduction += el.textContent;
+        } 
       } else if (this.getClassValue(el) === 'fr') {
         traduction.traduction += el.textContent;
       } else if (this.getClassValue(el) === 'fq') {
