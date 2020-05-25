@@ -148,20 +148,24 @@ export class LarousseService extends genericDico {
          */
 
         // Ex 'grey' & 'goose'
-        var indicateurs = ['Indicateur', 'IndicateurDomaine'];
         if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
-            if (!word.categorie) {
-                word.metalangue = e.textContent.trim();  // (US) vs (UK)
-            } else {
-                indicateurs.push('Metalangue');
-            }
+          if (!word.categorie) {
+            word.metalangue = e.textContent.trim();  // (US) vs (UK)
+          } else {
+            word.initTraduction();
+            word.currentTraduction.indicateur += e.textContent;
+          }
         }
-
+        
         // Indicateur:
         // <span class="Indicateur"> [car, motorcycle, engine]</span>
-        if (e.nodeName == 'SPAN' && indicateurs.includes(this.getClassValue(e))) {
+        if (e.nodeName == 'SPAN' && ['Indicateur'].includes(this.getClassValue(e))) {
           word.initTraduction();
           word.currentTraduction.indicateur += e.textContent;
+        }
+        if (e.nodeName == 'SPAN' && ['IndicateurDomaine'].includes(this.getClassValue(e))) {
+          word.initTraduction();
+          word.currentTraduction.indicateurDomaine += e.textContent;
         }
 
         // Locution: 

@@ -31,6 +31,9 @@
         &.inline {
             display: inline-block;
         }
+        &.capital {
+            text-transform: uppercase;
+        }
     }
     .locution {
         margin-left: 8px;
@@ -47,9 +50,8 @@
 }
 
 .traduction-container {
-    font-size: 95%;
-
     .number {
+        font-size: 90%;
         margin-right: 3px;
         display: inline-block;
     }
@@ -57,6 +59,10 @@
         margin-right: 6px;
         display: inline-block;
         color: green;
+    }
+    .capital {
+        font-size: 92%;
+        text-transform: uppercase;
     }
     .traduction {
         font-style: italic;

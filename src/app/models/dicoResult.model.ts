@@ -45,6 +45,7 @@ export class DicoWord {
 export class Traduction {
     number: string;
     indicateur: string = ''
+    indicateurDomaine: string = ''
     locution: string = ''
     traduction: string = ''
     lien: string = ''

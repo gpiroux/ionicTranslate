@@ -53,9 +53,11 @@ export class VanDaleService extends genericDico {
       if (this.getClassValue(el) === 'fq') word.categorie += el.textContent.replace(/[()]/g, '');
 
       if (this.getClassValue(el).includes('f0g')) {
+        const elementFz = el.getElementsByClassName('fz')[0];
         const elementF0 = el.getElementsByClassName('f0')[0];
         traduction = new Traduction();
         word.traductions.push(traduction);
+        traduction.number = elementFz.children[0].textContent;
         _.forEach(elementF0.children, parseChildrenOfElementF0.bind(this))
       }
     } 

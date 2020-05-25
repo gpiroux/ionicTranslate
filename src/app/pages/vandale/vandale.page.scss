@@ -50,6 +50,11 @@
 }
 
 .traduction-container {
+    .number {
+        font-size: 90%;
+        margin-right: 6px;
+        display: inline-block;
+    }
     .indicateur {
         margin-right: 6px;
         display: inline-block;
@@ -59,5 +64,9 @@
         font-style: italic;
         display: inline-block;
         color: #444;
+    }
+    mark {
+        color: green;
+        font-style: normal;
     }
 }

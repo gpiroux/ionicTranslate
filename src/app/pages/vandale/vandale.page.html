@@ -25,6 +25,12 @@
         <ion-icon *ngIf="item?.audio.length" class="audio-divider" slot="end" name="volume-high-outline"></ion-icon>
       </ion-item-divider>
       <ion-item *ngFor="let trad of item?.traductions" (click)="onTraductionClick(trad)">
+        <!-- No locution -->
+        <div *ngIf="!trad?.locution" class="traduction-container">
+          <div *ngIf="trad?.number" class="number">{{trad.number}}.</div>
+          <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
+          <div *ngIf="trad?.traduction" class="traduction" innerHTML="{{trad.traduction | highlight}}"></div>
+        </div>
         <!-- locution -->
         <ion-icon slot="end" *ngIf="trad?.audio" class="audio" name="volume-high-outline"></ion-icon>
         <div *ngIf="trad?.locution" class="locution-container">
@@ -36,11 +42,6 @@
             <div *ngIf="tradItem?.indicateur" class="indicateur inline">{{tradItem.indicateur}}</div>
             <div *ngIf="tradItem?.traduction" class="traduction2 inline">{{tradItem.traduction}}</div>
           </div>
-        </div>
-        <!-- No locution -->
-        <div *ngIf="!trad?.locution" class="traduction-container">
-          <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
-          <div *ngIf="trad?.traduction" class="traduction">{{trad.traduction}}</div>
         </div>
       </ion-item>
     </div>

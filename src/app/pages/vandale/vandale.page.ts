@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { VanDaleService } from 'src/app/services/vandale.service';
 import { WordService } from 'src/app/services/word.service';
@@ -13,6 +13,7 @@ import * as _ from 'lodash';
   selector: 'app-vandale',
   templateUrl: './vandale.page.html',
   styleUrls: ['./vandale.page.scss'],
+  encapsulation: ViewEncapsulation.None, // For <mark></madk> style
 })
 export class VandalePage implements OnInit {
   selectedWord: Word;

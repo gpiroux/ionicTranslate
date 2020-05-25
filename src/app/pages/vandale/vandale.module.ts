@@ -7,9 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { VandalePageRoutingModule } from './vandale-routing.module';
 
 import { VandalePage } from './vandale.page';
+import { PipesModule } from 'src/app/pipes/pipe.module';
 
 @NgModule({
   imports: [
+    PipesModule,
     CommonModule,
     FormsModule,
     IonicModule,

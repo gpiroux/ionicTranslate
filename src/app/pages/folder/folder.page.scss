@@ -4,8 +4,9 @@ ion-menu-button {
 
 mark {
   background-color: inherit;
-  font-style: italic;
-  color: #666;
+  font-style: normal;
+  //color: #666;
+  color: green;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,6 +36,7 @@ mark {
 
     .fr {
       flex-grow: 1;
+      font-style: italic;
     }
   
     .type {
