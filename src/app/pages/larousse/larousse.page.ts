@@ -68,7 +68,7 @@ export class LaroussePage implements OnInit {
   }
 
   async onTraductionClick(traduction: Traduction) {
-    if (traduction.tradList.length || traduction.locution) {
+    if (traduction.traductionSubList.length || traduction.locution) {
       const audio = traduction.audio;
       if (audio && !this.fetchAudio) {
         const blobURL = await this.audioService.loadAudio(audio)

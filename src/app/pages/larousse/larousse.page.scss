@@ -20,13 +20,10 @@
     padding-top: 2px;
     padding-bottom: 4px;
     color: #444;
+    font-size: 90%;
 
     .locution2-container {
         margin-left: 12px;
-    }
-
-    div {
-        font-size: 90%;
     }
     .indicateur {
         margin-right: 6px;
@@ -50,6 +47,12 @@
 }
 
 .traduction-container {
+    font-size: 95%;
+
+    .number {
+        margin-right: 3px;
+        display: inline-block;
+    }
     .indicateur {
         margin-right: 6px;
         display: inline-block;

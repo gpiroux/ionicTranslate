@@ -53,7 +53,7 @@ export class VandalePage implements OnInit {
   }
 
   onTraductionClick(traduction: Traduction) {
-    if (traduction.tradList.length || traduction.locution) return;
+    if (traduction.traductionSubList.length || traduction.locution) return;
     const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
     const tradSplit = _.map(traduction.traduction.split(','), s => s.trim());
     _.forEach(tradSplit, t => {

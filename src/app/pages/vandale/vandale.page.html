@@ -31,7 +31,7 @@
           <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
           <div *ngIf="trad?.locution" class="locution">{{trad.locution}}</div>
           <div *ngIf="trad?.traduction" class="traduction2">{{trad.traduction}}</div>
-          <div *ngFor="let tradItem of trad?.tradList" class="locution2-container">
+          <div *ngFor="let tradItem of trad?.traductionSubList" class="locution2-container">
             <span>-</span>&nbsp;
             <div *ngIf="tradItem?.indicateur" class="indicateur inline">{{tradItem.indicateur}}</div>
             <div *ngIf="tradItem?.traduction" class="traduction2 inline">{{tradItem.traduction}}</div>

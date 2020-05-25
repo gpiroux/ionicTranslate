@@ -14,14 +14,16 @@ export class DicoWord {
     
     constructor() {}
 
-    initTraduction() {
-        if (this.currentTraduction 
-                && !this.currentTraduction.traduction
-                && !this.currentTraduction.tradList.length) {
-            return;
+    /**
+      Does nothing while currentTraduction exists and no traduction nor traductionSubList
+    */
+    initTraduction(force = false) {
+        if (force || !this.currentTraduction
+                || this.currentTraduction.traduction
+                || this.currentTraduction.traductionSubList.length) {
+            this.currentTraduction = new Traduction()
+            this.traductions.push(this.currentTraduction)
         }
-        this.currentTraduction = new Traduction()
-        this.traductions.push(this.currentTraduction)
     }
 
     mapWordType(type: CategoryMapType): string {
@@ -41,12 +43,13 @@ export class DicoWord {
 }
 
 export class Traduction {
-    traduction: string = ''
-    locution: string = ''
+    number: string;
     indicateur: string = ''
+    locution: string = ''
+    traduction: string = ''
     lien: string = ''
     audio: string = ''
-    tradList: Traduction[] = [];
+    traductionSubList: Traduction[] = [];
 }
 
 export class OtherTraduction {
