@@ -79,27 +79,38 @@ export class VanDaleService extends genericDico {
         return
       }
 
+
+      // Main traduction including indicateur
       if (mainTraduction) {
+        //Check start of indicator
         if (this.getClassValue(el) === 'fq' && el.textContent.includes('(')) {
           indicator = true;
-          if (traduction.traduction) {
+          if (traduction.traduction && traduction.traduction.match(/,\ *$/)) {
             traduction = new Traduction();
             word.traductions.push(traduction);
           }
         }
         if (indicator) {
           traduction.indicateur += el.textContent;
+          // Check end of indicator
           if (this.getClassValue(el) === 'fq' && el.textContent.includes(')')) {
             indicator = false;
           }
-        } else if (this.getClassValue(el) === 'fr') {
+        } else 
+        // If not indicator, check translation
+        if (this.getClassValue(el) === 'fr') {
           traduction.traduction += el.textContent;
         } 
-      } else if (this.getClassValue(el) === 'fr') {
-        traduction.traduction += el.textContent;
-      } else if (this.getClassValue(el) === 'fq') {
+      } else 
+      // Locution
+      if (this.getClassValue(el) === 'fq') {
         traduction.locution += el.textContent;
+      } else
+      // Tradution
+      if (this.getClassValue(el) === 'fr') {
+        traduction.traduction += el.textContent;
       }
+
     }
 
     _.forEach(elements, parseElement.bind(this));
