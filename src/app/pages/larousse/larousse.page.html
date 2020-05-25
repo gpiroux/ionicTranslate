@@ -38,8 +38,8 @@
           <div *ngIf="trad?.traduction" class="traduction">{{trad.traduction}}</div>
         </div>
         <!-- locution -->
-        <ion-spinner *ngIf="trad?.audio && fetchAudio === trad?.audio" slot="end"></ion-spinner> &nbsp;
-        <ion-icon *ngIf="trad?.audio" slot="end" class="audio" name="volume-high-outline"></ion-icon>
+        <ion-spinner *ngIf="trad?.audio && fetchAudio === trad?.audio" class="spinner" slot="end"></ion-spinner> &nbsp;
+        <ion-icon *ngIf="trad?.audio && fetchAudio !== trad?.audio" slot="end" class="audio" name="volume-high-outline"></ion-icon>
         <div *ngIf="trad?.locution" class="locution-container">
           <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
           <div *ngIf="trad?.indicateurDomaine" class="indicateur capital">{{trad.indicateurDomaine}}</div>

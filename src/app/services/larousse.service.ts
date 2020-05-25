@@ -49,13 +49,11 @@ export class LarousseService extends genericDico {
 
          */
 
-        // Deprecated
         if (e.nodeName == 'SPAN' && ['lienson', 'lienson3'].includes(this.getClassValue(e))) {
           audio = { type: this.getClassValue(e), value: null }
         }
         if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais') && audio) {
           audio.value = this.getSrcValue(e).split('/').pop();
-          console.log("AUDIO", audio.value)
         }
 
         /* ### Word ###
