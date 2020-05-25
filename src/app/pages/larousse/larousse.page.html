@@ -20,7 +20,7 @@
   <ion-list>
     <ion-spinner style="display: block; margin: 80px auto;" *ngIf="!wordTraductions" name="lines"></ion-spinner>
     <div *ngFor="let item of wordTraductions;">
-      <ion-item-divider button sticky="true" color="light" (click)="onWordClick(item)">
+      <ion-item-divider button sticky="true" color="light" button (click)="onWordClick(item)">
         <ion-label>
           <b>{{item?.en}} {{item?.phonetique}} {{item?.formeFlechie}} {{item?.metalangue}}</b>
         </ion-label>
@@ -29,14 +29,14 @@
         </ion-label>
         <ion-icon *ngIf="item?.audio.length" class="audio-divider" slot="end" name="volume-high-outline"></ion-icon>
       </ion-item-divider>
-      <ion-item *ngFor="let trad of item?.traductions; let idx = index" (click)="onTraductionClick(trad, idx)">
+      <ion-item *ngFor="let trad of item?.traductions" button (click)="onTraductionClick(trad)">
         <!-- No locution: i.e. main translation -->
         <div *ngIf="!trad?.locution" class="traduction-container">
           <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
           <div *ngIf="trad?.traduction" class="traduction">{{trad.traduction}}</div>
         </div>
         <!-- locution -->
-        <ion-spinner *ngIf="fetchAudio === idx" slot="end"></ion-spinner> &nbsp;
+        <ion-spinner *ngIf="trad?.audio && fetchAudio === trad?.audio" slot="end"></ion-spinner> &nbsp;
         <ion-icon *ngIf="trad?.audio" slot="end" class="audio" name="volume-high-outline"></ion-icon>
         <div *ngIf="trad?.locution" class="locution-container">
           <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>

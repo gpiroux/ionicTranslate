@@ -24,8 +24,8 @@ export class LaroussePage implements OnInit {
   wordTraductions: DicoWord[];
   otherTraductions: OtherTraduction[];
 
-  private popover: any;
-  public fetchAudio: number;
+  private popover: HTMLIonPopoverElement;
+  public fetchAudio: string;
 
   constructor(
     private larousseService: LarousseService, 
@@ -67,7 +67,7 @@ export class LaroussePage implements OnInit {
     this.selectedWord.type = word.mapWordType(WordTypeMapType.short);
   }
 
-  async onTraductionClick(traduction: Traduction, idx: number) {
+  async onTraductionClick(traduction: Traduction) {
     if (traduction.tradList.length || traduction.locution) {
       const audio = traduction.audio;
       if (audio && !this.fetchAudio) {
@@ -75,7 +75,7 @@ export class LaroussePage implements OnInit {
         if (blobURL) {
           await this.audioService.playAudio(blobURL);
         } else {
-          this.fetchAudio = idx;
+          this.fetchAudio = audio;
           const data = await this.audioService.fetchAudio(audio);
           if (data) {
             this.audioService.saveAudio(audio , data);
