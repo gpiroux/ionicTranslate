@@ -30,6 +30,10 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () => import('./pages/folder/folder.module').then((m) => m.FolderPageModule),
   },
+  {
+    path: 'revesro',
+    loadChildren: () => import('./pages/revesro/revesro.module').then((m) => m.RevesroPageModule),
+  },
 ];
 
 @NgModule({

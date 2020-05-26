@@ -1,60 +1,73 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="folder/Inbox"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detail</ion-title>
-    <ion-buttons slot="end">
-      <ion-back-button 
-        defaultHref="folder/Inbox" 
-        text="Save" 
-        icon="" 
-        class="save-button" 
-        (click)="onSave()">
-      </ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="folder/Inbox"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Detail</ion-title>
+        <ion-buttons slot="end">
+            <ion-back-button defaultHref="folder/Inbox" text="Save" icon="" class="save-button" (click)="onSave()"></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-<ion-list>
-  <ion-item *ngIf="isLarousseDico" [routerLink]="['larousse']" detail>
-    <ion-label><b>Dictionary</b></ion-label><ion-button>Larousse</ion-button>
-  </ion-item>
-  <ion-item *ngIf="isVandaleDico" [routerLink]="['vandale']" detail>
-    <ion-label><b>Dictionary</b></ion-label><ion-button>Vandale</ion-button>
-  </ion-item>
-  <ion-item>
-    <ion-label *ngIf="isLarousseDico" position="floating"><b>English</b></ion-label>
-    <ion-label *ngIf="isVandaleDico" position="floating"><b>Dutch</b></ion-label>
-    <ion-textarea #textAreaEn style="margin-top:5px; color: #444;" auto-grow="true" [(ngModel)]="newWord.en" (ionChange)=valueChanged(textAreaEn)></ion-textarea>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating"><b>French</b></ion-label>
-    <ion-textarea #textAreaFr style="margin-top:5px; color: #444;" auto-grow="true" [(ngModel)]="newWord.fr" (ionChange)=valueChanged(textAreaFr)></ion-textarea>
-  </ion-item>
-  <ion-item>
-    <ion-label><b>Type</b></ion-label>
-    <ion-select [(ngModel)]="newWord.type" class="type">
-      <ion-select-option *ngFor="let opt of typeOptions;" [value]="opt">{{opt}}</ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-item>
-    <ion-label><b>Category</b></ion-label>
-    <ion-select [(ngModel)]="newWord.category" interface="popover" multiple="true" class="category">
-      <ion-select-option *ngFor="let opt of categoryOptions;" [value]="opt">{{opt}}</ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-item button (click)="playAudio(newWord.audio)">
-    <ion-label><b>Audio</b></ion-label>
-    <ion-spinner *ngIf="fetchAudio"></ion-spinner> &nbsp;
-    <ion-chip *ngFor="let audio of newWord.audio" color="primary" outline="false">
-      <ion-label>{{audio}}</ion-label>
-    </ion-chip>
-  </ion-item>
-  <ion-item>
-    <ion-label><b>Last update</b></ion-label>
-    <span class="expression">{{ newWord?.date | firebaseDate | date:"medium" }}</span>
-  </ion-item>
-</ion-list>
+    <ion-list>
+        <ion-item *ngIf="isLarousseDico" [routerLink]="['larousse']" detail>
+            <ion-label><b>Dictionary</b></ion-label>
+            <ion-button>Larousse</ion-button>
+        </ion-item>
+        <ion-item *ngIf="isVandaleDico" [routerLink]="['vandale']" detail>
+            <ion-label><b>Dictionary</b></ion-label>
+            <ion-button>Vandale</ion-button>
+        </ion-item>
+        <ion-item *ngIf="isVandaleDico" [routerLink]="['reverso']" detail>
+            <ion-label><b>Dictionary</b></ion-label>
+            <ion-button>Reverso</ion-button>
+        </ion-item>
+        <ion-item>
+            <ion-label *ngIf="isLarousseDico" position="floating"><b>English</b></ion-label>
+            <ion-label *ngIf="isVandaleDico" position="floating"><b>Dutch</b></ion-label>
+            <ion-textarea
+                #textAreaEn
+                style="margin-top: 5px; color: #444;"
+                auto-grow="true"
+                [(ngModel)]="newWord.en"
+                (ionChange)="valueChanged(textAreaEn)"
+            ></ion-textarea>
+        </ion-item>
+        <ion-item>
+            <ion-label position="floating"><b>French</b></ion-label>
+            <ion-textarea
+                #textAreaFr
+                style="margin-top: 5px; color: #444;"
+                auto-grow="true"
+                [(ngModel)]="newWord.fr"
+                (ionChange)="valueChanged(textAreaFr)"
+            ></ion-textarea>
+        </ion-item>
+        <ion-item>
+            <ion-label><b>Type</b></ion-label>
+            <ion-select [(ngModel)]="newWord.type" class="type">
+                <ion-select-option *ngFor="let opt of typeOptions;" [value]="opt">{{opt}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-label><b>Category</b></ion-label>
+            <ion-select [(ngModel)]="newWord.category" interface="popover" multiple="true" class="category">
+                <ion-select-option *ngFor="let opt of categoryOptions;" [value]="opt">{{opt}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item button (click)="playAudio(newWord.audio)">
+            <ion-label><b>Audio</b></ion-label>
+            <ion-spinner *ngIf="fetchAudio"></ion-spinner>
+            &nbsp;
+            <ion-chip *ngFor="let audio of newWord.audio" color="primary" outline="false">
+                <ion-label>{{audio}}</ion-label>
+            </ion-chip>
+        </ion-item>
+        <ion-item>
+            <ion-label><b>Last update</b></ion-label>
+            <span class="expression">{{ newWord?.date | firebaseDate | date:"medium" }}</span>
+        </ion-item>
+    </ion-list>
 </ion-content>

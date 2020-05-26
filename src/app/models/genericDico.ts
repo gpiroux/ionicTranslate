@@ -36,13 +36,21 @@ export abstract class genericDico {
     return _.get(el, ['attributes', 'link', 'value'], '');
   }
 
+  protected getStyleValue(el: Element | ChildNode): string {
+    return _.get(el, ['attributes', 'style', 'value'], '');
+  }
+
+  protected getIdValue(el: Element | ChildNode): string {
+    return _.get(el, ['attributes', 'id', 'value'], '');
+  }
+
   protected extraTrim(str: string) {
     // https://stackoverflow.com/questions/20690499/concrete-javascript-regex-for-accented-characters-diacritics
     return str
       .trim()
       .replace(new RegExp(String.fromCharCode(160), 'g'), ' ') // &nbsp
       .replace(new RegExp(String.fromCharCode(8212), 'g'), '-') // '\—'
-      .replace(/[^\ -\~\u00C0-\u017F]/g, '') // ASCII: '\ ' code: 32  => '\~' code: 127
+      .replace(/[^\ -\~\u00C0-\u017F\→]/g, '') // ASCII: '\ ' code: 32  => '\~' code: 127
       .replace(/\( +/g, '(')
       .replace(/ +\)/g, ')')
       .replace(/ +/g, ' ');
@@ -64,7 +72,7 @@ export abstract class genericDico {
 
     if (!data) {
       data = this.platform.is('cordova')
-        ? await this.httpNative.get(url, {}, {}).then((res) => res.data)
+        ? await this.httpNative.get(url, {}, {}).then(res => res.data)
         : await this.httpClient.get(url, { responseType: 'text' }).toPromise();
     }
 
@@ -75,7 +83,7 @@ export abstract class genericDico {
       let parsedData = this.parse(data);
 
       // For additional traduction, save also the href of the selected one ((Larousse))
-      let cacheHref = _.find(parsedData.otherTradutions, (tr) => tr.selected);
+      let cacheHref = _.find(parsedData.otherTradutions, tr => tr.selected);
       if (cacheHref) {
         this.cache[cacheHref.href] = data;
       }

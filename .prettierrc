@@ -4,5 +4,20 @@
     "useTabs": false,
     "tabWidth": 2,
     "semi": true,
-    "bracketSpacing": true
+    "bracketSpacing": true,
+    "arrowParens": "avoid",
+    "htmlWhitespaceSensitivity": "ignore",
+    "overrides": [
+        {
+            "files": [
+                "*.css",
+                "*.scss",
+                "*.html"
+            ],
+            "options": {
+                "printWidth": 140,
+                "tabWidth": 4
+            }
+        }
+    ]
 }

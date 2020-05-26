@@ -16,6 +16,10 @@ const routes: Routes = [
     path: 'vandale',
     loadChildren: () => import('../vandale/vandale.module').then((m) => m.VandalePageModule),
   },
+  {
+    path: 'reverso',
+    loadChildren: () => import('../revesro/revesro.module').then((m) => m.RevesroPageModule),
+  },
 ];
 
 @NgModule({
