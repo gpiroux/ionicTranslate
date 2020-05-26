@@ -1,13 +1,13 @@
-import { CategoryMapType, wordTypes } from "./word.model";
-import * as _ from "lodash";
+import { CategoryMapType, wordTypes } from './word.model';
+import * as _ from 'lodash';
 
 export class DicoWord {
   audio: string[] = [];
-  en: string = "";
-  phonetique: string = "";
-  categorie: string = "";
-  metalangue: string = "";
-  formeFlechie: string = "";
+  en: string = '';
+  phonetique: string = '';
+  categorie: string = '';
+  metalangue: string = '';
+  formeFlechie: string = '';
 
   traductions: Traduction[] = [];
   currentTraduction: Traduction = null;
@@ -30,8 +30,8 @@ export class DicoWord {
   }
 
   mapWordType(type: CategoryMapType): string {
-    const intransitive = "intransitive";
-    const transitive = "transitive";
+    const intransitive = 'intransitive';
+    const transitive = 'transitive';
     let shortCategory = _.find(wordTypes, (c) => this.categorie.includes(c));
 
     if (type === CategoryMapType.short) {
@@ -47,17 +47,17 @@ export class DicoWord {
 
 export class Traduction {
   number: string;
-  indicateur: string = "";
-  indicateurDomaine: string = "";
-  locution: string = "";
-  traduction: string = "";
-  lien: string = "";
-  audio: string = "";
+  indicateur: string = '';
+  indicateurDomaine: string = '';
+  locution: string = '';
+  traduction: string = '';
+  lien: string = '';
+  audio: string = '';
   traductionSubList: Traduction[] = [];
 }
 
 export class OtherTraduction {
-  href: string = "";
-  word: string = "";
+  href: string = '';
+  word: string = '';
   selected: boolean;
 }

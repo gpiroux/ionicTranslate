@@ -1,27 +1,19 @@
-import { Injectable } from "@angular/core";
-import { HTTP } from "@ionic-native/http/ngx";
-import { HttpClient } from "@angular/common/http";
-import { Platform } from "@ionic/angular";
+import { Injectable } from '@angular/core';
+import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
 
-import {
-  DicoWord,
-  Traduction,
-  OtherTraduction,
-} from "../models/dicoResult.model";
-import * as _ from "lodash";
-import { genericDico, ParseResult } from "../models/genericDico";
+import { DicoWord, Traduction, OtherTraduction } from '../models/dicoResult.model';
+import * as _ from 'lodash';
+import { genericDico, ParseResult } from '../models/genericDico';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class LarousseService extends genericDico {
-  constructor(
-    protected httpNative: HTTP,
-    protected httpClient: HttpClient,
-    protected platform: Platform
-  ) {
+  constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
-    this.webSite = "https://www.larousse.fr";
+    this.webSite = 'https://www.larousse.fr';
   }
 
   private parseElements(elements: HTMLCollection) {
@@ -51,18 +43,11 @@ export class LarousseService extends genericDico {
 
          */
 
-      if (
-        e.nodeName == "SPAN" &&
-        ["lienson", "lienson3"].includes(this.getClassValue(e))
-      ) {
+      if (e.nodeName == 'SPAN' && ['lienson', 'lienson3'].includes(this.getClassValue(e))) {
         audio = { type: this.getClassValue(e), value: null };
       }
-      if (
-        e.nodeName == "AUDIO" &&
-        this.getSrcValue(e).includes("anglais") &&
-        audio
-      ) {
-        audio.value = this.getSrcValue(e).split("/").pop();
+      if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais') && audio) {
+        audio.value = this.getSrcValue(e).split('/').pop();
       }
 
       /* ### Word ###
@@ -91,56 +76,40 @@ export class LarousseService extends genericDico {
          */
 
       // Mot anglais
-      if (e.nodeName == "H1" && this.getClassValue(e).includes("Adresse")) {
+      if (e.nodeName == 'H1' && this.getClassValue(e).includes('Adresse')) {
         word = new DicoWord();
         result.push(word);
         word.en = e.textContent.trim();
 
         // Need to wait creation of the word !
-        if (audio && audio.type === "lienson" && audio.value) {
+        if (audio && audio.type === 'lienson' && audio.value) {
           word.audio.push(audio.value);
           audio = null;
         }
       }
 
       // Phonetique principale
-      if (
-        e.nodeName == "SPAN" &&
-        this.getClassValue(e).includes("Phonetique")
-      ) {
+      if (e.nodeName == 'SPAN' && this.getClassValue(e).includes('Phonetique')) {
         word.phonetique = e.textContent.trim();
       }
 
       // Plurial form : "FormeFlechie2"
-      if (
-        e.nodeName == "SPAN" &&
-        this.getClassValue(e).includes("FormeFlechie2")
-      ) {
+      if (e.nodeName == 'SPAN' && this.getClassValue(e).includes('FormeFlechie2')) {
         _.forEach(e.childNodes, (ee) => {
-          if (
-            ee.nodeName == "SPAN" &&
-            ["Phonetique"].includes(this.getClassValue(ee))
-          ) {
+          if (ee.nodeName == 'SPAN' && ['Phonetique'].includes(this.getClassValue(ee))) {
             word.formeFlechie += ee.textContent;
           } else if (ee.nodeType === 3) {
             word.formeFlechie += this.extraTrim(ee.textContent);
           }
 
-          if (
-            ee.nodeName == "AUDIO" &&
-            this.getSrcValue(ee).includes("anglais")
-          ) {
-            word.audio.push(this.getSrcValue(ee).split("/").pop());
+          if (ee.nodeName == 'AUDIO' && this.getSrcValue(ee).includes('anglais')) {
+            word.audio.push(this.getSrcValue(ee).split('/').pop());
           }
         });
       }
 
       // Categorie grammaticale principale (avant traduction)
-      if (
-        e.nodeName == "SPAN" &&
-        this.getClassValue(e) === "CategorieGrammaticale" &&
-        !word.currentTraduction
-      ) {
+      if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'CategorieGrammaticale' && !word.currentTraduction) {
         _.forEach(e.childNodes, (ee) => {
           if (ee.nodeType === 3) word.categorie += ee.textContent.trim();
         });
@@ -168,7 +137,7 @@ export class LarousseService extends genericDico {
          */
 
       // Ex 'grey' & 'goose'
-      if (e.nodeName == "SPAN" && this.getClassValue(e) == "Metalangue") {
+      if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
         if (!word.categorie) {
           word.metalangue = e.textContent.trim(); // (US) vs (UK)
         } else {
@@ -179,28 +148,22 @@ export class LarousseService extends genericDico {
 
       // Indicateur:
       // <span class="Indicateur"> [car, motorcycle, engine]</span>
-      if (
-        e.nodeName == "SPAN" &&
-        ["Indicateur"].includes(this.getClassValue(e))
-      ) {
+      if (e.nodeName == 'SPAN' && ['Indicateur'].includes(this.getClassValue(e))) {
         word.initTraduction();
         word.currentTraduction.indicateur += e.textContent;
       }
-      if (
-        e.nodeName == "SPAN" &&
-        ["IndicateurDomaine"].includes(this.getClassValue(e))
-      ) {
+      if (e.nodeName == 'SPAN' && ['IndicateurDomaine'].includes(this.getClassValue(e))) {
         word.initTraduction();
         word.currentTraduction.indicateurDomaine += e.textContent;
       }
 
       // Locution:
       // <span class="Locution2" lang="en" xml:lang="en" id="884865">the car roared past</span>
-      var locutions = ["Locution2"];
-      if (e.nodeName == "SPAN" && locutions.includes(this.getClassValue(e))) {
+      var locutions = ['Locution2'];
+      if (e.nodeName == 'SPAN' && locutions.includes(this.getClassValue(e))) {
         word.initTraduction(true);
         word.currentTraduction.locution += e.textContent;
-        if (audio && audio.type === "lienson3" && audio.value) {
+        if (audio && audio.type === 'lienson3' && audio.value) {
           word.currentTraduction.audio = audio.value;
           audio = null;
         }
@@ -212,30 +175,17 @@ export class LarousseService extends genericDico {
       // <span class="Traduction" lang="fr" xml:lang="fr">  <a class="lienconj2" href="/conjugaison/francais/rugir/8295">Conjugaison</a>
       //    <a class="lienarticle2" href="/dictionnaires/francais-anglais/rugir/69459">rugir</a>
       // </span>
-      var traductions = ["Traduction", "Traduction2", "Glose2"];
-      if (e.nodeName == "SPAN" && traductions.includes(this.getClassValue(e))) {
+      var traductions = ['Traduction', 'Traduction2', 'Glose2'];
+      if (e.nodeName == 'SPAN' && traductions.includes(this.getClassValue(e))) {
         word.initTraduction();
 
         _.forEach(e.childNodes, (ee) => {
-          if (
-            ee.nodeName == "A" &&
-            ["lienarticle2"].includes(this.getClassValue(ee))
-          ) {
-            word.currentTraduction.traduction += `${this.extraTrim(
-              ee.textContent
-            )}`.trim();
-          } else if (
-            ee.nodeName == "SPAN" &&
-            ["Genre"].includes(this.getClassValue(ee))
-          ) {
-            word.currentTraduction.traduction += ee.textContent.includes(",")
-              ? ", "
-              : "";
-          } else if (
-            ee.nodeName == "SMALL" &&
-            ["oubien"].includes(this.getClassValue(ee))
-          ) {
-            word.currentTraduction.traduction += "OU";
+          if (ee.nodeName == 'A' && ['lienarticle2'].includes(this.getClassValue(ee))) {
+            word.currentTraduction.traduction += `${this.extraTrim(ee.textContent)}`.trim();
+          } else if (ee.nodeName == 'SPAN' && ['Genre'].includes(this.getClassValue(ee))) {
+            word.currentTraduction.traduction += ee.textContent.includes(',') ? ', ' : '';
+          } else if (ee.nodeName == 'SMALL' && ['oubien'].includes(this.getClassValue(ee))) {
+            word.currentTraduction.traduction += 'OU';
           } else if (ee.nodeType === 3) {
             word.currentTraduction.traduction += ee.textContent;
           }
@@ -252,11 +202,11 @@ export class LarousseService extends genericDico {
          </span>
          */
 
-      if (e.nodeName == "SPAN" && this.getClassValue(e) === "Renvois") {
+      if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'Renvois') {
         word.initTraduction();
 
         _.forEach(e.children, (ee) => {
-          if (ee.nodeName == "A" && this.getClassValue(ee) == "lienarticle") {
+          if (ee.nodeName == 'A' && this.getClassValue(ee) == 'lienarticle') {
             word.currentTraduction.lien = this.getHrefValue(ee);
             word.currentTraduction.traduction = ee.textContent;
           }
@@ -264,13 +214,10 @@ export class LarousseService extends genericDico {
       }
 
       // Tables
-      if (e.nodeName == "TABLE") {
+      if (e.nodeName == 'TABLE') {
         // Number
         const numElement = e.children[0].children[0].children[0].children[0];
-        if (
-          numElement.nodeName == "SPAN" &&
-          this.getClassValue(numElement) === "CategorieGrammaticale"
-        ) {
+        if (numElement.nodeName == 'SPAN' && this.getClassValue(numElement) === 'CategorieGrammaticale') {
           word.initTraduction();
           word.currentTraduction.number = numElement.textContent;
         }
@@ -297,26 +244,20 @@ export class LarousseService extends genericDico {
          */
 
       if (
-        e.nodeName == "SPAN" &&
-        this.getClassValue(e) === "CategorieGrammaticale" &&
-        _.get(word, ["currentTraduction", "locution"]) &&
-        !_.get(word, ["currentTraduction", "traduction"])
+        e.nodeName == 'SPAN' &&
+        this.getClassValue(e) === 'CategorieGrammaticale' &&
+        _.get(word, ['currentTraduction', 'locution']) &&
+        !_.get(word, ['currentTraduction', 'traduction'])
       ) {
         let tradustion2 = new Traduction();
         word.currentTraduction.traductionSubList.push(tradustion2);
 
         _.forEach(e.children, (ee) => {
-          if (
-            ee.nodeName == "SPAN" &&
-            ["Indicateur", "Metalangue"].includes(this.getClassValue(ee))
-          ) {
+          if (ee.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(ee))) {
             tradustion2.indicateur = ee.textContent;
           }
 
-          if (
-            ee.nodeName == "SPAN" &&
-            "Traduction2" === this.getClassValue(ee)
-          ) {
+          if (ee.nodeName == 'SPAN' && 'Traduction2' === this.getClassValue(ee)) {
             tradustion2.traduction = ee.textContent;
           }
         });
@@ -333,7 +274,7 @@ export class LarousseService extends genericDico {
          </span>
 
          */
-      if (e.nodeName == "SPAN" && this.getLinkValue(e)) {
+      if (e.nodeName == 'SPAN' && this.getLinkValue(e)) {
         _.forEach(e.children, parseElement.bind(this));
       }
     }
@@ -400,22 +341,22 @@ export class LarousseService extends genericDico {
 
     function parseElement(e: Element) {
       // Sub section: "autres résultats"
-      if (e.nodeName === "SECTION") {
+      if (e.nodeName === 'SECTION') {
         _.forEach(e.children, parseElement.bind(this));
       }
 
-      if (e.nodeName === "ARTICLE") {
+      if (e.nodeName === 'ARTICLE') {
         let trad = new OtherTraduction();
         result.push(trad);
 
-        if (this.getClassValue(e) === "sel") {
+        if (this.getClassValue(e) === 'sel') {
           trad.selected = true;
         }
         let link = e.childNodes[0].childNodes[0];
         trad.word = link.textContent;
         trad.href = this.getHrefValue(link);
         // Remove extra links that refer to anchor (example with 'word')
-        if (trad.href.includes("#")) result.pop();
+        if (trad.href.includes('#')) result.pop();
       }
     }
 
@@ -427,29 +368,23 @@ export class LarousseService extends genericDico {
   parse(data: string): ParseResult {
     const result: ParseResult = { dicoWords: null, otherTradutions: null };
     const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(data, "text/html");
+    const htmlDoc = parser.parseFromString(data, 'text/html');
 
     // <article role="article">
-    const articles = htmlDoc.getElementsByTagName("article");
-    const article = _.find(articles, (a) => this.getRoleValue(a) === "article");
+    const articles = htmlDoc.getElementsByTagName('article');
+    const article = _.find(articles, (a) => this.getRoleValue(a) === 'article');
 
     if (article) {
       // <div class="article_bilingue">
-      const article_bilingue = _.find(
-        article.children,
-        (a) => this.getClassValue(a) === "article_bilingue"
-      );
+      const article_bilingue = _.find(article.children, (a) => this.getClassValue(a) === 'article_bilingue');
 
       const domElements = article_bilingue.children;
       result.dicoWords = this.parseElements(domElements);
     }
 
     // <div class="wrapper-search">
-    const navs = htmlDoc.getElementsByTagName("div");
-    const wrapperSearch = _.find(
-      navs,
-      (a) => this.getClassValue(a) === "wrapper-search"
-    );
+    const navs = htmlDoc.getElementsByTagName('div');
+    const wrapperSearch = _.find(navs, (a) => this.getClassValue(a) === 'wrapper-search');
 
     if (wrapperSearch) {
       const domElements = wrapperSearch.children;
@@ -465,7 +400,7 @@ export class LarousseService extends genericDico {
     //     return this.parseElements(domElements, 'corrector');
     // }
 
-    var error = htmlDoc.getElementsByClassName("err");
-    throw error[0].textContent || "Parsing error";
+    var error = htmlDoc.getElementsByClassName('err');
+    throw error[0].textContent || 'Parsing error';
   }
 }

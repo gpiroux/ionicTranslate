@@ -1,12 +1,12 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { HttpClientModule } from "@angular/common/http";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
-import { LaroussePage } from "./larousse.page";
+import { LaroussePage } from './larousse.page';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: LaroussePage,
   },
 ];

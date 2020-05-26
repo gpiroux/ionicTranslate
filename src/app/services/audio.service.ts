@@ -1,15 +1,15 @@
-import { Injectable } from "@angular/core";
-import { HTTP } from "@ionic-native/http/ngx";
-import { Platform } from "@ionic/angular";
+import { Injectable } from '@angular/core';
+import { HTTP } from '@ionic-native/http/ngx';
+import { Platform } from '@ionic/angular';
 
-import { HttpClient } from "@angular/common/http";
+import { HttpClient } from '@angular/common/http';
 
-import { FileSystemService } from "./file-system.service";
+import { FileSystemService } from './file-system.service';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AudioService {
   constructor(
@@ -22,13 +22,11 @@ export class AudioService {
   async fetchAudio(audio: string): Promise<Blob> {
     const url = `https://voix.larousse.fr/anglais/${audio}.mp3`;
     try {
-      return this.platform.is("cordova")
-        ? await this.httpNative
-            .sendRequest(url, { method: "get", responseType: "blob" })
-            .then((res) => res.data)
-        : await this.httpClient.get(url, { responseType: "blob" }).toPromise();
+      return this.platform.is('cordova')
+        ? await this.httpNative.sendRequest(url, { method: 'get', responseType: 'blob' }).then((res) => res.data)
+        : await this.httpClient.get(url, { responseType: 'blob' }).toPromise();
     } catch (err) {
-      console.error("HTTP - ", err.message || err);
+      console.error('HTTP - ', err.message || err);
       return;
     }
   }
@@ -39,7 +37,7 @@ export class AudioService {
       player.src = data;
     } else {
       player.src = URL.createObjectURL(data);
-      player.addEventListener("ended", () => URL.revokeObjectURL(player.src));
+      player.addEventListener('ended', () => URL.revokeObjectURL(player.src));
     }
     await player.play();
   }
@@ -48,7 +46,7 @@ export class AudioService {
     try {
       return await this.fileSystem.loadMP3(audio);
     } catch (err) {
-      console.error("LOAD - ", err.message || err);
+      console.error('LOAD - ', err.message || err);
     }
   }
 
@@ -56,7 +54,7 @@ export class AudioService {
     try {
       await this.fileSystem.writeMP3(audio, data);
     } catch (err) {
-      console.error("WRITE - ", err.message || err);
+      console.error('WRITE - ', err.message || err);
     }
   }
 }

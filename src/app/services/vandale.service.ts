@@ -1,27 +1,19 @@
-import { Injectable } from "@angular/core";
-import { HTTP } from "@ionic-native/http/ngx";
-import { HttpClient } from "@angular/common/http";
-import { Platform } from "@ionic/angular";
+import { Injectable } from '@angular/core';
+import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
 
-import {
-  DicoWord,
-  Traduction,
-  OtherTraduction,
-} from "../models/dicoResult.model";
-import * as _ from "lodash";
-import { genericDico, ParseResult } from "../models/genericDico";
+import { DicoWord, Traduction, OtherTraduction } from '../models/dicoResult.model';
+import * as _ from 'lodash';
+import { genericDico, ParseResult } from '../models/genericDico';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class VanDaleService extends genericDico {
-  constructor(
-    protected httpNative: HTTP,
-    protected httpClient: HttpClient,
-    protected platform: Platform
-  ) {
+  constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
-    this.webSite = "https://www.vandale.be";
+    this.webSite = 'https://www.vandale.be';
 
     // Example: naar
   }
@@ -34,12 +26,12 @@ export class VanDaleService extends genericDico {
     let indicator: boolean;
 
     function parseElement(e: Element) {
-      if (this.getClassValue(e) !== "f0f") {
-        console.log("ERROR element has no class f0f", e);
+      if (this.getClassValue(e) !== 'f0f') {
+        console.log('ERROR element has no class f0f', e);
         return;
       }
-      if (this.getClassValue(e.children[0]) !== "f0j") {
-        console.log("ERROR subelement has no class f0j", e);
+      if (this.getClassValue(e.children[0]) !== 'f0j') {
+        console.log('ERROR subelement has no class f0j', e);
         return;
       }
 
@@ -53,13 +45,12 @@ export class VanDaleService extends genericDico {
     }
 
     function parseChildrenOfElementF0j(el: Element) {
-      if (this.getClassValue(el) === "f0i") word.en = el.textContent;
-      if (this.getClassValue(el) === "fq")
-        word.categorie += el.textContent.replace(/[()]/g, "");
+      if (this.getClassValue(el) === 'f0i') word.en = el.textContent;
+      if (this.getClassValue(el) === 'fq') word.categorie += el.textContent.replace(/[()]/g, '');
 
-      if (this.getClassValue(el).includes("f0g")) {
-        const elementFz = el.getElementsByClassName("fz")[0];
-        const elementF0 = el.getElementsByClassName("f0")[0];
+      if (this.getClassValue(el).includes('f0g')) {
+        const elementFz = el.getElementsByClassName('fz')[0];
+        const elementF0 = el.getElementsByClassName('f0')[0];
         traduction = new Traduction();
         word.traductions.push(traduction);
         traduction.number = elementFz.children[0].textContent;
@@ -68,16 +59,13 @@ export class VanDaleService extends genericDico {
     }
 
     function parseChildrenOfElementF0(el: Element, idx: number) {
-      if (idx === 0 && this.getClassValue(el) === "fq") {
-        mainTraduction = el.textContent.includes("(");
+      if (idx === 0 && this.getClassValue(el) === 'fq') {
+        mainTraduction = el.textContent.includes('(');
       }
-      if (idx === 0 && this.getClassValue(el) === "fr") {
+      if (idx === 0 && this.getClassValue(el) === 'fr') {
         mainTraduction = true;
       }
-      if (
-        this.getClassValue(el) === "fr" &&
-        (el.textContent === ": " || el.textContent === "; ")
-      ) {
+      if (this.getClassValue(el) === 'fr' && (el.textContent === ': ' || el.textContent === '; ')) {
         mainTraduction = false;
         traduction = new Traduction();
         word.traductions.push(traduction);
@@ -87,7 +75,7 @@ export class VanDaleService extends genericDico {
       // Main traduction including indicateur
       if (mainTraduction) {
         //Check start of indicator
-        if (this.getClassValue(el) === "fq" && el.textContent.includes("(")) {
+        if (this.getClassValue(el) === 'fq' && el.textContent.includes('(')) {
           indicator = true;
           if (traduction.traduction && traduction.traduction.match(/,\ *$/)) {
             traduction = new Traduction();
@@ -97,21 +85,21 @@ export class VanDaleService extends genericDico {
         if (indicator) {
           traduction.indicateur += el.textContent;
           // Check end of indicator
-          if (this.getClassValue(el) === "fq" && el.textContent.includes(")")) {
+          if (this.getClassValue(el) === 'fq' && el.textContent.includes(')')) {
             indicator = false;
           }
         }
         // If not indicator, check translation
-        else if (this.getClassValue(el) === "fr") {
+        else if (this.getClassValue(el) === 'fr') {
           traduction.traduction += el.textContent;
         }
       }
       // Locution
-      else if (this.getClassValue(el) === "fq") {
+      else if (this.getClassValue(el) === 'fq') {
         traduction.locution += el.textContent;
       }
       // Tradution
-      else if (this.getClassValue(el) === "fr") {
+      else if (this.getClassValue(el) === 'fr') {
         traduction.traduction += el.textContent;
       }
     }
@@ -130,12 +118,12 @@ export class VanDaleService extends genericDico {
   parse(data: string): ParseResult {
     const result: ParseResult = { dicoWords: null, otherTradutions: null };
     const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(data, "text/html");
+    const htmlDoc = parser.parseFromString(data, 'text/html');
 
-    console.log("htmlDoc", htmlDoc);
+    console.log('htmlDoc', htmlDoc);
 
     // <div class="snippets">
-    const snippets = htmlDoc.getElementsByClassName("snippets");
+    const snippets = htmlDoc.getElementsByClassName('snippets');
     const snippet = snippets && snippets[0];
 
     if (snippet) {

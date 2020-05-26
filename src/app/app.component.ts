@@ -1,52 +1,52 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { Location } from "@angular/common";
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
-import { Platform, AlertController } from "@ionic/angular";
-import { SplashScreen } from "@ionic-native/splash-screen/ngx";
-import { StatusBar } from "@ionic-native/status-bar/ngx";
-import { Deploy } from "cordova-plugin-ionic/dist/ngx";
+import { Platform, AlertController } from '@ionic/angular';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
 
-import { AuthService } from "./services/auth.service";
-import { NotificationsService } from "./services/notifications.service";
+import { AuthService } from './services/auth.service';
+import { NotificationsService } from './services/notifications.service';
 
-import * as _ from "lodash";
-import * as packageJson from "../../package.json";
+import * as _ from 'lodash';
+import * as packageJson from '../../package.json';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "app.component.html",
-  styleUrls: ["app.component.scss"],
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit {
   public selectedIndex = 0;
   public appPages = [
     {
       hidden: false,
-      title: "Login",
-      url: "/login",
-      icon: "log-in",
+      title: 'Login',
+      url: '/login',
+      icon: 'log-in',
     },
     {
       hidden: false,
-      title: "Dico En",
-      url: "/folder/dicoEn",
-      icon: "documents",
+      title: 'Dico En',
+      url: '/folder/dicoEn',
+      icon: 'documents',
     },
     {
       hidden: false,
-      title: "Dico NL",
-      url: "/folder/dicoNL",
-      icon: "document-text",
+      title: 'Dico NL',
+      url: '/folder/dicoNL',
+      icon: 'document-text',
     },
     {
       hidden: false,
-      title: "Logout",
-      url: "/logout",
-      icon: "log-out",
+      title: 'Logout',
+      url: '/logout',
+      icon: 'log-out',
     },
   ];
-  public labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];
+  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
 
   public user: firebase.User;
   public progress: number = null;
@@ -67,8 +67,8 @@ export class AppComponent implements OnInit {
     this.initializeApp();
 
     this.auth.user$.subscribe((user) => {
-      const loginPage = _.find(this.appPages, (p) => p.title === "Login");
-      const logoutPage = _.find(this.appPages, (p) => p.title === "Logout");
+      const loginPage = _.find(this.appPages, (p) => p.title === 'Login');
+      const logoutPage = _.find(this.appPages, (p) => p.title === 'Logout');
       loginPage.hidden = !!user;
       logoutPage.hidden = !user;
       this.user = user;
@@ -77,9 +77,7 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe((val) => {
       if (this.location.path()) {
         const path = this.location.path();
-        this.selectedIndex = _.findIndex(this.appPages, (p) =>
-          path.toLowerCase().includes(p.url.toLowerCase())
-        );
+        this.selectedIndex = _.findIndex(this.appPages, (p) => path.toLowerCase().includes(p.url.toLowerCase()));
       }
     });
 
@@ -95,7 +93,7 @@ export class AppComponent implements OnInit {
 
       this.checkForUpdate(true);
 
-      this.isCordova = this.platform.is("cordova");
+      this.isCordova = this.platform.is('cordova');
     });
   }
 
@@ -107,8 +105,8 @@ export class AppComponent implements OnInit {
           return this.openUpdateAppAlert();
         }
         if (silentMode) return;
-        const message = "No update available";
-        const header = "Check for update";
+        const message = 'No update available';
+        const header = 'Check for update';
         return this.notificationService.message(message, header);
       })
       .catch((err) => {
@@ -118,15 +116,15 @@ export class AppComponent implements OnInit {
 
   async openUpdateAppAlert() {
     const alert = await this.alertController.create({
-      header: "Check for update",
-      message: "Update available",
+      header: 'Check for update',
+      message: 'Update available',
       buttons: [
         {
-          text: "Cancel",
-          cssClass: "secondary",
+          text: 'Cancel',
+          cssClass: 'secondary',
         },
         {
-          text: "Install",
+          text: 'Install',
           handler: () => this.updateApp(),
         },
       ],

@@ -1,10 +1,10 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { WordService } from "src/app/services/word.service";
+import { Component, OnInit, Input } from '@angular/core';
+import { WordService } from 'src/app/services/word.service';
 
 @Component({
-  selector: "app-filter-popover",
-  templateUrl: "./filter-popover.component.html",
-  styleUrls: ["./filter-popover.component.scss"],
+  selector: 'app-filter-popover',
+  templateUrl: './filter-popover.component.html',
+  styleUrls: ['./filter-popover.component.scss'],
 })
 export class FilterPopoverComponent implements OnInit {
   @Input() dismiss: (val: boolean) => {};

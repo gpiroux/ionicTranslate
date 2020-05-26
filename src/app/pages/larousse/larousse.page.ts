@@ -1,30 +1,23 @@
-import { Component, OnInit } from "@angular/core";
-import { PopoverController } from "@ionic/angular";
+import { Component, OnInit } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
 
-import { OtherTraductionPopoverComponent } from "./other-traduction-popover/other-traduction-popover.component";
+import { OtherTraductionPopoverComponent } from './other-traduction-popover/other-traduction-popover.component';
 
-import { WordService } from "src/app/services/word.service";
-import { AudioService } from "src/app/services/audio.service";
-import { LarousseService } from "src/app/services/larousse.service";
-import { NotificationsService } from "src/app/services/notifications.service";
+import { WordService } from 'src/app/services/word.service';
+import { AudioService } from 'src/app/services/audio.service';
+import { LarousseService } from 'src/app/services/larousse.service';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
-import {
-  Word,
-  CategoryMapType as WordTypeMapType,
-} from "src/app/models/word.model";
-import {
-  DicoWord,
-  OtherTraduction,
-  Traduction,
-} from "src/app/models/dicoResult.model";
+import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.model';
+import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
 
-import * as _ from "lodash";
-import { Router } from "@angular/router";
+import * as _ from 'lodash';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-larousse",
-  templateUrl: "./larousse.page.html",
-  styleUrls: ["./larousse.page.scss"],
+  selector: 'app-larousse',
+  templateUrl: './larousse.page.html',
+  styleUrls: ['./larousse.page.scss'],
 })
 export class LaroussePage implements OnInit {
   selectedWord: Word;
@@ -45,17 +38,17 @@ export class LaroussePage implements OnInit {
 
   async ngOnInit() {
     this.selectedWord = this.wordService.selectedWord;
-    const selectedWordEn = _.get(this.selectedWord, "en");
-    const selectedWordHref = _.get(this.selectedWord, "href");
+    const selectedWordEn = _.get(this.selectedWord, 'en');
+    const selectedWordHref = _.get(this.selectedWord, 'href');
 
     if (selectedWordHref) {
       this.load(selectedWordHref);
     } else if (selectedWordEn) {
-      let strippedWord = selectedWordEn.trim().split(" ")[0].split("[")[0];
+      let strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
       this.load(`dictionnaires/anglais-francais/${strippedWord}`);
     } else {
-      this.router.navigateByUrl("");
-      this.notification.error("Pas de mot sélectionné !");
+      this.router.navigateByUrl('');
+      this.notification.error('Pas de mot sélectionné !');
     }
   }
 
@@ -97,13 +90,13 @@ export class LaroussePage implements OnInit {
       return;
     }
 
-    const frSplit = _.map(this.selectedWord.fr.split(","), (s) => s.trim());
-    const tradSplit = _.map(traduction.traduction.split(","), (s) => s.trim());
+    const frSplit = _.map(this.selectedWord.fr.split(','), (s) => s.trim());
+    const tradSplit = _.map(traduction.traduction.split(','), (s) => s.trim());
     _.forEach(tradSplit, (t) => {
       if (frSplit.includes(t)) return;
       frSplit.push(t);
     });
-    this.selectedWord.fr = _.compact(frSplit).join(", ");
+    this.selectedWord.fr = _.compact(frSplit).join(', ');
   }
 
   async onOtherTraductionPopoverClick(ev: any) {

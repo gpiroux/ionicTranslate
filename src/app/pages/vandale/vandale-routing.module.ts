@@ -1,12 +1,12 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { HttpClientModule } from "@angular/common/http";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
-import { VandalePage } from "./vandale.page";
+import { VandalePage } from './vandale.page';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: VandalePage,
   },
 ];

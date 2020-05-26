@@ -1,22 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { IonTextarea } from "@ionic/angular";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { IonTextarea } from '@ionic/angular';
 
-import { AudioService } from "src/app/services/audio.service";
-import { Word, wordTypes } from "src/app/models/word.model";
-import {
-  WordService,
-  dicoList,
-  DicoWebsite,
-} from "src/app/services/word.service";
-import { DicoWord } from "src/app/models/dicoResult.model";
+import { AudioService } from 'src/app/services/audio.service';
+import { Word, wordTypes } from 'src/app/models/word.model';
+import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
+import { DicoWord } from 'src/app/models/dicoResult.model';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
-  selector: "app-detail",
-  templateUrl: "./detail.page.html",
-  styleUrls: ["./detail.page.scss"],
+  selector: 'app-detail',
+  templateUrl: './detail.page.html',
+  styleUrls: ['./detail.page.scss'],
 })
 export class DetailPage implements OnInit {
   traductions: DicoWord[];
@@ -29,18 +25,7 @@ export class DetailPage implements OnInit {
   isVandaleDico: boolean;
 
   typeOptions: string[] = wordTypes;
-  categoryOptions = [
-    "other",
-    "novel",
-    "conv",
-    "net",
-    "lyrics",
-    "check",
-    "Caving",
-    "Collins",
-    "XP",
-    "ESL",
-  ];
+  categoryOptions = ['other', 'novel', 'conv', 'net', 'lyrics', 'check', 'Caving', 'Collins', 'XP', 'ESL'];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -52,29 +37,27 @@ export class DetailPage implements OnInit {
   }
 
   ngOnInit() {
-    const dicoName = this.activatedRoute.snapshot.paramMap.get("dicoName");
+    const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
     this.isLarousseDico = dicoList[dicoName].dico === DicoWebsite.Larousse;
     this.isVandaleDico = dicoList[dicoName].dico === DicoWebsite.Vandale;
 
     const displayedWords = this.wordService.displayedWords;
 
-    const wordId = this.activatedRoute.snapshot.paramMap.get("wordId");
-    const searchString = this.activatedRoute.snapshot.paramMap.get(
-      "searchString"
-    );
+    const wordId = this.activatedRoute.snapshot.paramMap.get('wordId');
+    const searchString = this.activatedRoute.snapshot.paramMap.get('searchString');
     if (wordId) {
       let word = displayedWords.find((w) => w.id === wordId);
       this.newWord = _.cloneDeep(word);
     } else {
       this.newWord = new Word();
-      this.newWord.en = (searchString || "")
+      this.newWord.en = (searchString || '')
         .trim()
-        .replace(/^\^|\$$/g, "")
+        .replace(/^\^|\$$/g, '')
         .toLowerCase();
-      this.newWord.fr = "";
+      this.newWord.fr = '';
     }
     this.wordService.selectedWord = this.newWord;
-    console.log("Detail world", this.newWord);
+    console.log('Detail world', this.newWord);
   }
 
   async onSave(): Promise<void> {
@@ -108,11 +91,11 @@ export class DetailPage implements OnInit {
 
   async checkTextArea(textAreaView: IonTextarea) {
     const textArea = await textAreaView.getInputElement();
-    if (textArea.parentElement.style.height === "0px") {
+    if (textArea.parentElement.style.height === '0px') {
       setTimeout(() => {
         const height = Math.max(52, textArea.scrollHeight);
-        textArea.parentElement.style.height = height + "px";
-        textArea.style.height = height + "px";
+        textArea.parentElement.style.height = height + 'px';
+        textArea.style.height = height + 'px';
       }, 50);
     }
   }
