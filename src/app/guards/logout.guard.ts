@@ -19,7 +19,7 @@ export class LogoutGuard implements CanActivate {
         this.router.navigateByUrl('/login');
         return false;
       })
-      .catch((err) => {
+      .catch(err => {
         this.notifications.error(err.message || err);
         return false;
       });

@@ -10,11 +10,11 @@ const routes: Routes = [
   },
   {
     path: 'new/:searchString',
-    loadChildren: () => import('../detail/detail.module').then((m) => m.DetailPageModule),
+    loadChildren: () => import('../detail/detail.module').then(m => m.DetailPageModule),
   },
   {
     path: 'detail/:wordId',
-    loadChildren: () => import('../detail/detail.module').then((m) => m.DetailPageModule),
+    loadChildren: () => import('../detail/detail.module').then(m => m.DetailPageModule),
   },
 ];
 

@@ -107,8 +107,8 @@ export class VanDaleService extends genericDico {
     _.forEach(elements, parseElement.bind(this));
 
     // Clean dicoWord
-    _.forEach(result, (r) => {
-      _.forEach(r.traductions, (tr) => {
+    _.forEach(result, r => {
+      _.forEach(r.traductions, tr => {
         tr.traduction = this.globalTrim(tr.traduction);
       });
     });

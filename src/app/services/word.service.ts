@@ -80,10 +80,10 @@ export class WordService implements OnDestroy {
     }
 
     this._words$ = this.userDoc
-      .collection<Word>(this.dicoCollection, (ref) => ref.orderBy('date', 'desc').limit(this.wordsCount))
+      .collection<Word>(this.dicoCollection, ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
       .snapshotChanges()
       .pipe(
-        map((actions) => {
+        map(actions => {
           console.log('_words$', actions.length);
           return this.mapToWords(actions);
         })
@@ -91,12 +91,12 @@ export class WordService implements OnDestroy {
 
     this._randomWords$ = this._random$.pipe(
       switchMap(() => this.getLastKey()),
-      switchMap((lastKey) => {
+      switchMap(lastKey => {
         return this.userDoc
           .collection<Word>(this.dicoCollection, this.filterEnRandom(lastKey, this))
           .snapshotChanges()
           .pipe(
-            map((actions) => {
+            map(actions => {
               console.log('_randomWords$', actions.length);
               return this.mapToWords(actions);
             })
@@ -105,7 +105,7 @@ export class WordService implements OnDestroy {
     );
 
     this._searchedWords$ = this._search$.pipe(
-      switchMap((_search) => {
+      switchMap(_search => {
         const search = (_search || '').trim();
         const len = search.length;
         let querySearch = search;
@@ -128,13 +128,13 @@ export class WordService implements OnDestroy {
           .collection<Word>(this.dicoCollection, this.filterEnSearch(querySearch, this))
           .snapshotChanges()
           .pipe(
-            map((actions) => {
+            map(actions => {
               console.log('_searchedWords$', actions.length);
               const words = this.mapToWords(actions);
               return _(words)
-                .filter((w) => w.en.includes(nakedSearch))
-                .orderBy((w) => w.en.split(' ')[0])
-                .orderBy((w) => _.find(w.en.split(' '), (sw) => sw === nakedSearch))
+                .filter(w => w.en.includes(nakedSearch))
+                .orderBy(w => w.en.split(' ')[0])
+                .orderBy(w => _.find(w.en.split(' '), sw => sw === nakedSearch))
                 .value();
             })
           );
@@ -145,7 +145,7 @@ export class WordService implements OnDestroy {
   ngOnDestroy() {}
 
   private mapToWords(actions: DocumentChangeAction<Word>[]) {
-    return _.map(actions, (a) => {
+    return _.map(actions, a => {
       const data = a.payload.doc.data();
       const id = a.payload.doc.id;
       return new Word({ id, ...data });
@@ -156,7 +156,7 @@ export class WordService implements OnDestroy {
     search: string,
     self: WordService
   ): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
-    return (ref) =>
+    return ref =>
       ref.where('en', '>=', search).where('en', '<', `${search}\uf8ff`).orderBy('en').limit(self.searchCount);
   }
 
@@ -164,7 +164,7 @@ export class WordService implements OnDestroy {
     search: string,
     self: WordService
   ): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
-    return (ref) => ref.where('search', 'array-contains', search).limit(self.searchCount); // Index issue =>  .orderBy('en')
+    return ref => ref.where('search', 'array-contains', search).limit(self.searchCount); // Index issue =>  .orderBy('en')
   }
 
   private filterEnRandom(
@@ -173,15 +173,15 @@ export class WordService implements OnDestroy {
   ): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
     let randomArray = _.range(10).map(() => Math.ceil(Math.random() * (lastKey || 0)));
     console.log(randomArray);
-    return (ref) => ref.where('key', 'in', randomArray).limit(self.randomCount);
+    return ref => ref.where('key', 'in', randomArray).limit(self.randomCount);
   }
 
   getLastKey() {
     return this.userDoc
-      .collection<Word>(this.dicoCollection, (ref) => ref.orderBy('key', 'desc').limit(1))
+      .collection<Word>(this.dicoCollection, ref => ref.orderBy('key', 'desc').limit(1))
       .get()
       .pipe(
-        map((res) => {
+        map(res => {
           const doc = res.docs[0];
           return doc ? doc.data().key : 0;
         })

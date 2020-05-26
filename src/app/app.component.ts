@@ -66,18 +66,18 @@ export class AppComponent implements OnInit {
   ) {
     this.initializeApp();
 
-    this.auth.user$.subscribe((user) => {
-      const loginPage = _.find(this.appPages, (p) => p.title === 'Login');
-      const logoutPage = _.find(this.appPages, (p) => p.title === 'Logout');
+    this.auth.user$.subscribe(user => {
+      const loginPage = _.find(this.appPages, p => p.title === 'Login');
+      const logoutPage = _.find(this.appPages, p => p.title === 'Logout');
       loginPage.hidden = !!user;
       logoutPage.hidden = !user;
       this.user = user;
     });
 
-    this.router.events.subscribe((val) => {
+    this.router.events.subscribe(val => {
       if (this.location.path()) {
         const path = this.location.path();
-        this.selectedIndex = _.findIndex(this.appPages, (p) => path.toLowerCase().includes(p.url.toLowerCase()));
+        this.selectedIndex = _.findIndex(this.appPages, p => path.toLowerCase().includes(p.url.toLowerCase()));
       }
     });
 
@@ -100,7 +100,7 @@ export class AppComponent implements OnInit {
   checkForUpdate(silentMode: boolean = false) {
     this.deploy
       .checkForUpdate()
-      .then((response) => {
+      .then(response => {
         if (response.available) {
           return this.openUpdateAppAlert();
         }
@@ -109,7 +109,7 @@ export class AppComponent implements OnInit {
         const header = 'Check for update';
         return this.notificationService.message(message, header);
       })
-      .catch((err) => {
+      .catch(err => {
         this.notificationService.error(err.message || err);
       });
   }
@@ -134,10 +134,10 @@ export class AppComponent implements OnInit {
 
   async updateApp() {
     this.progress = 0;
-    await this.deploy.downloadUpdate((progress) => {
+    await this.deploy.downloadUpdate(progress => {
       this.progress = progress / 100;
     });
-    await this.deploy.extractUpdate((progress) => {
+    await this.deploy.extractUpdate(progress => {
       this.progress = progress / 100;
     });
     await this.deploy.reloadApp();

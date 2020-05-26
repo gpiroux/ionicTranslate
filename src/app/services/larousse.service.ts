@@ -95,7 +95,7 @@ export class LarousseService extends genericDico {
 
       // Plurial form : "FormeFlechie2"
       if (e.nodeName == 'SPAN' && this.getClassValue(e).includes('FormeFlechie2')) {
-        _.forEach(e.childNodes, (ee) => {
+        _.forEach(e.childNodes, ee => {
           if (ee.nodeName == 'SPAN' && ['Phonetique'].includes(this.getClassValue(ee))) {
             word.formeFlechie += ee.textContent;
           } else if (ee.nodeType === 3) {
@@ -110,7 +110,7 @@ export class LarousseService extends genericDico {
 
       // Categorie grammaticale principale (avant traduction)
       if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'CategorieGrammaticale' && !word.currentTraduction) {
-        _.forEach(e.childNodes, (ee) => {
+        _.forEach(e.childNodes, ee => {
           if (ee.nodeType === 3) word.categorie += ee.textContent.trim();
         });
       }
@@ -179,7 +179,7 @@ export class LarousseService extends genericDico {
       if (e.nodeName == 'SPAN' && traductions.includes(this.getClassValue(e))) {
         word.initTraduction();
 
-        _.forEach(e.childNodes, (ee) => {
+        _.forEach(e.childNodes, ee => {
           if (ee.nodeName == 'A' && ['lienarticle2'].includes(this.getClassValue(ee))) {
             word.currentTraduction.traduction += `${this.extraTrim(ee.textContent)}`.trim();
           } else if (ee.nodeName == 'SPAN' && ['Genre'].includes(this.getClassValue(ee))) {
@@ -205,7 +205,7 @@ export class LarousseService extends genericDico {
       if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'Renvois') {
         word.initTraduction();
 
-        _.forEach(e.children, (ee) => {
+        _.forEach(e.children, ee => {
           if (ee.nodeName == 'A' && this.getClassValue(ee) == 'lienarticle') {
             word.currentTraduction.lien = this.getHrefValue(ee);
             word.currentTraduction.traduction = ee.textContent;
@@ -252,7 +252,7 @@ export class LarousseService extends genericDico {
         let tradustion2 = new Traduction();
         word.currentTraduction.traductionSubList.push(tradustion2);
 
-        _.forEach(e.children, (ee) => {
+        _.forEach(e.children, ee => {
           if (ee.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(ee))) {
             tradustion2.indicateur = ee.textContent;
           }
@@ -301,8 +301,8 @@ export class LarousseService extends genericDico {
     _.forEach(elements, parseElement.bind(this));
 
     // Clean dicoWord
-    _.forEach(result, (r) => {
-      _.forEach(r.traductions, (tr) => {
+    _.forEach(result, r => {
+      _.forEach(r.traductions, tr => {
         tr.traduction = this.globalTrim(tr.traduction);
       });
     });
@@ -372,11 +372,11 @@ export class LarousseService extends genericDico {
 
     // <article role="article">
     const articles = htmlDoc.getElementsByTagName('article');
-    const article = _.find(articles, (a) => this.getRoleValue(a) === 'article');
+    const article = _.find(articles, a => this.getRoleValue(a) === 'article');
 
     if (article) {
       // <div class="article_bilingue">
-      const article_bilingue = _.find(article.children, (a) => this.getClassValue(a) === 'article_bilingue');
+      const article_bilingue = _.find(article.children, a => this.getClassValue(a) === 'article_bilingue');
 
       const domElements = article_bilingue.children;
       result.dicoWords = this.parseElements(domElements);
@@ -384,7 +384,7 @@ export class LarousseService extends genericDico {
 
     // <div class="wrapper-search">
     const navs = htmlDoc.getElementsByTagName('div');
-    const wrapperSearch = _.find(navs, (a) => this.getClassValue(a) === 'wrapper-search');
+    const wrapperSearch = _.find(navs, a => this.getClassValue(a) === 'wrapper-search');
 
     if (wrapperSearch) {
       const domElements = wrapperSearch.children;

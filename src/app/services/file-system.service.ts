@@ -17,7 +17,7 @@ export class FileSystemService {
     try {
       const directoryEntry = await this.file.resolveDirectoryUrl(this.file.documentsDirectory);
       const fileEntry = await this.file.getFile(directoryEntry, `${fileName}.mp3`, {});
-      fileEntry.file((file) => {
+      fileEntry.file(file => {
         const reader = new FileReader();
         reader.onloadend = () => deferred.resolve(reader.result as string);
         reader.readAsDataURL(file);
@@ -37,7 +37,7 @@ export class FileSystemService {
     try {
       const directoryEntry = await this.file.resolveDirectoryUrl(this.file.documentsDirectory);
       const fileEntry = await this.file.getFile(directoryEntry, `${fileName}.mp3`, { create: true });
-      fileEntry.createWriter((fileWriter) => {
+      fileEntry.createWriter(fileWriter => {
         fileWriter.onwriteend = () => deferred.resolve();
         fileWriter.write(blob);
       });

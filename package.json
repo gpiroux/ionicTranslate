@@ -11,7 +11,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build-ios": "ionic cordova build ios --prod",
-    "prettier": "prettier --write \"./src/{app,environments,assets}/**/*.{ts,js,css,scss}\"",
+    "prettier": "prettier --write \"./src/{app,environments,assets}/**/*.{ts,js,css,scss,html}\"",
     "pretty-quick": "pretty-quick --staged"
   },
   "husky": {

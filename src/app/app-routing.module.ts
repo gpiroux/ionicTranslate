@@ -13,7 +13,7 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then((m) => m.LoginPageModule),
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule),
   },
   {
     path: 'logout',
@@ -28,11 +28,11 @@ const routes: Routes = [
   {
     path: 'folder/:dicoName',
     canActivate: [AuthGuard],
-    loadChildren: () => import('./pages/folder/folder.module').then((m) => m.FolderPageModule),
+    loadChildren: () => import('./pages/folder/folder.module').then(m => m.FolderPageModule),
   },
   {
     path: 'revesro',
-    loadChildren: () => import('./pages/revesro/revesro.module').then((m) => m.RevesroPageModule),
+    loadChildren: () => import('./pages/revesro/revesro.module').then(m => m.RevesroPageModule),
   },
 ];
 

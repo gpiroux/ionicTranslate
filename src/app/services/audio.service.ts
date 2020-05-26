@@ -23,7 +23,7 @@ export class AudioService {
     const url = `https://voix.larousse.fr/anglais/${audio}.mp3`;
     try {
       return this.platform.is('cordova')
-        ? await this.httpNative.sendRequest(url, { method: 'get', responseType: 'blob' }).then((res) => res.data)
+        ? await this.httpNative.sendRequest(url, { method: 'get', responseType: 'blob' }).then(res => res.data)
         : await this.httpClient.get(url, { responseType: 'blob' }).toPromise();
     } catch (err) {
       console.error('HTTP - ', err.message || err);

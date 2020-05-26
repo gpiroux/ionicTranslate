@@ -28,7 +28,7 @@ export class LoginPage implements OnInit {
       .then(() => {
         this.router.navigateByUrl('');
       })
-      .catch((err) => this.notification.error(err.message));
+      .catch(err => this.notification.error(err.message));
   }
 
   sendResetPawword(email: string) {
@@ -44,6 +44,6 @@ export class LoginPage implements OnInit {
       .then(() => {
         this.ngZone.run(() => this.router.navigateByUrl(''));
       })
-      .catch((err) => this.notification.error(err.message));
+      .catch(err => this.notification.error(err.message));
   }
 }

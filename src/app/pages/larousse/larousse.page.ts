@@ -55,11 +55,11 @@ export class LaroussePage implements OnInit {
   async load(href: string) {
     this.larousseService
       .load(href)
-      .then((result) => {
+      .then(result => {
         this.wordTraductions = result.dicoWords;
         this.otherTraductions = result.otherTradutions;
       })
-      .catch((err) => {
+      .catch(err => {
         this.notification.error(err.message || err);
       });
   }
@@ -90,9 +90,9 @@ export class LaroussePage implements OnInit {
       return;
     }
 
-    const frSplit = _.map(this.selectedWord.fr.split(','), (s) => s.trim());
-    const tradSplit = _.map(traduction.traduction.split(','), (s) => s.trim());
-    _.forEach(tradSplit, (t) => {
+    const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
+    const tradSplit = _.map(traduction.traduction.split(','), s => s.trim());
+    _.forEach(tradSplit, t => {
       if (frSplit.includes(t)) return;
       frSplit.push(t);
     });

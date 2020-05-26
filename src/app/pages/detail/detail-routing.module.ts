@@ -10,15 +10,15 @@ const routes: Routes = [
   },
   {
     path: 'larousse',
-    loadChildren: () => import('../larousse/larousse.module').then((m) => m.LaroussePageModule),
+    loadChildren: () => import('../larousse/larousse.module').then(m => m.LaroussePageModule),
   },
   {
     path: 'vandale',
-    loadChildren: () => import('../vandale/vandale.module').then((m) => m.VandalePageModule),
+    loadChildren: () => import('../vandale/vandale.module').then(m => m.VandalePageModule),
   },
   {
     path: 'reverso',
-    loadChildren: () => import('../revesro/revesro.module').then((m) => m.RevesroPageModule),
+    loadChildren: () => import('../revesro/revesro.module').then(m => m.RevesroPageModule),
   },
 ];
 

@@ -20,7 +20,7 @@ export class AuthService {
     private firestore: AngularFirestore,
     private notifications: NotificationsService
   ) {
-    this.fireauth.user.subscribe((user) => {
+    this.fireauth.user.subscribe(user => {
       console.log('fireauth.user.subscribe', user);
       this._user = user;
 
@@ -36,7 +36,7 @@ export class AuthService {
     this.firestore.firestore
       .enablePersistence({ synchronizeTabs: true })
       .then(() => console.log('Enable persistence OK'))
-      .catch((err) => {
+      .catch(err => {
         this.notifications.error('Enable persistence KO: ' + err.message || err);
         console.error('enablePersistence KO', err);
       });

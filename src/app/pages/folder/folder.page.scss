@@ -1,61 +1,61 @@
 ion-menu-button {
-  color: var(--ion-color-primary);
+    color: var(--ion-color-primary);
 }
 
 mark {
-  background-color: inherit;
-  font-style: normal;
-  //color: #666;
-  color: green;
+    background-color: inherit;
+    font-style: normal;
+    //color: #666;
+    color: green;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --ion-color-primary: #428cff;
-  }
+    :root {
+        --ion-color-primary: #428cff;
+    }
 }
 
 .no-click:active {
-  --ripple-color: transparent;
+    --ripple-color: transparent;
 }
 
 .word-content {
-  width: 100%;
-  padding: 4px 0px;
-  .flex-row {
-    padding: 2px 0px;
-    display: flex;
-    //flex-wrap: nowrap;
-    justify-content: space-between;
     width: 100%;
+    padding: 4px 0px;
+    .flex-row {
+        padding: 2px 0px;
+        display: flex;
+        //flex-wrap: nowrap;
+        justify-content: space-between;
+        width: 100%;
 
-    .en {
-      flex-grow: 1;
-      font-weight: bold;
-    }
+        .en {
+            flex-grow: 1;
+            font-weight: bold;
+        }
 
-    .fr {
-      flex-grow: 1;
-      font-style: italic;
-    }
+        .fr {
+            flex-grow: 1;
+            font-style: italic;
+        }
 
-    .type {
-      color: darkblue;
-    }
+        .type {
+            color: darkblue;
+        }
 
-    .cat {
-      text-align: right;
-      padding-left: 4px;
-      color: darkred;
-    }
+        .cat {
+            text-align: right;
+            padding-left: 4px;
+            color: darkred;
+        }
 
-    @media (prefers-color-scheme: dark) {
-      .type {
-        color: #4cabfa;
-      }
-      .cat {
-        color: rgb(185, 0, 71);
-      }
+        @media (prefers-color-scheme: dark) {
+            .type {
+                color: #4cabfa;
+            }
+            .cat {
+                color: rgb(185, 0, 71);
+            }
+        }
     }
-  }
 }

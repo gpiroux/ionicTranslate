@@ -1,55 +1,48 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>{{dico.title}}</ion-title>
-    <ion-buttons slot="primary">
-      <ion-button (click)="onReloadClick()" *ngIf="isFilterRandom">
-        <ion-icon slot="icon-only" ios="reload-outline" md="reload-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="onFilterPopoverClick($event)">
-        <ion-icon slot="icon-only" ios="list-outline" md="list-outline"></ion-icon>
-      </ion-button>
-      <ion-button [routerLink]="['new', searchString]">
-        <ion-icon slot="icon-only" ios="add-outline" md="add-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>{{dico.title}}</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button (click)="onReloadClick()" *ngIf="isFilterRandom">
+                <ion-icon slot="icon-only" ios="reload-outline" md="reload-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="onFilterPopoverClick($event)">
+                <ion-icon slot="icon-only" ios="list-outline" md="list-outline"></ion-icon>
+            </ion-button>
+            <ion-button [routerLink]="['new', searchString]">
+                <ion-icon slot="icon-only" ios="add-outline" md="add-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-searchbar 
-    animated 
-    debounce="250"
-    mode="ios" 
-    spellcheck="true" 
-    (ionChange)="onSearchChange($event)"
-  ></ion-searchbar>
-  <ion-list>
-    <ion-item-sliding mode="md" *ngFor="let item of displayedWords; trackBy:trackByFn " #slidingItem>
-      <ion-item [routerLink]="['detail', item.id]">
-        <div class="word-content">
-          <div class="flex-row">
-            <div class="en">{{item.en}}</div> 
-            <div class="type">{{item.type}}</div>
-          </div>
-          <div class="flex-row">
-            <div class="fr" innerHTML="{{item.fr | highlight}}"></div>
-            <div class="cat">{{item.category | join:' '}}</div>
-          </div>
-        </div>
-      </ion-item>
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="onDelete(item)">
-          Delete
-        </ion-item-option>
-      </ion-item-options>
-      <ion-item-options side="start" (ionSwipe)="onUpdateTime(item, slidingItem)">
-        <ion-item-option color="primary" expandable="true" (click)="onUpdateTime(item, slidingItem)">
-          Update
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-
-  </ion-list>
+    <ion-searchbar animated debounce="250" mode="ios" spellcheck="true" (ionChange)="onSearchChange($event)"></ion-searchbar>
+    <ion-list>
+        <ion-item-sliding mode="md" *ngFor="let item of displayedWords; trackBy:trackByFn " #slidingItem>
+            <ion-item [routerLink]="['detail', item.id]">
+                <div class="word-content">
+                    <div class="flex-row">
+                        <div class="en">{{item.en}}</div>
+                        <div class="type">{{item.type}}</div>
+                    </div>
+                    <div class="flex-row">
+                        <div class="fr" innerHTML="{{item.fr | highlight}}"></div>
+                        <div class="cat">{{item.category | join:' '}}</div>
+                    </div>
+                </div>
+            </ion-item>
+            <ion-item-options side="end">
+                <ion-item-option color="danger" (click)="onDelete(item)">
+                    Delete
+                </ion-item-option>
+            </ion-item-options>
+            <ion-item-options side="start" (ionSwipe)="onUpdateTime(item, slidingItem)">
+                <ion-item-option color="primary" expandable="true" (click)="onUpdateTime(item, slidingItem)">
+                    Update
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
 </ion-content>

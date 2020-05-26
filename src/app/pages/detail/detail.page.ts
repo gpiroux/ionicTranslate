@@ -46,7 +46,7 @@ export class DetailPage implements OnInit {
     const wordId = this.activatedRoute.snapshot.paramMap.get('wordId');
     const searchString = this.activatedRoute.snapshot.paramMap.get('searchString');
     if (wordId) {
-      let word = displayedWords.find((w) => w.id === wordId);
+      let word = displayedWords.find(w => w.id === wordId);
       this.newWord = _.cloneDeep(word);
     } else {
       this.newWord = new Word();

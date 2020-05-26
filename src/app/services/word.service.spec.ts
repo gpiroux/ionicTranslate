@@ -6,7 +6,7 @@ import { Word } from '../models/word.model';
 import * as fs from 'fs';
 
 describe('WordService', () => {
-  it('should be created', (done) => {
+  it('should be created', done => {
     let AngularFirestoreSpy: AngularFirestore = jasmine.createSpyObj('AngularFirestore', ['collection']);
     const service: WordService = new WordService(AngularFirestoreSpy);
 
@@ -15,7 +15,7 @@ describe('WordService', () => {
     done();
   });
 
-  it('should generateSearchString', (done) => {
+  it('should generateSearchString', done => {
     let AngularFirestoreSpy: AngularFirestore = jasmine.createSpyObj('AngularFirestore', ['collection']);
     const service: WordService = new WordService(AngularFirestoreSpy);
 

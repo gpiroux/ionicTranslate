@@ -78,16 +78,16 @@ export class Word {
     let search = [];
     let split = _(this.en.split(' '))
       .compact() // remove empty string
-      .filter((s) => !s.includes('[') && !s.includes(']'))
-      .map((s) => s.replace(/[,\-\(\)\:]/g, '')) // remove , - ( ) :
-      .map((s) => s.toLowerCase())
-      .filter((s) => s.length >= 3)
+      .filter(s => !s.includes('[') && !s.includes(']'))
+      .map(s => s.replace(/[,\-\(\)\:]/g, '')) // remove , - ( ) :
+      .map(s => s.toLowerCase())
+      .filter(s => s.length >= 3)
       .uniq()
       .value();
 
-    _.forEach(split, (s) => {
+    _.forEach(split, s => {
       search.push('^' + s + '$');
-      _.forEach([3, 4], (len) => {
+      _.forEach([3, 4], len => {
         if (s.length >= len)
           for (let i = 0; i < s.length - len + 1; i++) {
             if (i === 0) search.push('^' + s.substr(i, len));
@@ -101,7 +101,7 @@ export class Word {
 
   clean(): Object {
     const result = {};
-    Object.keys(this).forEach((key) => {
+    Object.keys(this).forEach(key => {
       if (key !== 'id' && this[key] !== undefined) {
         result[key] = this[key];
       }

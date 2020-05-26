@@ -6,7 +6,7 @@ import { LarousseService } from './larousse.service';
 import * as fs from 'fs';
 
 describe('LarousseService', () => {
-  it('should be created', (done) => {
+  it('should be created', done => {
     let HttpNativeSpy: HTTP = jasmine.createSpyObj('HTTP', ['get']);
     let HttpClientSpy: HttpClient = jasmine.createSpyObj('HttpClient', ['get']);
     const service: LarousseService = new LarousseService(HttpNativeSpy, HttpClientSpy);
@@ -15,7 +15,7 @@ describe('LarousseService', () => {
     done();
   });
 
-  it('should parse data', (done) => {
+  it('should parse data', done => {
     let HttpNativeSpy: HTTP = jasmine.createSpyObj('HTTP', ['get']);
     let HttpClientSpy: HttpClient = jasmine.createSpyObj('HttpClient', ['get']);
     const service: LarousseService = new LarousseService(HttpNativeSpy, HttpClientSpy);
