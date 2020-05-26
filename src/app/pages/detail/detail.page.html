@@ -16,13 +16,11 @@
             <ion-label><b>Dictionary</b></ion-label>
             <ion-button>Larousse</ion-button>
         </ion-item>
-        <ion-item *ngIf="isVandaleDico" [routerLink]="['vandale']" detail>
+        <ion-item *ngIf="isVandaleDico" detail>
             <ion-label><b>Dictionary</b></ion-label>
-            <ion-button>Vandale</ion-button>
-        </ion-item>
-        <ion-item *ngIf="isVandaleDico" [routerLink]="['reverso']" detail>
-            <ion-label><b>Dictionary</b></ion-label>
-            <ion-button>Reverso</ion-button>
+            <ion-button [routerLink]="['vandale']">&nbsp;&nbsp;Vandale&nbsp;&nbsp;</ion-button>
+            <span>&nbsp;&nbsp;</span>
+            <ion-button [routerLink]="['reverso']">&nbsp;&nbsp;Reverso&nbsp;&nbsp;</ion-button>
         </ion-item>
         <ion-item>
             <ion-label *ngIf="isLarousseDico" position="floating"><b>English</b></ion-label>
