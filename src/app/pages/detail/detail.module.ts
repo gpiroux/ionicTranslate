@@ -1,13 +1,13 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 
-import { IonicModule } from '@ionic/angular';
+import { IonicModule } from "@ionic/angular";
 
-import { DetailPageRoutingModule } from './detail-routing.module';
+import { DetailPageRoutingModule } from "./detail-routing.module";
 
-import { DetailPage } from './detail.page';
-import { PipesModule } from 'src/app/pipes/pipe.module';
+import { DetailPage } from "./detail.page";
+import { PipesModule } from "src/app/pipes/pipe.module";
 
 @NgModule({
   imports: [
@@ -15,8 +15,8 @@ import { PipesModule } from 'src/app/pipes/pipe.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    DetailPageRoutingModule
+    DetailPageRoutingModule,
   ],
-  declarations: [DetailPage]
+  declarations: [DetailPage],
 })
 export class DetailPageModule {}

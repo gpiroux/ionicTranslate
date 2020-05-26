@@ -1,53 +1,53 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { Location } from "@angular/common";
 
-import { Platform, AlertController } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
+import { Platform, AlertController } from "@ionic/angular";
+import { SplashScreen } from "@ionic-native/splash-screen/ngx";
+import { StatusBar } from "@ionic-native/status-bar/ngx";
+import { Deploy } from "cordova-plugin-ionic/dist/ngx";
 
-import { AuthService } from './services/auth.service';
-import { NotificationsService } from './services/notifications.service';
+import { AuthService } from "./services/auth.service";
+import { NotificationsService } from "./services/notifications.service";
 
-import * as _ from 'lodash';
-import * as packageJson from '../../package.json'
+import * as _ from "lodash";
+import * as packageJson from "../../package.json";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss']
+  selector: "app-root",
+  templateUrl: "app.component.html",
+  styleUrls: ["app.component.scss"],
 })
 export class AppComponent implements OnInit {
   public selectedIndex = 0;
   public appPages = [
     {
       hidden: false,
-      title: 'Login',
-      url: '/login',
-      icon: 'log-in'
+      title: "Login",
+      url: "/login",
+      icon: "log-in",
     },
     {
       hidden: false,
-      title: 'Dico En',
-      url: '/folder/dicoEn',
-      icon: 'documents'
+      title: "Dico En",
+      url: "/folder/dicoEn",
+      icon: "documents",
     },
     {
       hidden: false,
-      title: 'Dico NL',
-      url: '/folder/dicoNL',
-      icon: 'document-text'
+      title: "Dico NL",
+      url: "/folder/dicoNL",
+      icon: "document-text",
     },
     {
       hidden: false,
-      title: 'Logout',
-      url: '/logout',
-      icon: 'log-out'
-    }
+      title: "Logout",
+      url: "/logout",
+      icon: "log-out",
+    },
   ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-  
+  public labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];
+
   public user: firebase.User;
   public progress: number = null;
   public version: string;
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private location: Location, 
+    private location: Location,
     private router: Router,
     private deploy: Deploy,
     private auth: AuthService,
@@ -66,19 +66,20 @@ export class AppComponent implements OnInit {
   ) {
     this.initializeApp();
 
-    this.auth.user$.subscribe(user => {
-      const loginPage = _.find(this.appPages, p => p.title === 'Login')
-      const logoutPage = _.find(this.appPages, p => p.title === 'Logout')
+    this.auth.user$.subscribe((user) => {
+      const loginPage = _.find(this.appPages, (p) => p.title === "Login");
+      const logoutPage = _.find(this.appPages, (p) => p.title === "Logout");
       loginPage.hidden = !!user;
       logoutPage.hidden = !user;
       this.user = user;
-    })
+    });
 
-    this.router.events.subscribe(val => {
+    this.router.events.subscribe((val) => {
       if (this.location.path()) {
         const path = this.location.path();
-        this.selectedIndex = 
-          _.findIndex(this.appPages, p => path.toLowerCase().includes(p.url.toLowerCase()));
+        this.selectedIndex = _.findIndex(this.appPages, (p) =>
+          path.toLowerCase().includes(p.url.toLowerCase())
+        );
       }
     });
 
@@ -88,47 +89,47 @@ export class AppComponent implements OnInit {
   ngOnInit() {}
 
   initializeApp() {
-    this.platform.ready()
-      .then(() => {
-        this.statusBar.styleDefault();
-        this.splashScreen.hide();
+    this.platform.ready().then(() => {
+      this.statusBar.styleDefault();
+      this.splashScreen.hide();
 
-        this.checkForUpdate(true);
+      this.checkForUpdate(true);
 
-        this.isCordova = this.platform.is('cordova')
-      });
+      this.isCordova = this.platform.is("cordova");
+    });
   }
 
   checkForUpdate(silentMode: boolean = false) {
-    this.deploy.checkForUpdate()
-      .then(response => {
+    this.deploy
+      .checkForUpdate()
+      .then((response) => {
         if (response.available) {
-          return this.openUpdateAppAlert()
+          return this.openUpdateAppAlert();
         }
         if (silentMode) return;
-        const message = 'No update available';
-        const header = 'Check for update';
+        const message = "No update available";
+        const header = "Check for update";
         return this.notificationService.message(message, header);
       })
-      .catch(err => {
+      .catch((err) => {
         this.notificationService.error(err.message || err);
       });
   }
 
   async openUpdateAppAlert() {
     const alert = await this.alertController.create({
-      header: 'Check for update',
-      message: 'Update available',
+      header: "Check for update",
+      message: "Update available",
       buttons: [
         {
-          text: 'Cancel',
-          cssClass: 'secondary',
-        }, 
+          text: "Cancel",
+          cssClass: "secondary",
+        },
         {
-          text: 'Install',
-          handler: () => this.updateApp()
-        }
-      ]
+          text: "Install",
+          handler: () => this.updateApp(),
+        },
+      ],
     });
     await alert.present();
   }
@@ -137,10 +138,10 @@ export class AppComponent implements OnInit {
     this.progress = 0;
     await this.deploy.downloadUpdate((progress) => {
       this.progress = progress / 100;
-    })
+    });
     await this.deploy.extractUpdate((progress) => {
       this.progress = progress / 100;
-    })
+    });
     await this.deploy.reloadApp();
   }
 }

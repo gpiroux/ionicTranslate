@@ -1,49 +1,52 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 
-import { VanDaleService } from 'src/app/services/vandale.service';
-import { WordService } from 'src/app/services/word.service';
-import { NotificationsService } from 'src/app/services/notifications.service';
+import { VanDaleService } from "src/app/services/vandale.service";
+import { WordService } from "src/app/services/word.service";
+import { NotificationsService } from "src/app/services/notifications.service";
 
-import { Word } from 'src/app/models/word.model';
-import { DicoWord, Traduction } from 'src/app/models/dicoResult.model';
+import { Word } from "src/app/models/word.model";
+import { DicoWord, Traduction } from "src/app/models/dicoResult.model";
 
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
 @Component({
-  selector: 'app-vandale',
-  templateUrl: './vandale.page.html',
-  styleUrls: ['./vandale.page.scss'],
+  selector: "app-vandale",
+  templateUrl: "./vandale.page.html",
+  styleUrls: ["./vandale.page.scss"],
   encapsulation: ViewEncapsulation.None, // For <mark></madk> style
 })
 export class VandalePage implements OnInit {
   selectedWord: Word;
   wordTraductions: DicoWord[];
 
-  constructor(    
-    private vandaleService: VanDaleService, 
+  constructor(
+    private vandaleService: VanDaleService,
     private wordService: WordService,
     private notification: NotificationsService
-  ) { }
+  ) {}
 
   async ngOnInit() {
     this.selectedWord = this.wordService.selectedWord;
-    const selectedWord = _.get(this.selectedWord, 'en');
-    
+    const selectedWord = _.get(this.selectedWord, "en");
+
     if (selectedWord) {
-      let strippedWord = selectedWord.trim().split(' ')[0].split('[')[0];
-      this.load(`gratis-woordenboek/nederlands-frans/vertaling/${strippedWord}`);
+      let strippedWord = selectedWord.trim().split(" ")[0].split("[")[0];
+      this.load(
+        `gratis-woordenboek/nederlands-frans/vertaling/${strippedWord}`
+      );
     } else {
-      this.notification.error('Pas de mot sélectionné !');
+      this.notification.error("Pas de mot sélectionné !");
     }
   }
 
   async load(href: string) {
-    this.vandaleService.load(href)
-      .then(result => {
+    this.vandaleService
+      .load(href)
+      .then((result) => {
         this.wordTraductions = result.dicoWords;
-        console.log('wordTraductions', this.wordTraductions)
+        console.log("wordTraductions", this.wordTraductions);
       })
-      .catch(err => {
+      .catch((err) => {
         this.notification.error(err.message || err);
       });
   }
@@ -55,13 +58,12 @@ export class VandalePage implements OnInit {
 
   onTraductionClick(traduction: Traduction) {
     if (traduction.traductionSubList.length || traduction.locution) return;
-    const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
-    const tradSplit = _.map(traduction.traduction.split(','), s => s.trim());
-    _.forEach(tradSplit, t => {
+    const frSplit = _.map(this.selectedWord.fr.split(","), (s) => s.trim());
+    const tradSplit = _.map(traduction.traduction.split(","), (s) => s.trim());
+    _.forEach(tradSplit, (t) => {
       if (frSplit.includes(t)) return;
-      frSplit.push(t)
+      frSplit.push(t);
     });
-    this.selectedWord.fr = _.compact(frSplit).join(', ');
+    this.selectedWord.fr = _.compact(frSplit).join(", ");
   }
-
 }

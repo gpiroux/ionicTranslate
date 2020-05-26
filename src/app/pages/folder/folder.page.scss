@@ -16,14 +16,14 @@ mark {
 }
 
 .no-click:active {
-  --ripple-color: transparent
+  --ripple-color: transparent;
 }
 
-.word-content { 
+.word-content {
   width: 100%;
-  padding: 4px 0px; 
+  padding: 4px 0px;
   .flex-row {
-    padding: 2px 0px; 
+    padding: 2px 0px;
     display: flex;
     //flex-wrap: nowrap;
     justify-content: space-between;
@@ -38,7 +38,7 @@ mark {
       flex-grow: 1;
       font-style: italic;
     }
-  
+
     .type {
       color: darkblue;
     }
@@ -51,7 +51,7 @@ mark {
 
     @media (prefers-color-scheme: dark) {
       .type {
-        color: #4CABFA;
+        color: #4cabfa;
       }
       .cat {
         color: rgb(185, 0, 71);

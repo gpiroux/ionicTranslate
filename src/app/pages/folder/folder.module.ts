@@ -1,13 +1,13 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 
-import { PipesModule } from 'src/app/pipes/pipe.module'
-import { IonicModule } from '@ionic/angular';
-import { FolderPageRoutingModule } from './folder-routing.module';
+import { PipesModule } from "src/app/pipes/pipe.module";
+import { IonicModule } from "@ionic/angular";
+import { FolderPageRoutingModule } from "./folder-routing.module";
 
-import { FolderPage } from './folder.page';
-import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
+import { FolderPage } from "./folder.page";
+import { FilterPopoverComponent } from "./filter-popover/filter-popover.component";
 
 @NgModule({
   imports: [
@@ -15,9 +15,9 @@ import { FilterPopoverComponent } from './filter-popover/filter-popover.componen
     CommonModule,
     FormsModule,
     IonicModule,
-    FolderPageRoutingModule
+    FolderPageRoutingModule,
   ],
   entryComponents: [FilterPopoverComponent],
-  declarations: [FolderPage, FilterPopoverComponent]
+  declarations: [FolderPage, FilterPopoverComponent],
 })
 export class FolderPageModule {}

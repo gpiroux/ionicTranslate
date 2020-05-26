@@ -1,17 +1,16 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { NavParams } from '@ionic/angular';
-import { OtherTraduction } from 'src/app/models/dicoResult.model';
+import { Component, OnInit, Input } from "@angular/core";
+import { NavParams } from "@ionic/angular";
+import { OtherTraduction } from "src/app/models/dicoResult.model";
 
 @Component({
-  selector: 'app-other-traduction-popover',
-  templateUrl: './other-traduction-popover.component.html',
-  styleUrls: ['./other-traduction-popover.component.scss'],
+  selector: "app-other-traduction-popover",
+  templateUrl: "./other-traduction-popover.component.html",
+  styleUrls: ["./other-traduction-popover.component.scss"],
 })
-
 export class OtherTraductionPopoverComponent implements OnInit {
-  @Input() dismiss: (link: string) => {}
+  @Input() dismiss: (link: string) => {};
   @Input() otherTraductionList: OtherTraduction[];
-  
+
   constructor() {}
 
   onClick(item: OtherTraduction) {
@@ -19,5 +18,4 @@ export class OtherTraductionPopoverComponent implements OnInit {
   }
 
   ngOnInit() {}
-
 }

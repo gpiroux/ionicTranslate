@@ -1,37 +1,35 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { RouteReuseStrategy } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { AlertController } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy } from "@ionic/angular";
+import { AlertController } from "@ionic/angular";
 
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { HTTP } from '@ionic-native/http/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
+import { SplashScreen } from "@ionic-native/splash-screen/ngx";
+import { StatusBar } from "@ionic-native/status-bar/ngx";
+import { HTTP } from "@ionic-native/http/ngx";
+import { File } from "@ionic-native/file/ngx";
+import { Deploy } from "cordova-plugin-ionic/dist/ngx";
 
-import { PipesModule } from './pipes/pipe.module'
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireDatabaseModule } from '@angular/fire/database';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { PipesModule } from "./pipes/pipe.module";
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireDatabaseModule } from "@angular/fire/database";
+import { AngularFirestore } from "@angular/fire/firestore";
+import { AngularFireAuth } from "@angular/fire/auth";
 
-import { environment } from '../environments/environment';
+import { environment } from "../environments/environment";
 
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from "./app.component";
+import { AppRoutingModule } from "./app-routing.module";
 
-import { FileSystemService } from './services/file-system.service';
-import { AuthService } from './services/auth.service';
-import { WordService } from './services/word.service';
+import { FileSystemService } from "./services/file-system.service";
+import { AuthService } from "./services/auth.service";
+import { WordService } from "./services/word.service";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [
     HttpClientModule,
@@ -39,9 +37,9 @@ import { WordService } from './services/word.service';
     BrowserModule,
     PipesModule,
     AppRoutingModule,
-    IonicModule.forRoot({ mode: 'md' }),
+    IonicModule.forRoot({ mode: "md" }),
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
   ],
   providers: [
     HTTP,
@@ -55,8 +53,8 @@ import { WordService } from './services/word.service';
     AuthService,
     WordService,
     FileSystemService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

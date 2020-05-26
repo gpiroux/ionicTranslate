@@ -1,77 +1,76 @@
-
 .category-divider {
-    margin-left: 5px;
-    margin-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .audio-divider {
-    margin-left: 0px;
-    margin-right: 5px;
-    height: 18px;
+  margin-left: 0px;
+  margin-right: 5px;
+  height: 18px;
 }
 
 .audio {
-    margin-left: 0px;
-    margin-right: -8px;
-    height: 18px;
+  margin-left: 0px;
+  margin-right: -8px;
+  height: 18px;
 }
 
 .spinner {
-    height: 40%;
-    margin-right: -10px;
+  height: 40%;
+  margin-right: -10px;
 }
 
 .locution-container {
-    padding-top: 2px;
-    padding-bottom: 4px;
-    color: #444;
-    font-size: 90%;
+  padding-top: 2px;
+  padding-bottom: 4px;
+  color: #444;
+  font-size: 90%;
 
-    .locution2-container {
-        margin-left: 12px;
+  .locution2-container {
+    margin-left: 12px;
+  }
+  .indicateur {
+    margin-right: 6px;
+    color: green;
+    &.inline {
+      display: inline-block;
     }
-    .indicateur {
-        margin-right: 6px;
-        color: green;
-        &.inline {
-            display: inline-block;
-        }
-        &.capital {
-            text-transform: uppercase;
-        }
+    &.capital {
+      text-transform: uppercase;
     }
-    .locution {
-        margin-left: 8px;
+  }
+  .locution {
+    margin-left: 8px;
+  }
+  .traduction2 {
+    margin-left: 10px;
+    font-style: italic;
+    color: #428cff;
+    &.inline {
+      margin-left: 0;
+      display: inline-block;
     }
-    .traduction2 {
-        margin-left: 10px;
-        font-style: italic;
-        color: #428cff;
-        &.inline {
-            margin-left: 0;
-            display: inline-block;
-        }
-    }
+  }
 }
 
 .traduction-container {
-    .number {
-        font-size: 90%;
-        margin-right: 3px;
-        display: inline-block;
-    }
-    .indicateur {
-        margin-right: 6px;
-        display: inline-block;
-        color: green;
-    }
-    .capital {
-        font-size: 92%;
-        text-transform: uppercase;
-    }
-    .traduction {
-        font-style: italic;
-        display: inline-block;
-        color: #444;
-    }
+  .number {
+    font-size: 90%;
+    margin-right: 3px;
+    display: inline-block;
+  }
+  .indicateur {
+    margin-right: 6px;
+    display: inline-block;
+    color: green;
+  }
+  .capital {
+    font-size: 92%;
+    text-transform: uppercase;
+  }
+  .traduction {
+    font-style: italic;
+    display: inline-block;
+    color: #444;
+  }
 }

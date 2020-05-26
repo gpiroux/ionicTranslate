@@ -1,23 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { IonTextarea } from '@ionic/angular';
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { IonTextarea } from "@ionic/angular";
 
-import { AudioService } from 'src/app/services/audio.service';
-import { Word, wordTypes } from 'src/app/models/word.model';
-import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
-import { DicoWord } from 'src/app/models/dicoResult.model';
+import { AudioService } from "src/app/services/audio.service";
+import { Word, wordTypes } from "src/app/models/word.model";
+import {
+  WordService,
+  dicoList,
+  DicoWebsite,
+} from "src/app/services/word.service";
+import { DicoWord } from "src/app/models/dicoResult.model";
 
-import * as _ from 'lodash';
-
+import * as _ from "lodash";
 
 @Component({
-  selector: 'app-detail',
-  templateUrl: './detail.page.html',
-  styleUrls: ['./detail.page.scss'],
+  selector: "app-detail",
+  templateUrl: "./detail.page.html",
+  styleUrls: ["./detail.page.scss"],
 })
-
 export class DetailPage implements OnInit {
-
   traductions: DicoWord[];
   newWord: Word;
 
@@ -29,17 +30,17 @@ export class DetailPage implements OnInit {
 
   typeOptions: string[] = wordTypes;
   categoryOptions = [
-    'other',
-    'novel',
-    'conv',
-    'net',
-    'lyrics',
-    'check',
-    'Caving',
-    'Collins',
-    'XP',
-    'ESL',
-  ]
+    "other",
+    "novel",
+    "conv",
+    "net",
+    "lyrics",
+    "check",
+    "Caving",
+    "Collins",
+    "XP",
+    "ESL",
+  ];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -50,25 +51,30 @@ export class DetailPage implements OnInit {
     this.newWord = new Word();
   }
 
-  ngOnInit() {    
-    const dicoName = this.activatedRoute.snapshot.paramMap.get('dicoName');
+  ngOnInit() {
+    const dicoName = this.activatedRoute.snapshot.paramMap.get("dicoName");
     this.isLarousseDico = dicoList[dicoName].dico === DicoWebsite.Larousse;
     this.isVandaleDico = dicoList[dicoName].dico === DicoWebsite.Vandale;
-    
+
     const displayedWords = this.wordService.displayedWords;
-    
-    const wordId = this.activatedRoute.snapshot.paramMap.get('wordId');
-    const searchString = this.activatedRoute.snapshot.paramMap.get('searchString');
+
+    const wordId = this.activatedRoute.snapshot.paramMap.get("wordId");
+    const searchString = this.activatedRoute.snapshot.paramMap.get(
+      "searchString"
+    );
     if (wordId) {
-      let word = displayedWords.find(w => w.id === wordId);
+      let word = displayedWords.find((w) => w.id === wordId);
       this.newWord = _.cloneDeep(word);
     } else {
-      this.newWord = new Word()
-      this.newWord.en = (searchString || '').trim().replace(/^\^|\$$/g,'').toLowerCase()
-      this.newWord.fr = '';
+      this.newWord = new Word();
+      this.newWord.en = (searchString || "")
+        .trim()
+        .replace(/^\^|\$$/g, "")
+        .toLowerCase();
+      this.newWord.fr = "";
     }
     this.wordService.selectedWord = this.newWord;
-    console.log('Detail world', this.newWord);
+    console.log("Detail world", this.newWord);
   }
 
   async onSave(): Promise<void> {
@@ -81,32 +87,32 @@ export class DetailPage implements OnInit {
 
   async playAudio(audioArray: string[]) {
     if (this.fetchAudio || !audioArray || !audioArray.length) return;
-    
+
     const audio = audioArray[this.audioIdx % audioArray.length];
-    
-    const blobURL = await this.audioService.loadAudio(audio)
+
+    const blobURL = await this.audioService.loadAudio(audio);
     if (blobURL) {
       this.audioService.playAudio(blobURL);
-      this.audioIdx++
+      this.audioIdx++;
     } else {
       this.fetchAudio = true;
       const data = await this.audioService.fetchAudio(audio);
       if (data) {
-        this.audioService.saveAudio(audio , data);
+        this.audioService.saveAudio(audio, data);
         await this.audioService.playAudio(data);
-        this.audioIdx++
+        this.audioIdx++;
       }
     }
-    this.fetchAudio = false; 
+    this.fetchAudio = false;
   }
 
   async checkTextArea(textAreaView: IonTextarea) {
     const textArea = await textAreaView.getInputElement();
-    if (textArea.parentElement.style.height === '0px') {
+    if (textArea.parentElement.style.height === "0px") {
       setTimeout(() => {
-        const height = Math.max(52, textArea.scrollHeight)
-        textArea.parentElement.style.height = height + 'px';
-        textArea.style.height = height + 'px';
+        const height = Math.max(52, textArea.scrollHeight);
+        textArea.parentElement.style.height = height + "px";
+        textArea.style.height = height + "px";
       }, 50);
     }
   }
