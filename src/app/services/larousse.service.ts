@@ -20,6 +20,7 @@ export class LarousseService extends genericDico {
     let result: DicoWord[] = [];
     let word: DicoWord;
     let audio: { type: string; value: string };
+    let phoneticOpen = false;
 
     function parseElement(e: Element) {
       /*
@@ -90,7 +91,15 @@ export class LarousseService extends genericDico {
 
       // Phonetique principale
       if (e.nodeName == 'SPAN' && this.getClassValue(e).includes('Phonetique')) {
-        word.phonetique = e.textContent.trim();
+        word.phonetique += e.textContent.trim();
+        word.phonetique = word.phonetique.replace('[ ', '[');
+        phoneticOpen = !word.phonetique.includes(']'); // patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
+      }
+
+      // E.g. patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
+      if (phoneticOpen && audio && audio.type === 'lienson' && audio.value) {
+        word.audio.push(audio.value);
+        audio = null;
       }
 
       // Plurial form : "FormeFlechie2"
@@ -139,7 +148,11 @@ export class LarousseService extends genericDico {
       // Ex 'grey' & 'goose'
       if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
         if (!word.categorie) {
-          word.metalangue = e.textContent.trim(); // (US) vs (UK)
+          if (phoneticOpen) {
+            word.phonetique += e.textContent; // patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
+          } else {
+            word.metalangue = e.textContent.trim(); // (US) vs (UK)
+          }
         } else {
           word.initTraduction();
           word.currentTraduction.indicateur += e.textContent;
@@ -159,8 +172,7 @@ export class LarousseService extends genericDico {
 
       // Locution:
       // <span class="Locution2" lang="en" xml:lang="en" id="884865">the car roared past</span>
-      var locutions = ['Locution2'];
-      if (e.nodeName == 'SPAN' && locutions.includes(this.getClassValue(e))) {
+      if (e.nodeName == 'SPAN' && ['Locution2'].includes(this.getClassValue(e))) {
         word.initTraduction(true);
         word.currentTraduction.locution += e.textContent;
         if (audio && audio.type === 'lienson3' && audio.value) {
