@@ -48,12 +48,12 @@ export class ReversoService extends genericDico {
     return result;
   }
 
-  private parseElements(elements: Element) {
+  private parseElements(element: Element) {
     let result: DicoWord[] = [];
     let word: DicoWord;
     let traduction: Traduction;
 
-    const roughContent = this.getTextContent(elements);
+    const roughContent = this.getTextContent(element);
     if (roughContent.length) console.log(roughContent);
 
     // Clean dicoWord
@@ -72,12 +72,10 @@ export class ReversoService extends genericDico {
 
     console.log('htmlDoc', htmlDoc);
 
-    // <div class="snippets">
-    const translateBoxes = htmlDoc.getElementsByClassName('translate_box0');
-    const translateBox = translateBoxes && translateBoxes[0];
-
-    if (translateBox) {
-      result.dicoWords = this.parseElements(translateBox);
+    const elements = htmlDoc.getElementsByTagName('FONT');
+    const element = elements && elements[0];
+    if (element) {
+      result.dicoWords = this.parseElements(element);
     }
 
     return result;
