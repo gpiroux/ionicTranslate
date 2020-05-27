@@ -21,6 +21,8 @@ import { Router } from '@angular/router';
 })
 export class LaroussePage implements OnInit {
   selectedWord: Word;
+  strippedWord: string;
+  currentHref: string;
   wordTraductions: DicoWord[];
   otherTraductions: OtherTraduction[];
 
@@ -44,8 +46,9 @@ export class LaroussePage implements OnInit {
     if (selectedWordHref) {
       this.load(selectedWordHref);
     } else if (selectedWordEn) {
-      let strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
-      this.load(`dictionnaires/anglais-francais/${strippedWord}`);
+      this.strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
+      this.currentHref = `dictionnaires/anglais-francais/${this.strippedWord}`;
+      this.load(this.currentHref);
     } else {
       this.router.navigateByUrl('');
       this.notification.error('Pas de mot sélectionné !');
@@ -57,7 +60,15 @@ export class LaroussePage implements OnInit {
       .load(href)
       .then(result => {
         this.wordTraductions = result.dicoWords;
-        this.otherTraductions = result.otherTradutions;
+        if (result.otherTradutions.length === 1) {
+          const newWord = result.otherTradutions[0];
+          this.otherTraductions = this.otherTraductions || [];
+          _.forEach(this.otherTraductions, i => (i.selected = false));
+          _.remove(this.otherTraductions, i => i.word === newWord.word);
+          this.otherTraductions.unshift(newWord);
+        } else if (result.otherTradutions.length > 1) {
+          this.otherTraductions = result.otherTradutions;
+        }
       })
       .catch(err => {
         this.notification.error(err.message || err);
@@ -71,6 +82,7 @@ export class LaroussePage implements OnInit {
   }
 
   async onTraductionClick(traduction: Traduction) {
+    // locution => audio
     if (traduction.traductionSubList.length || traduction.locution) {
       const audio = traduction.audio;
       if (audio && !this.fetchAudio) {
@@ -87,6 +99,22 @@ export class LaroussePage implements OnInit {
         }
         this.fetchAudio = undefined;
       }
+      return;
+    }
+
+    // Renvois
+    if (traduction.lien) {
+      if (!this.otherTraductions) {
+        this.otherTraductions = [
+          {
+            href: this.currentHref,
+            word: this.strippedWord,
+            selected: false,
+          },
+        ];
+      }
+      this.wordTraductions = null;
+      this.load(traduction.lien);
       return;
     }
 

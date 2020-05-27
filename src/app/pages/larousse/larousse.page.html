@@ -33,6 +33,7 @@
                 <!-- No locution: i.e. main translation -->
                 <div *ngIf="!trad?.locution" class="traduction-container">
                     <div class="number">{{trad?.number}}</div>
+                    <div *ngIf="trad?.lien" class="renvois">→</div>
                     <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
                     <div *ngIf="trad?.indicateurDomaine" class="indicateur capital">{{trad.indicateurDomaine}}</div>
                     <div *ngIf="trad?.traduction" class="traduction">{{trad.traduction}}</div>
