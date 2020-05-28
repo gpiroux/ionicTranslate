@@ -229,7 +229,7 @@ export class LarousseService extends genericDico {
       if (e.nodeName == 'TABLE') {
         // Number
         const numElement = e.children[0].children[0].children[0].children[0];
-        if (numElement && numElement.nodeName == 'SPAN' && this.getClassValue(numElement) === 'CategorieGrammaticale') {
+        if (_.get(numElement, 'nodeName') == 'SPAN' && this.getClassValue(numElement) === 'CategorieGrammaticale') {
           word.initTraduction();
           word.currentTraduction.number = numElement.textContent;
         }
