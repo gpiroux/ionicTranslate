@@ -235,7 +235,7 @@ export class LarousseService extends genericDico {
         }
 
         // Other table elements
-        const domElements = e.children[0].children[0].children[1].children;
+        const domElements = _.get(e, 'children.0.children.0.children.1.children');
         _.forEach(domElements, parseElement.bind(this));
       }
 
