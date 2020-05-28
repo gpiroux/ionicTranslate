@@ -60,15 +60,14 @@ export class LaroussePage implements OnInit {
       .load(href)
       .then(result => {
         this.wordTraductions = result.dicoWords;
-        if (result.otherTradutions.length === 1) {
-          const newWord = result.otherTradutions[0];
-          this.otherTraductions = this.otherTraductions || [];
-          _.forEach(this.otherTraductions, i => (i.selected = false));
-          _.remove(this.otherTraductions, i => i.word === newWord.word);
-          this.otherTraductions.unshift(newWord);
-        } else if (result.otherTradutions.length > 1) {
-          this.otherTraductions = result.otherTradutions;
-        }
+
+        this.otherTraductions = this.otherTraductions || [];
+        this.otherTraductions.forEach(i => (i.selected = false));
+        this.otherTraductions = this.otherTraductions.concat(result.otherTradutions);
+
+        // Remove duplicate if any
+        const selectedOne = _.find(this.otherTraductions, i => i.selected);
+        if (selectedOne) _.remove(this.otherTraductions, i => !i.selected && i.word === selectedOne.word);
       })
       .catch(err => {
         this.notification.error(err.message || err);
@@ -134,6 +133,7 @@ export class LaroussePage implements OnInit {
         otherTraductionList: this.otherTraductions,
         dismiss: (link: string) => {
           this.wordTraductions = null;
+          this.otherTraductions = null;
           this.load(link);
           this.selectedWord.href = link;
           this.popover.dismiss();
