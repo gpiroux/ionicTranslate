@@ -119,7 +119,7 @@ export class LaroussePage implements OnInit {
     }
 
     const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
-    const tradSplit = _.map(traduction.traduction.split(','), s => s.trim());
+    const tradSplit = _.map([traduction.indicateur, traduction.traduction].join(' ').split(','), s => s.trim());
     _.forEach(tradSplit, t => {
       if (frSplit.includes(t)) return;
       frSplit.push(t);

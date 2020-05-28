@@ -36,7 +36,8 @@ export class FirebaseDatePipe implements PipeTransform {
 })
 export class HighlightPipe implements PipeTransform {
   transform(value: string): string {
-    const re = new RegExp(/\([^\(\))]*\)/, 'gi');
-    return value.replace(re, '<mark>$&</mark>');
+    const re1 = new RegExp(/\([^\(\)]*\)/, 'gi');
+    const re2 = new RegExp(/\[[^\[\]]*\]/, 'gi');
+    return value.replace(re1, '<mark>$&</mark>').replace(re2, '<mark>$&</mark>');
   }
 }
