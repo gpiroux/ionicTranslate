@@ -103,15 +103,14 @@ export class LaroussePage implements OnInit {
 
     // Renvois
     if (traduction.lien) {
-      if (!this.otherTraductions) {
-        this.otherTraductions = [
-          {
-            href: this.currentHref,
-            word: this.strippedWord,
-            selected: false,
-          },
-        ];
-      }
+      // Keep only the current one (example: 'check' vs 'cheque' from renvoi)
+      this.otherTraductions = [
+        {
+          href: this.currentHref,
+          word: this.strippedWord,
+          selected: false,
+        },
+      ];
       this.wordTraductions = null;
       this.load(traduction.lien);
       return;
