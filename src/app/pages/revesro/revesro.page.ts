@@ -42,6 +42,7 @@ export class RevesroPage implements OnInit {
       })
       .catch(err => {
         this.notification.error(err.message || err);
+        this.wordTraductions = [];
       });
   }
 

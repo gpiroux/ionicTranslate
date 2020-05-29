@@ -41,7 +41,7 @@
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-ionic": "^5.4.7",
     "core-js": "^2.5.4",
-    "firebase": "^7.12.0",
+    "firebase": "^7.14.5",
     "firebaseui": "^4.5.0",
     "lodash": "^4.17.15",
     "rxjs": "~6.5.1",
