@@ -12,7 +12,9 @@ export class DicoWord {
   traductions: Traduction[] = [];
   currentTraduction: Traduction = null;
 
-  constructor() {}
+  constructor(private obj?: any) {
+    _.assign(this, obj);
+  }
 
   /**
       Does nothing while currentTraduction exists and no traduction nor traductionSubList

@@ -14,6 +14,14 @@ interface Result {
   tag?: string;
 }
 
+enum Color {
+  red = 'color:#B50000;',
+  green = 'color:#008000;',
+  bleu = 'color:#0000ff;',
+  white = 'color:#ffffff;',
+  black = 'color:#0;',
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -48,6 +56,13 @@ export class ReversoService extends genericDico {
     return result;
   }
 
+  static isNumber(num: string) {
+    return !_.isNaN(Number(num));
+  }
+  static isNotNumber(num: string) {
+    return !ReversoService.isNumber(num);
+  }
+
   private parseElements(element: Element) {
     let result: DicoWord[] = [];
     let word: DicoWord;
@@ -55,6 +70,62 @@ export class ReversoService extends genericDico {
 
     const roughContent = this.getTextContent(element);
     if (roughContent.length) console.log(roughContent);
+
+    word = new DicoWord();
+    result.push(word);
+
+    _.forEach(roughContent, item => {
+      if (item.style === Color.bleu && !word.en) {
+        word.en = item.text;
+        return;
+      }
+
+      // New word, section 1, 2, ...
+      if (item.style === Color.white && ReversoService.isNumber(item.text) && word.traductions.length) {
+        word = new DicoWord({ en: word.en });
+        result.push(word);
+        return;
+      }
+
+      if (item.tag === 'hr') {
+        word = new DicoWord({ en: word.en });
+        result.push(word);
+        return;
+      }
+
+      // Categorie
+      if (item.style === Color.red) {
+        word.categorie = item.text;
+        return;
+      }
+
+      if (item.style === Color.white && ReversoService.isNotNumber(item.text)) {
+        word.initTraduction();
+        word.currentTraduction.number = item.text;
+        return;
+      }
+
+      // Indicateur
+      if (item.style === Color.green) {
+        word.initTraduction();
+        word.currentTraduction.indicateur = item.text;
+        return;
+      }
+
+      // Traduction
+      if (item.style === Color.black) {
+        word.initTraduction();
+        word.currentTraduction.traduction = item.text;
+        return;
+      }
+
+      // Locution
+      if (item.style === Color.bleu && word.en && item.text[0] !== '→') {
+        word.initTraduction();
+        word.currentTraduction.locution = item.text;
+        return;
+      }
+    });
 
     // Clean dicoWord
     _.forEach(result, r => {
