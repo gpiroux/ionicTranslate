@@ -143,11 +143,16 @@ export class ReversoService extends genericDico {
 
     console.log('htmlDoc', htmlDoc);
 
-    const elements = htmlDoc.getElementsByTagName('FONT');
-    const element = elements && elements[0];
-    if (element) {
-      result.dicoWords = this.parseElements(element);
-    }
+    // eg: dorp
+    const fontElements = htmlDoc.getElementsByTagName('FONT');
+    const fontElement = fontElements && fontElements[0];
+
+    // eg: visser
+    const mainResultsElement = htmlDoc.getElementById('DivMainResults');
+
+    result.dicoWords = fontElement 
+      ? this.parseElements(fontElement) : mainResultsElement 
+        ? this.parseElements(mainResultsElement) : []
 
     return result;
   }
