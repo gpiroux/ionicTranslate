@@ -28,7 +28,10 @@ export class LoginPage implements OnInit {
       .then(() => {
         this.router.navigateByUrl('');
       })
-      .catch(err => this.notification.error(err.message));
+      .catch(err => {
+        console.error(err);
+        this.notification.error(err.message)
+      });
   }
 
   sendResetPawword(email: string) {

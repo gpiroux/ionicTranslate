@@ -41,6 +41,7 @@ export class RevesroPage implements OnInit {
         console.log('wordTraductions', this.wordTraductions);
       })
       .catch(err => {
+        console.error(err);
         this.notification.error(err.message || err);
         this.wordTraductions = [];
       });

@@ -377,8 +377,34 @@ export class LarousseService extends genericDico {
     return result;
   }
 
+  private parseCorrectorElements(elements: HTMLCollection) {
+    let result: OtherTraduction[] = [];
+
+    function parseElement(e: Element) {
+      if (e.nodeName === 'LI') {
+        _.forEach(e.children, parseElement.bind(this));
+      }
+
+      if (e.nodeName === 'H3') {
+        _.forEach(e.children, parseElement.bind(this));
+      }
+
+      if (e.nodeName === 'A') {
+        let trad = new OtherTraduction();
+        result.push(trad);
+
+        trad.href = this.getHrefValue(e);
+        trad.word = e.textContent
+      }
+    }
+
+    _.forEach(elements, parseElement.bind(this));
+
+    return result;
+  }
+
   parse(data: string): ParseResult {
-    const result: ParseResult = { dicoWords: null, otherTradutions: null };
+    const result: ParseResult = { dicoWords: [], otherTradutions: [] };
     const parser = new DOMParser();
     const htmlDoc = parser.parseFromString(data, 'text/html');
 
@@ -395,12 +421,21 @@ export class LarousseService extends genericDico {
     }
 
     // <div class="wrapper-search">
-    const navs = htmlDoc.getElementsByTagName('div');
-    const wrapperSearch = _.find(navs, a => this.getClassValue(a) === 'wrapper-search');
+    const divs = htmlDoc.getElementsByTagName('div');
+    const wrapperSearch = _.find(divs, a => this.getClassValue(a) === 'wrapper-search');
 
     if (wrapperSearch) {
       const domElements = wrapperSearch.children;
       result.otherTradutions = this.parseSearchElements(domElements);
+    }
+
+    // <div class="corrector">
+    const sections = htmlDoc.getElementsByTagName('section');
+    const corrector = _.find(sections, a => this.getClassValue(a) === 'corrector');
+
+    if (corrector) {
+      const domElements = corrector.getElementsByTagName('ul')[0].children;
+      result.otherTradutions = this.parseCorrectorElements(domElements);
     }
 
     return result;

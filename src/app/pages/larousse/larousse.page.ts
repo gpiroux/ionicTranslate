@@ -61,15 +61,21 @@ export class LaroussePage implements OnInit {
       .then(result => {
         this.wordTraductions = result.dicoWords;
 
+        // Other traduction not empty if fron Remvoi ...
         this.otherTraductions = this.otherTraductions || [];
         this.otherTraductions.forEach(i => (i.selected = false));
         this.otherTraductions = this.otherTraductions.concat(result.otherTradutions);
+
+        if (!this.otherTraductions.length) {
+          return;
+        }
 
         // Remove duplicate if any
         const selectedOne = _.find(this.otherTraductions, i => i.selected);
         if (selectedOne) _.remove(this.otherTraductions, i => !i.selected && i.word === selectedOne.word);
       })
       .catch(err => {
+        console.error(err);
         this.notification.error(err.message || err);
         this.wordTraductions = [];
       });
