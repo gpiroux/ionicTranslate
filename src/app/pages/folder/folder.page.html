@@ -18,7 +18,7 @@
     </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-    <ion-searchbar animated debounce="250" mode="ios" spellcheck="true" (ionChange)="onSearchChange($event)"></ion-searchbar>
+    <ion-searchbar animated debounce="250" mode="ios" spellcheck="true" (ionChange)="onSearchChange($event)" focusOnCmdF></ion-searchbar>
     <ion-list>
         <ion-item-sliding mode="md" *ngFor="let item of displayedWords; trackBy:trackByFn " #slidingItem>
             <ion-item [routerLink]="['detail', item.id]">

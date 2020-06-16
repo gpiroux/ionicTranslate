@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/core';
 import { PopoverController, IonItemSliding } from '@ionic/angular';
 
 import { Word } from '../../models/word.model';
@@ -8,7 +8,7 @@ import { FilterPopoverComponent } from './filter-popover/filter-popover.componen
 import * as _ from 'lodash';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-folder',
@@ -17,6 +17,16 @@ import { ActivatedRoute } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
 })
 export class FolderPage implements OnInit {
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    // Btn "Enter"
+    console.log('keydown', event.keyCode)
+    if (event.keyCode === 13) {
+      this.router.navigate(['new', this.searchString], { relativeTo: this.route })  
+    }
+  }
+
   public displayedWords: Word[] = [];
   public searchString: string = '';
   public dico: Dico;
@@ -27,7 +37,9 @@ export class FolderPage implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private wordService: WordService,
-    private popoverController: PopoverController
+    private popoverController: PopoverController,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   async ngOnInit() {
@@ -98,5 +110,9 @@ export class FolderPage implements OnInit {
 
   onDelete(item: Word) {
     this.wordService.deleteWord(item.id);
+  }
+
+  focusSearchField() {
+    console.log('Focus Search !!!!')
   }
 }

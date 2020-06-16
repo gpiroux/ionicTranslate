@@ -8,10 +8,15 @@ import { FolderPageRoutingModule } from './folder-routing.module';
 
 import { FolderPage } from './folder.page';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
+import { FocusOnCmdFDetectorDirective } from 'src/app/directives/ctrl-f.directive';
 
 @NgModule({
   imports: [PipesModule, CommonModule, FormsModule, IonicModule, FolderPageRoutingModule],
   entryComponents: [FilterPopoverComponent],
-  declarations: [FolderPage, FilterPopoverComponent],
+  declarations: [
+    FolderPage, 
+    FilterPopoverComponent, 
+    FocusOnCmdFDetectorDirective
+  ],
 })
 export class FolderPageModule {}

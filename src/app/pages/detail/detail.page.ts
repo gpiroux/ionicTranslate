@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonTextarea } from '@ionic/angular';
+import { IonTextarea, NavController } from '@ionic/angular';
 
 import { AudioService } from 'src/app/services/audio.service';
 import { Word, wordTypes } from 'src/app/models/word.model';
@@ -15,6 +15,15 @@ import * as _ from 'lodash';
   styleUrls: ['./detail.page.scss'],
 })
 export class DetailPage implements OnInit {
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    // Esc
+    if (event.keyCode === 27) {
+      this.navCtrl.back()
+    }
+  }
+  
   traductions: DicoWord[];
   newWord: Word;
 
@@ -30,7 +39,8 @@ export class DetailPage implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private wordService: WordService,
-    private audioService: AudioService
+    private audioService: AudioService,
+    private navCtrl: NavController
   ) {
     // html page initialwed before ngOnInit()
     this.newWord = new Word();

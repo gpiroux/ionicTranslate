@@ -29,7 +29,9 @@ import { AuthService } from './services/auth.service';
 import { WordService } from './services/word.service';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent, 
+  ],
   entryComponents: [],
   imports: [
     HttpClientModule,
