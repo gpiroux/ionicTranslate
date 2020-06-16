@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonTextarea, NavController } from '@ionic/angular';
 
 import { Word, wordTypes } from 'src/app/models/word.model';
@@ -23,13 +23,17 @@ export class DetailPage implements OnInit {
   onKeyDown(event: KeyboardEvent): void {
     // Esc
     if (event.keyCode === 27 && this.isActualView) {
-      this.navCtrl.back()
+      this.router.navigate([''], { relativeTo: this.route });
     }
     // Cmd+S
     if (event.getModifierState && event.getModifierState('Meta') && event.keyCode === 83 && this.isActualView) {
       this.onSave()
-        .then(() => this.navCtrl.back())
+        .then(() => this.router.navigate([''], { relativeTo: this.route }))
         .catch(err => this.notificationService.error(err.message || err))
+    }
+    // Cmd+L
+    if (event.getModifierState && event.getModifierState('Meta') && event.keyCode === 76 && this.isActualView && this.isLarousseDico) {
+      this.router.navigate(['larousse'], { relativeTo: this.route });
     }
   }
   
@@ -50,7 +54,9 @@ export class DetailPage implements OnInit {
     private wordService: WordService,
     private audioService: AudioService,
     private navCtrl: NavController,
-    private notificationService: NotificationsService
+    private notificationService: NotificationsService,
+    private router: Router,
+    private route: ActivatedRoute,
   ) {
     // html page initialwed before ngOnInit()
     this.newWord = new Word();

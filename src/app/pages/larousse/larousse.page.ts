@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { PopoverController, NavController } from '@ionic/angular';
 
 import { OtherTraductionPopoverComponent } from './other-traduction-popover/other-traduction-popover.component';
 
@@ -12,7 +12,7 @@ import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.mo
 import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
 
 import * as _ from 'lodash';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-larousse',
@@ -20,6 +20,16 @@ import { Router } from '@angular/router';
   styleUrls: ['./larousse.page.scss'],
 })
 export class LaroussePage implements OnInit {
+  
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    // Esc
+    if (event.keyCode === 27 && this.isActualView) {
+      this.navCtrl.back();
+    }
+  }
+  
+  isActualView: boolean;
   selectedWord: Word;
   strippedWord: string;
   currentHref: string;
@@ -35,7 +45,8 @@ export class LaroussePage implements OnInit {
     private popoverController: PopoverController,
     private notification: NotificationsService,
     private audioService: AudioService,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) {}
 
   async ngOnInit() {
@@ -53,6 +64,14 @@ export class LaroussePage implements OnInit {
       this.router.navigateByUrl('');
       this.notification.error('Pas de mot sélectionné !');
     }
+  }
+
+  ionViewWillEnter(){
+    this.isActualView = true;
+  }
+
+  ionViewWillLeave(){
+    this.isActualView = false;
   }
 
   async load(href: string) {
