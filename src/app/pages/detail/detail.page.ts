@@ -2,10 +2,12 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonTextarea, NavController } from '@ionic/angular';
 
-import { AudioService } from 'src/app/services/audio.service';
 import { Word, wordTypes } from 'src/app/models/word.model';
-import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
 import { DicoWord } from 'src/app/models/dicoResult.model';
+
+import { AudioService } from 'src/app/services/audio.service';
+import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 import * as _ from 'lodash';
 
@@ -15,12 +17,22 @@ import * as _ from 'lodash';
   styleUrls: ['./detail.page.scss'],
 })
 export class DetailPage implements OnInit {
+  isActualView: boolean;
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     // Esc
-    if (event.keyCode === 27) {
+    if (event.keyCode === 27 && this.isActualView) {
+      console.log('event.keyCode === 27')
       this.navCtrl.back()
+    }
+
+    // Cmd+S
+    if (event.getModifierState && event.getModifierState('Meta') && event.keyCode === 83 && this.isActualView) {
+      console.log('event.keyCode === 83')
+      this.onSave()
+        .then(() => this.navCtrl.back())
+        .catch(err => this.notificationService.error(err.message || err))
     }
   }
   
@@ -40,7 +52,8 @@ export class DetailPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private wordService: WordService,
     private audioService: AudioService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private notificationService: NotificationsService
   ) {
     // html page initialwed before ngOnInit()
     this.newWord = new Word();
@@ -68,6 +81,14 @@ export class DetailPage implements OnInit {
     }
     this.wordService.selectedWord = this.newWord;
     console.log('Detail world', this.newWord);
+  }
+
+  ionViewWillEnter(){
+    this.isActualView = true;
+  }
+
+  ionViewWillLeave(){
+    this.isActualView = false;
   }
 
   async onSave(): Promise<void> {

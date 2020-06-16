@@ -17,12 +17,14 @@ import { ActivatedRoute, Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
 })
 export class FolderPage implements OnInit {
+  isActualView: boolean;
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     // Btn "Enter"
     console.log('keydown', event.keyCode)
-    if (event.keyCode === 13) {
+    if (event.keyCode === 13 && this.isActualView) {
+      console.log('event.keyCode === 13')
       this.router.navigate(['new', this.searchString], { relativeTo: this.route })  
     }
   }
@@ -63,6 +65,14 @@ export class FolderPage implements OnInit {
     console.log('Page ngOnDestroy');
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  ionViewWillEnter(){
+    this.isActualView = true;
+  }
+
+  ionViewWillLeave(){
+    this.isActualView = false;
   }
 
   get isFilterRandom() {
