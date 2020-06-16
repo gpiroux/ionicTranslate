@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, HostListener, ElementRef } from '@angular/core';
 import { PopoverController, IonItemSliding } from '@ionic/angular';
 
 import { Word } from '../../models/word.model';
@@ -22,10 +22,19 @@ export class FolderPage implements OnInit {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     // Btn "Enter"
-    console.log('keydown', event.keyCode)
     if (event.keyCode === 13 && this.isActualView) {
-      console.log('event.keyCode === 13')
-      this.router.navigate(['new', this.searchString], { relativeTo: this.route })  
+      const selectedItem = this.refElement.nativeElement.querySelector('ion-item.ion-focused')
+      if (selectedItem) {
+        const attr = selectedItem.getAttribute('ng-reflect-router-link') || '';
+        const splitAttr = attr.split(',');
+        this.router.navigate([splitAttr[0], splitAttr[1]], { relativeTo: this.route });
+      } else {
+        this.router.navigate(['new', this.searchString], { relativeTo: this.route });
+      }
+    }
+    // Esc
+    if (event.keyCode === 27 && this.isActualView) {
+      this.searchString = '';
     }
   }
 
@@ -41,7 +50,8 @@ export class FolderPage implements OnInit {
     private wordService: WordService,
     private popoverController: PopoverController,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private refElement: ElementRef
   ) {}
 
   async ngOnInit() {

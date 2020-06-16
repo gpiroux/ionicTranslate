@@ -23,13 +23,10 @@ export class DetailPage implements OnInit {
   onKeyDown(event: KeyboardEvent): void {
     // Esc
     if (event.keyCode === 27 && this.isActualView) {
-      console.log('event.keyCode === 27')
       this.navCtrl.back()
     }
-
     // Cmd+S
     if (event.getModifierState && event.getModifierState('Meta') && event.keyCode === 83 && this.isActualView) {
-      console.log('event.keyCode === 83')
       this.onSave()
         .then(() => this.navCtrl.back())
         .catch(err => this.notificationService.error(err.message || err))
