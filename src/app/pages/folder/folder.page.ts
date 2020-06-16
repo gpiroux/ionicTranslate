@@ -27,7 +27,11 @@ export class FolderPage implements OnInit {
       if (selectedItem) {
         const attr = selectedItem.getAttribute('ng-reflect-router-link') || '';
         const splitAttr = attr.split(',');
-        this.router.navigate([splitAttr[0], splitAttr[1]], { relativeTo: this.route });
+        if (splitAttr.length == 2) {
+          this.router.navigate([splitAttr[0], splitAttr[1]], { relativeTo: this.route });
+        } else {
+          this.router.navigate(['new', this.searchString], { relativeTo: this.route });
+        }
       } else {
         this.router.navigate(['new', this.searchString], { relativeTo: this.route });
       }
