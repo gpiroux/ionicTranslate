@@ -20,6 +20,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./larousse.page.scss'],
 })
 export class LaroussePage implements OnInit {
+
   
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
@@ -35,9 +36,10 @@ export class LaroussePage implements OnInit {
   currentHref: string;
   wordTraductions: DicoWord[];
   otherTraductions: OtherTraduction[];
-
+  
   private popover: HTMLIonPopoverElement;
   public fetchAudio: string;
+  public loadedWord: string;
 
   constructor(
     private larousseService: LarousseService,
@@ -53,13 +55,14 @@ export class LaroussePage implements OnInit {
     this.selectedWord = this.wordService.selectedWord;
     const selectedWordEn = _.get(this.selectedWord, 'en');
     const selectedWordHref = _.get(this.selectedWord, 'href');
+    
+    this.strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
+    this.currentHref = `dictionnaires/anglais-francais/${this.strippedWord}`;
 
     if (selectedWordHref) {
-      this.load(selectedWordHref);
+      this.load(selectedWordHref, selectedWordEn);
     } else if (selectedWordEn) {
-      this.strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
-      this.currentHref = `dictionnaires/anglais-francais/${this.strippedWord}`;
-      this.load(this.currentHref);
+      this.load(this.currentHref, this.strippedWord);
     } else {
       this.router.navigateByUrl('');
       this.notification.error('Pas de mot sélectionné !');
@@ -74,27 +77,38 @@ export class LaroussePage implements OnInit {
     this.isActualView = false;
   }
 
-  async load(href: string) {
+  async load(href: string, loadedWord: string) {
+    this.loadedWord = loadedWord;
     this.larousseService
       .load(href)
       .then(result => {
         this.wordTraductions = result.dicoWords;
 
         // Other traduction not empty if fron Remvoi ...
-        this.otherTraductions = this.otherTraductions || [];
-        this.otherTraductions.forEach(i => (i.selected = false));
+        this.otherTraductions = [
+          {
+            href: this.currentHref,
+            word: this.strippedWord,
+            selected: this.currentHref == href,
+          },
+        ];
         this.otherTraductions = this.otherTraductions.concat(result.otherTradutions);
+
+        console.log('this.otherTraductions', this.otherTraductions)
 
         if (!this.otherTraductions.length) {
           return;
         }
 
-        // Remove duplicate if any
+        // If duplicate, remove the one not selected
         const selectedOne = _.find(this.otherTraductions, i => i.selected);
         if (selectedOne) _.remove(this.otherTraductions, i => !i.selected && i.word === selectedOne.word);
 
-        if (!this.wordTraductions.length && this.otherTraductions.length) {
-          this.onOtherTraductionPopoverClick(null)
+        this.otherTraductions = _.uniqBy(this.otherTraductions, i => i.word);
+
+        // If only one item selected => Current one, no need to keep it
+        if (this.otherTraductions.length === 1 && _.find(this.otherTraductions, i => i.selected)) {
+          this.otherTraductions = []
         }
       })
       .catch(err => {
@@ -133,16 +147,8 @@ export class LaroussePage implements OnInit {
 
     // Renvois
     if (traduction.lien) {
-      // Keep only the current one (example: 'check' vs 'cheque' from renvoi)
-      this.otherTraductions = [
-        {
-          href: this.currentHref,
-          word: this.strippedWord,
-          selected: false,
-        },
-      ];
       this.wordTraductions = null;
-      this.load(traduction.lien);
+      this.load(traduction.lien, traduction.traduction);
       return;
     }
 
@@ -160,11 +166,11 @@ export class LaroussePage implements OnInit {
       component: OtherTraductionPopoverComponent,
       componentProps: {
         otherTraductionList: this.otherTraductions,
-        dismiss: (link: string) => {
+        dismiss: (item: OtherTraduction) => {
           this.wordTraductions = null;
           this.otherTraductions = null;
-          this.load(link);
-          this.selectedWord.href = link;
+          this.load(item.href, item.word);
+          this.selectedWord.href = item.href;
           this.popover.dismiss();
         },
       },

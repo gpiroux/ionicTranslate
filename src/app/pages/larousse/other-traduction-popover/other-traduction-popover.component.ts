@@ -8,13 +8,13 @@ import { OtherTraduction } from 'src/app/models/dicoResult.model';
   styleUrls: ['./other-traduction-popover.component.scss'],
 })
 export class OtherTraductionPopoverComponent implements OnInit {
-  @Input() dismiss: (link: string) => {};
+  @Input() dismiss: (item: OtherTraduction) => {};
   @Input() otherTraductionList: OtherTraduction[];
 
   constructor() {}
 
   onClick(item: OtherTraduction) {
-    this.dismiss(item.href);
+    this.dismiss(item);
   }
 
   ngOnInit() {}

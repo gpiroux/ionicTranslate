@@ -434,11 +434,11 @@ export class LarousseService extends genericDico {
       result.otherTradutions = this.parseCorrectorElements(domElements);
     }
 
-    // TBC
-    var error = htmlDoc.getElementsByClassName('err');
-    if (error && error[0]) {
-      throw error[0].textContent || 'Parsing error';
-    }
+    // // TBC
+    // var error = htmlDoc.getElementsByClassName('err');
+    // if (error && error[0]) {
+    //   throw error[0].textContent || 'Parsing error';
+    // }
 
     return result;
   }

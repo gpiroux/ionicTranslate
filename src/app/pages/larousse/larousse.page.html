@@ -6,7 +6,7 @@
         <ion-title style="padding-left: 12px;">
             <span style="font-size: 85%;">{{selectedWord.en}}</span>
         </ion-title>
-        <ion-buttons slot="primary" *ngIf="otherTraductions?.length > 1">
+        <ion-buttons slot="primary" *ngIf="otherTraductions?.length">
             <ion-button (click)="onOtherTraductionPopoverClick($event)">
                 <ion-icon slot="icon-only" ios="list-outline" md="list-outline"></ion-icon>
             </ion-button>
@@ -19,7 +19,9 @@
 <ion-content>
     <ion-list>
         <ion-spinner style="display: block; margin: 80px auto;" *ngIf="!wordTraductions" name="lines"></ion-spinner>
-        <ion-item *ngIf="wordTraductions && !wordTraductions.length"><ion-label><b>No result found !</b></ion-label></ion-item>
+        <ion-item *ngIf="wordTraductions && !wordTraductions.length">
+            <ion-label><b>No result found for <span style="font-style: italic;">"{{loadedWord}}"</span> !</b></ion-label>
+        </ion-item>
         <div *ngFor="let item of wordTraductions;">
             <ion-item-divider button sticky="true" color="light" button (click)="onWordClick(item)">
                 <ion-label>
