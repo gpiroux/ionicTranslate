@@ -436,7 +436,7 @@ export class LarousseService extends genericDico {
 
     // TBC
     var error = htmlDoc.getElementsByClassName('err');
-    if (error) {
+    if (error && error[0]) {
       throw error[0].textContent || 'Parsing error';
     }
 
