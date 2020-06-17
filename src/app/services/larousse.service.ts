@@ -411,11 +411,9 @@ export class LarousseService extends genericDico {
     // <article role="article">
     const articles = htmlDoc.getElementsByTagName('article');
     const article = _.find(articles, a => this.getRoleValue(a) === 'article');
-
     if (article) {
       // <div class="article_bilingue">
       const article_bilingue = _.find(article.children, a => this.getClassValue(a) === 'article_bilingue');
-
       const domElements = article_bilingue.children;
       result.dicoWords = this.parseElements(domElements);
     }
@@ -423,7 +421,6 @@ export class LarousseService extends genericDico {
     // <div class="wrapper-search">
     const divs = htmlDoc.getElementsByTagName('div');
     const wrapperSearch = _.find(divs, a => this.getClassValue(a) === 'wrapper-search');
-
     if (wrapperSearch) {
       const domElements = wrapperSearch.children;
       result.otherTradutions = this.parseSearchElements(domElements);
@@ -432,22 +429,17 @@ export class LarousseService extends genericDico {
     // <div class="corrector">
     const sections = htmlDoc.getElementsByTagName('section');
     const corrector = _.find(sections, a => this.getClassValue(a) === 'corrector');
-
-    if (corrector) {
-      const domElements = corrector.getElementsByTagName('ul')[0].children;
+    const domElements = corrector ? corrector.getElementsByTagName('li') : null; 
+    if (domElements) {
       result.otherTradutions = this.parseCorrectorElements(domElements);
     }
 
-    return result;
-
-    // // <section class="corrector">
-    // let corrector = htmlDoc.getElementsByClassName('corrector');
-    // if (corrector) {
-    //     let domElements = corrector[0].children;
-    //     return this.parseElements(domElements, 'corrector');
-    // }
-
+    // TBC
     var error = htmlDoc.getElementsByClassName('err');
-    throw error[0].textContent || 'Parsing error';
+    if (error) {
+      throw error[0].textContent || 'Parsing error';
+    }
+
+    return result;
   }
 }

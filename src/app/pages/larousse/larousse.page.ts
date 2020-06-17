@@ -92,6 +92,10 @@ export class LaroussePage implements OnInit {
         // Remove duplicate if any
         const selectedOne = _.find(this.otherTraductions, i => i.selected);
         if (selectedOne) _.remove(this.otherTraductions, i => !i.selected && i.word === selectedOne.word);
+
+        if (!this.wordTraductions.length && this.otherTraductions.length) {
+          this.onOtherTraductionPopoverClick(null)
+        }
       })
       .catch(err => {
         console.error(err);

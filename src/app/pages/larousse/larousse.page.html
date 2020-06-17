@@ -19,6 +19,7 @@
 <ion-content>
     <ion-list>
         <ion-spinner style="display: block; margin: 80px auto;" *ngIf="!wordTraductions" name="lines"></ion-spinner>
+        <ion-item *ngIf="wordTraductions && !wordTraductions.length"><ion-label><b>No result found !</b></ion-label></ion-item>
         <div *ngFor="let item of wordTraductions;">
             <ion-item-divider button sticky="true" color="light" button (click)="onWordClick(item)">
                 <ion-label>
