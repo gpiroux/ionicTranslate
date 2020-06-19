@@ -84,11 +84,10 @@ export class LaroussePage implements OnInit {
       .then(result => {
         this.wordTraductions = result.dicoWords;
 
-        // Other traduction not empty if fron Remvoi ...
         this.otherTraductions = [
           {
             href: this.currentHref,
-            word: this.strippedWord,
+            word: _.get(this.wordTraductions[0], 'en') || this.strippedWord,
             selected: this.currentHref == href,
           },
         ];
