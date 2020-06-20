@@ -27,11 +27,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { FileSystemService } from './services/file-system.service';
 import { AuthService } from './services/auth.service';
 import { WordService } from './services/word.service';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
-  declarations: [
-    AppComponent, 
-  ],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [
     HttpClientModule,
@@ -42,6 +41,7 @@ import { WordService } from './services/word.service';
     IonicModule.forRoot({ mode: 'md' }),
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
     HTTP,
