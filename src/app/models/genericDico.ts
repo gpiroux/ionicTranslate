@@ -65,8 +65,15 @@ export abstract class genericDico {
 
   abstract parse(data: string): ParseResult;
 
-  async load(href: string): Promise<ParseResult> {
-    let url = `${this.webSite}/${href}`;
+  async load(href: string, proxy = false): Promise<ParseResult> {
+    let url;
+
+    if (proxy && !this.platform.is('cordova') && !this.platform.is('electron')) {
+      const proxyUrl = 'us-central1-ionictranslate5.cloudfunctions.net/forward?url=';
+      url = `https://${proxyUrl}${this.webSite}/${href}`;
+    } else {
+      url = `https://${this.webSite}/${href}`;
+    }
 
     let data: string = this.cache[href];
 

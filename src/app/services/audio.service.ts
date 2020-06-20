@@ -20,7 +20,14 @@ export class AudioService {
   ) {}
 
   async fetchAudio(audio: string): Promise<Blob> {
-    const url = `https://voix.larousse.fr/anglais/${audio}.mp3`;
+    let url: string;
+    if (!this.platform.is('cordova') && !this.platform.is('electron')) {
+      const proxyUrl = 'us-central1-ionictranslate5.cloudfunctions.net/forward?url=';
+      url = `https://${proxyUrl}voix.larousse.fr/anglais/${audio}.mp3`;
+    } else {
+      url = `https://voix.larousse.fr/anglais/${audio}.mp3`;
+    }
+
     try {
       return this.platform.is('cordova')
         ? await this.httpNative.sendRequest(url, { method: 'get', responseType: 'blob' }).then(res => res.data)

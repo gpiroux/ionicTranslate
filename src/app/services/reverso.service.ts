@@ -28,7 +28,7 @@ enum Color {
 export class ReversoService extends genericDico {
   constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
-    this.webSite = 'https://dictionnaire.reverso.net';
+    this.webSite = 'dictionnaire.reverso.net';
   }
 
   private getTextContent(el: Element, depth = 0) {

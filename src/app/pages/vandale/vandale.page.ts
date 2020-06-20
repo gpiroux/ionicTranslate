@@ -39,7 +39,7 @@ export class VandalePage implements OnInit {
 
   async load(href: string) {
     this.vandaleService
-      .load(href)
+      .load(href, true)
       .then(result => {
         this.wordTraductions = result.dicoWords;
         console.log('wordTraductions', this.wordTraductions);

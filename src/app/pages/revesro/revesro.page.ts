@@ -35,7 +35,7 @@ export class RevesroPage implements OnInit {
 
   async load(href: string) {
     this.reversoService
-      .load(href)
+      .load(href, true)
       .then(result => {
         this.wordTraductions = result.dicoWords;
         console.log('wordTraductions', this.wordTraductions);

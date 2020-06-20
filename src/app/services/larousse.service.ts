@@ -13,7 +13,7 @@ import { genericDico, ParseResult } from '../models/genericDico';
 export class LarousseService extends genericDico {
   constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
-    this.webSite = 'https://www.larousse.fr';
+    this.webSite = 'www.larousse.fr';
   }
 
   private parseElements(elements: HTMLCollection) {

@@ -13,7 +13,7 @@ import { genericDico, ParseResult } from '../models/genericDico';
 export class VanDaleService extends genericDico {
   constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
-    this.webSite = 'https://www.vandale.be';
+    this.webSite = 'www.vandale.be';
 
     // Example: naar
   }
