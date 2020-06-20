@@ -21,7 +21,7 @@ export class AudioService {
 
   async fetchAudio(audio: string): Promise<Blob> {
     let url: string;
-    if (!this.platform.is('cordova') && !this.platform.is('electron')) {
+    if (!this.platform.is('cordova') && !window['isElectron']) {
       const proxyUrl = 'us-central1-ionictranslate5.cloudfunctions.net/forward?url=';
       url = `https://${proxyUrl}voix.larousse.fr/anglais/${audio}.mp3`;
     } else {
