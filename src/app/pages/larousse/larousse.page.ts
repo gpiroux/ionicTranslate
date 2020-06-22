@@ -20,8 +20,6 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./larousse.page.scss'],
 })
 export class LaroussePage implements OnInit {
-
-  
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     // Esc
@@ -29,14 +27,14 @@ export class LaroussePage implements OnInit {
       this.navCtrl.back();
     }
   }
-  
+
   isActualView: boolean;
   selectedWord: Word;
   strippedWord: string;
   currentHref: string;
   wordTraductions: DicoWord[];
   otherTraductions: OtherTraduction[];
-  
+
   private popover: HTMLIonPopoverElement;
   public fetchAudio: string;
   public loadedWord: string;
@@ -55,7 +53,7 @@ export class LaroussePage implements OnInit {
     this.selectedWord = this.wordService.selectedWord;
     const selectedWordEn = _.get(this.selectedWord, 'en');
     const selectedWordHref = _.get(this.selectedWord, 'href');
-    
+
     this.strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
     this.currentHref = `dictionnaires/anglais-francais/${this.strippedWord}`;
 
@@ -69,11 +67,11 @@ export class LaroussePage implements OnInit {
     }
   }
 
-  ionViewWillEnter(){
+  ionViewWillEnter() {
     this.isActualView = true;
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.isActualView = false;
   }
 
@@ -87,13 +85,11 @@ export class LaroussePage implements OnInit {
         this.otherTraductions = [
           {
             href: this.currentHref,
-            word: _.get(this.wordTraductions[0], 'en') || this.strippedWord,
+            word: this.strippedWord,
             selected: this.currentHref == href,
           },
         ];
         this.otherTraductions = this.otherTraductions.concat(result.otherTradutions);
-
-        console.log('this.otherTraductions', this.otherTraductions)
 
         if (!this.otherTraductions.length) {
           return;
@@ -107,7 +103,7 @@ export class LaroussePage implements OnInit {
 
         // If only one item selected => Current one, no need to keep it
         if (this.otherTraductions.length === 1 && _.find(this.otherTraductions, i => i.selected)) {
-          this.otherTraductions = []
+          this.otherTraductions = [];
         }
       })
       .catch(err => {
