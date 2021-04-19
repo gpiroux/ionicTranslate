@@ -30,8 +30,8 @@ export class LaroussePage implements OnInit {
 
   isActualView: boolean;
   selectedWord: Word;
-  strippedWord: string;
-  currentHref: string;
+  onInitStrippedWord: string;
+  onInitWordHref: string;
   wordTraductions: DicoWord[];
   otherTraductions: OtherTraduction[];
 
@@ -54,13 +54,13 @@ export class LaroussePage implements OnInit {
     const selectedWordEn = _.get(this.selectedWord, 'en');
     const selectedWordHref = _.get(this.selectedWord, 'href');
 
-    this.strippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
-    this.currentHref = `dictionnaires/anglais-francais/${this.strippedWord}`;
+    this.onInitStrippedWord = selectedWordEn.trim().split(' ')[0].split('[')[0];
+    this.onInitWordHref = `dictionnaires/anglais-francais/${this.onInitStrippedWord}`;
 
     if (selectedWordHref) {
       this.load(selectedWordHref, selectedWordEn);
     } else if (selectedWordEn) {
-      this.load(this.currentHref, this.strippedWord);
+      this.load(this.onInitWordHref, this.onInitStrippedWord);
     } else {
       this.router.navigateByUrl('');
       this.notification.error('Pas de mot sélectionné !');
@@ -82,24 +82,28 @@ export class LaroussePage implements OnInit {
       .then(result => {
         this.wordTraductions = result.dicoWords;
 
+        // this.currentHref
         this.otherTraductions = [
           {
-            href: this.currentHref,
-            word: this.strippedWord,
-            selected: this.currentHref == href,
+            href: this.onInitWordHref,
+            word: this.onInitStrippedWord,
+            selected: this.onInitWordHref === href,
+            current: true
           },
+          ...result.otherTradutions
         ];
-        this.otherTraductions = this.otherTraductions.concat(result.otherTradutions);
+
+        console.log('otherTraductions', this.otherTraductions);
 
         if (!this.otherTraductions.length) {
           return;
         }
 
         // If duplicate, remove the one not selected
-        const selectedOne = _.find(this.otherTraductions, i => i.selected);
-        if (selectedOne) _.remove(this.otherTraductions, i => !i.selected && i.word === selectedOne.word);
+        const selectedOne = _.find(this.otherTraductions, i => i.selected && i.current);
+        if (selectedOne) _.remove(this.otherTraductions, i => i.selected && !i.current);
 
-        this.otherTraductions = _.uniqBy(this.otherTraductions, i => i.word);
+        this.otherTraductions = _.uniqBy(this.otherTraductions, i => i.href);
 
         // If only one item selected => Current one, no need to keep it
         if (this.otherTraductions.length === 1 && _.find(this.otherTraductions, i => i.selected)) {

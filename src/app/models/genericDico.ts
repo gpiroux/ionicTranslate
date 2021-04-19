@@ -21,7 +21,7 @@ export abstract class genericDico {
   }
 
   protected getClassValue(el: Element | ChildNode): string {
-    return _.get(el, ['attributes', 'class', 'value'], '');
+    return _.get(el, ['attributes', 'class', 'value'], '').trim();
   }
 
   protected getRoleValue(el: Element | ChildNode): string {

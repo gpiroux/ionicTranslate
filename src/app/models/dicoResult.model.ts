@@ -66,4 +66,5 @@ export class OtherTraduction {
   href: string = '';
   word: string = '';
   selected: boolean;
+  current: boolean;
 }

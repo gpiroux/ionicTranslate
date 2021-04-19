@@ -12,8 +12,6 @@ import { genericDico, ParseResult } from '../models/genericDico';
 })
 export class LarousseService extends genericDico {
   result: DicoWord[];
-
-  phoneticOpen: boolean;
   
   constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
@@ -112,16 +110,10 @@ export class LarousseService extends genericDico {
     }
 
     function parseZoneExpression(elements: HTMLCollection) {
-      try {
-        if (!currentTraduction || !currentTraduction.empty()) {
-          currentTraduction = new Traduction();
-          word.traductions.push(currentTraduction);
-        }
+      if (!currentTraduction || !currentTraduction.empty()) {
+        currentTraduction = new Traduction();
+        word.traductions.push(currentTraduction);
       }
-      catch(e) {
-        console.log(currentTraduction)
-      }
-
 
       _.forEach(elements, e => {
         
@@ -155,8 +147,10 @@ export class LarousseService extends genericDico {
     }
 
     function parseRenvois(elements: HTMLCollection) {
-      currentTraduction = new Traduction();
-      word.traductions.push(currentTraduction);
+      if (!currentTraduction || !currentTraduction.empty()) {
+        currentTraduction = new Traduction();
+        word.traductions.push(currentTraduction);
+      }
 
       _.forEach(elements, ee => {
 
@@ -229,31 +223,8 @@ export class LarousseService extends genericDico {
   private parseSearchElements(elements: HTMLCollection) {
     let result: OtherTraduction[] = [];
 
-    /*
-
-        <nav class="search" role="contentinfo">
-        <h2>Recherche <b>word</b></h2>
-        <p class="count">25 résultats générés en 0ms</p>
-        <div class="wrapper-search">
-          <article class="sel"><h3><a href="/dictionnaires/anglais-francais/f-word/582617?q=word">f-word</a></h3></article>
-          <section>
-            <div class="banner-title"><hr class="line-left"/><span class="homebox-title">autres résultats</span><hr class="line-right"/></div>
-            <article><h3><a href="/dictionnaires/anglais-francais/word/624795#624796">Word</a></h3></article>
-            <article><h3><a href="/dictionnaires/anglais-francais/word/624795">word</a></h3></article>
-            <article class="sous-article"><h3><a href="/dictionnaires/anglais-francais/word/624795?q=word#624798">in a word</a></h3></article>
-          </section>
-          <article><h3><a href="/dictionnaires/anglais-francais/word_association/624800?q=word">word association</a></h3></article>
-          <article><h3><a href="/dictionnaires/anglais-francais/word_class/624804?q=word">word class</a></h3></article>
-          <article class="itemHidden"><h3><a href="/dictionnaires/anglais-francais/word_count/624805?q=word">word count</a></h3></article>
-          <article class="itemHidden"><h3><a href="/dictionnaires/anglais-francais/word_game/624807?q=word">word game</a></h3></article>
-        </div>
-        </nav>
-
-
-    */
-
     function parseElement(e: Element) {
-      // Sub section: "autres résultats"
+
       if (e.nodeName === 'SECTION') {
         _.forEach(e.children, parseElement.bind(this));
       }
@@ -268,34 +239,9 @@ export class LarousseService extends genericDico {
         let link = e.childNodes[0].childNodes[0];
         trad.word = link.textContent;
         trad.href = this.getHrefValue(link);
+
         // Remove extra links that refer to anchor (example with 'word')
         if (trad.href.includes('#')) result.pop();
-      }
-    }
-
-    _.forEach(elements, parseElement.bind(this));
-
-    return result;
-  }
-
-  private parseCorrectorElements(elements: HTMLCollection) {
-    let result: OtherTraduction[] = [];
-
-    function parseElement(e: Element) {
-      if (e.nodeName === 'LI') {
-        _.forEach(e.children, parseElement.bind(this));
-      }
-
-      if (e.nodeName === 'H3') {
-        _.forEach(e.children, parseElement.bind(this));
-      }
-
-      if (e.nodeName === 'A') {
-        let trad = new OtherTraduction();
-        result.push(trad);
-
-        trad.href = this.getHrefValue(e);
-        trad.word = e.textContent
       }
     }
 
@@ -318,7 +264,12 @@ export class LarousseService extends genericDico {
       result.dicoWords = this.result;
     }
 
-    // Other translation parsing ?
+    const nav = htmlDoc.getElementsByClassName('search')
+    if (nav && nav[0] && nav[0].children && nav[0].children[0]) {
+      result.otherTradutions = this.parseSearchElements(nav[0].children[0].children);
+    }
+
+    console.log('Result', result);
 
     return result;
   }
