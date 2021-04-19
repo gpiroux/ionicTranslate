@@ -35,7 +35,7 @@
             <ion-item *ngFor="let trad of item?.traductions" button (click)="onTraductionClick(trad)">
                 <!-- No locution: i.e. main translation -->
                 <div *ngIf="!trad?.locution" class="traduction-container">
-                    <div class="number">{{trad?.number}}</div>
+                    <div class="number">{{ trad?.number || '\u00A0\u00A0\u00A0' }}</div>
                     <div *ngIf="trad?.lien" class="renvois">→</div>
                     <div *ngIf="trad?.indicateur" class="indicateur">{{trad.indicateur}}</div>
                     <div *ngIf="trad?.indicateurDomaine" class="indicateur capital">{{trad.indicateurDomaine}}</div>
@@ -50,9 +50,9 @@
                     <div *ngIf="trad?.indicateurDomaine" class="indicateur capital">{{trad.indicateurDomaine}}</div>
                     <div *ngIf="trad?.locution" class="locution">{{trad.locution}}</div>
                     <div *ngIf="trad?.traduction" class="traduction2">{{trad.traduction}}</div>
-                    <div *ngFor="let tradItem of trad?.traductionSubList" class="locution2-container">
+                    <div *ngFor="let tradItem of trad?.subExpressions" class="locution2-container">
                         <span>-</span>
-                        &nbsp;
+                        <!-- &nbsp; -->
                         <div *ngIf="tradItem?.indicateur" class="indicateur inline">{{tradItem.indicateur}}</div>
                         <div *ngIf="tradItem?.traduction" class="traduction2 inline">{{tradItem.traduction}}</div>
                     </div>

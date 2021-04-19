@@ -27,9 +27,10 @@
     font-size: 90%;
 
     .locution2-container {
-        margin-left: 12px;
+        margin-left: 16px;
     }
     .indicateur {
+        margin-left: 6px;
         margin-right: 6px;
         color: green;
         &.inline {
@@ -40,10 +41,10 @@
         }
     }
     .locution {
-        margin-left: 8px;
+        margin-left: 12px;
     }
     .traduction2 {
-        margin-left: 10px;
+        margin-left: 16px;
         font-style: italic;
         color: #428cff;
         &.inline {

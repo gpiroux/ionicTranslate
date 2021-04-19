@@ -24,7 +24,7 @@ export class DicoWord {
       force ||
       !this.currentTraduction ||
       this.currentTraduction.traduction ||
-      this.currentTraduction.traductionSubList.length
+      this.currentTraduction.subExpressions.length
     ) {
       this.currentTraduction = new Traduction();
       this.traductions.push(this.currentTraduction);
@@ -55,7 +55,11 @@ export class Traduction {
   traduction: string = '';
   lien: string = '';
   audio: string = '';
-  traductionSubList: Traduction[] = [];
+  subExpressions: Traduction[] = [];
+
+  public empty() {
+    return !this.locution && !this.traduction && !this.lien && !this.indicateur;
+  }
 }
 
 export class OtherTraduction {

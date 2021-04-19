@@ -11,118 +11,206 @@ import { genericDico, ParseResult } from '../models/genericDico';
   providedIn: 'root',
 })
 export class LarousseService extends genericDico {
+  result: DicoWord[];
+
+  phoneticOpen: boolean;
+  
   constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
     this.webSite = 'www.larousse.fr';
   }
 
+  private feedTraductionField(e: Element, currentTraduction: Traduction) {
+    _.forEach(e.childNodes, ee => {
+      if (ee.nodeName == 'A' && this.hasClassValue(ee, 'lienarticle2')) {
+        currentTraduction.traduction += `${this.extraTrim(ee.textContent)}`.trim();
+      } else if (ee.nodeName == 'SPAN' && ['Genre'].includes(this.getClassValue(ee))) {
+        currentTraduction.traduction += ee.textContent.includes(',') ? ', ' : '';
+      } else if (ee.nodeName == 'SMALL' && ['oubien'].includes(this.getClassValue(ee))) {
+        currentTraduction.traduction += 'OU';
+      } else if (ee.nodeType === 3) {
+        currentTraduction.traduction += ee.textContent;
+      }
+    });
+  }
+
   private parseElements(elements: HTMLCollection) {
-    let result: DicoWord[] = [];
     let word: DicoWord;
-    let audio: { type: string; value: string };
-    let phoneticOpen = false;
+    let currentTraduction: Traduction;
 
-    function parseElement(e: Element) {
-      /*
-         *  ### Lienson ###
-         *  They are all saved (keep only unique list)
+    function parseZoneGram(elements: HTMLCollection) {
+      _.forEach(elements, e => {
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'CategorieGrammaticale')) {
+          word.categorie += e.textContent.trim();
+          console.log('CategorieGrammaticale', word.categorie);
+        }
+      })
+    }
 
-         <a class="lienson" href="/dictionnaires-prononciation/anglais/goose/19207A"> </a>
-         <h1 class="Adresse" lang="en" xml:lang="en">goose </h1>
-         <span class="Phonetique"> [gu:s]</span>
+    function parseFormeFlechie2(elements: HTMLCollection) {
+      _.forEach(elements, ee => {
+        if (ee.nodeName == 'AUDIO' && this.getSrcValue(ee).includes('anglais')) {
+          word.audio.push(this.getSrcValue(ee).split('/').pop());
+        }
+      });
+    }
 
-         <span class="FormeFlechie2">
-             (
-             <a class="lienson" href="/dictionnaires-prononciation/anglais/goose/19207B"> </a>
-             <span class="FormeFlechie1">pl</span>
-             geese
-             <span class="Phonetique"> [gi:s]</span>
-             )
-         </span>
-         <br />
-         <span class="CategorieGrammaticale" lang="en" xml:lang="en"> noun</span>
+    function parseZoneEntree(elements: HTMLCollection) {
+      word = new DicoWord();
+      this.result.push(word);
 
-         */
+      _.forEach(elements, e => {
+  
+        if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais')) {
+          word.audio.push(this.getSrcValue(e).split('/').pop());
+        }
 
-      if (e.nodeName == 'SPAN' && ['lienson', 'lienson3'].includes(this.getClassValue(e))) {
-        audio = { type: this.getClassValue(e), value: null };
-      }
-      if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais') && audio) {
-        audio.value = this.getSrcValue(e).split('/').pop();
-      }
+        if (e.nodeName == 'H2' && this.hasClassValue(e, 'Adresse')) {
+          word.en = e.textContent.trim();
+        }
 
-      /* ### Word ###
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Metalangue')) {
+          word.metalangue = e.textContent.trim(); // (US) vs (UK)
+        }
 
-         <a class="lienson" href="/dictionnaires-prononciation/anglais/goose/19207A"> </a>
-         <h1 class="Adresse" lang="en" xml:lang="en">goose </h1>
-         <span class="Phonetique"> [gu:s]</span>
-         <span class="FormeFlechie2">
-             (
-             <a class="lienson" href="/dictionnaires-prononciation/anglais/goose/19207B"> </a>
-             <span class="FormeFlechie1">pl</span>
-             geese
-             <span class="Phonetique"> [gi:s]</span>
-             )
-         </span>
-         <br />
-         <pan class="CategorieGrammaticale" lang="en" xml:lang="en"> noun</span>
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Phonetique')) {
+          word.phonetique += e.textContent.trim();
+          word.phonetique = word.phonetique.replace('[ ', '[');
+        }
+
+        // Plurial form : "FormeFlechie2"
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'FormeFlechie2')) {
+          word.formeFlechie += e.textContent;
+          parseFormeFlechie2.bind(this)(e.children);
+        }
+
+        if (e.nodeName == 'DIV' && this.hasClassValue(e, 'ZoneGram')) {
+          parseZoneGram.bind(this)(e.children);
+        }
+
+      });
+    }
+
+    function parseDivisionExpression(elements: HTMLCollection, idx: number) {
+      let subExpression = new Traduction();
+      subExpression.number = idx.toString();
+      currentTraduction.subExpressions.push(subExpression);
+
+      _.forEach(elements, e => {
+
+        // Metalangue
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Indicateur')) {
+          subExpression.indicateur += e.textContent;
+        }
+
+        // Traduction
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Traduction2')) {
+          this.feedTraductionField(e, subExpression);
+        }
+
+      });
+    }
 
 
-         Example of CategorieGrammaticale:
-
-         <span class="CategorieGrammaticale" lang="en" xml:lang="en"> transitive verb
-            <a class="lienconj" href="/conjugaison/anglais/goose/4120">Conjugaison</a>
-         </span>
-
-         */
-
-      // Mot anglais
-      if (e.nodeName == 'H1' && this.getClassValue(e).includes('Adresse')) {
-        word = new DicoWord();
-        result.push(word);
-        word.en = e.textContent.trim();
-
-        // Need to wait creation of the word !
-        if (audio && audio.type === 'lienson' && audio.value) {
-          word.audio.push(audio.value);
-          audio = null;
+    function parseZoneExpression(elements: HTMLCollection) {
+      try {
+        if (!currentTraduction || !currentTraduction.empty()) {
+          currentTraduction = new Traduction();
+          word.traductions.push(currentTraduction);
         }
       }
-
-      // Phonetique principale
-      if (e.nodeName == 'SPAN' && this.getClassValue(e).includes('Phonetique')) {
-        word.phonetique += e.textContent.trim();
-        word.phonetique = word.phonetique.replace('[ ', '[');
-        phoneticOpen = !word.phonetique.includes(']'); // patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
+      catch(e) {
+        console.log(currentTraduction)
       }
 
-      // E.g. patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
-      if (phoneticOpen && audio && audio.type === 'lienson' && audio.value) {
-        word.audio.push(audio.value);
-        audio = null;
-      }
 
-      // Plurial form : "FormeFlechie2"
-      if (e.nodeName == 'SPAN' && this.getClassValue(e).includes('FormeFlechie2')) {
-        _.forEach(e.childNodes, ee => {
-          if (ee.nodeName == 'SPAN' && ['Phonetique'].includes(this.getClassValue(ee))) {
-            word.formeFlechie += ee.textContent;
-          } else if (ee.nodeType === 3) {
-            word.formeFlechie += this.extraTrim(ee.textContent);
-          }
+      _.forEach(elements, e => {
+        
+        // Locution
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Locution2')) {
+          currentTraduction.locution += e.textContent;
+        }
 
-          if (ee.nodeName == 'AUDIO' && this.getSrcValue(ee).includes('anglais')) {
-            word.audio.push(this.getSrcValue(ee).split('/').pop());
-          }
-        });
-      }
+        // Traduction
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Traduction2')) {
+          this.feedTraductionField(e, currentTraduction);
+        }
 
-      // Categorie grammaticale principale (avant traduction)
-      if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'CategorieGrammaticale' && !word.currentTraduction) {
-        _.forEach(e.childNodes, ee => {
-          if (ee.nodeType === 3) word.categorie += ee.textContent.trim();
-        });
-      }
+        // Metalangue
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Metalangue')) {
+          currentTraduction.indicateur += e.textContent;
+        }
+
+        // Ajout code audio anglais
+        if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais')) {
+          currentTraduction.audio = this.getSrcValue(e).split('/').pop();
+        }
+
+        // DivisionExpression
+        if (e.nodeName == 'OL' && this.hasClassValue(e, 'DivisionExpression')) {
+          _.forEach(e.children, (li, idx) => 
+            li.nodeName == 'LI' && parseDivisionExpression.bind(this)(li.children, idx + 1)
+          );
+        }
+      })
+    }
+
+    function parseRenvois(elements: HTMLCollection) {
+      currentTraduction = new Traduction();
+      word.traductions.push(currentTraduction);
+
+      _.forEach(elements, ee => {
+
+        if (ee.nodeName == 'A' && this.hasClassValue(ee, 'lienarticle')) {
+          currentTraduction.lien = this.getHrefValue(ee);
+          currentTraduction.traduction = ee.textContent;
+        }
+
+      });
+    }
+
+    function parseZoneTexte(elements: HTMLCollection, index?: number) {
+      currentTraduction = new Traduction();
+      index && (currentTraduction.number = `${index}.`);
+      word.traductions.push(currentTraduction);
+      
+      _.forEach(elements, e => {
+        
+        // Traduction
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Traduction')) {
+          this.feedTraductionField(e, currentTraduction);
+          console.log('trad', currentTraduction.traduction);
+        }
+
+        if (e.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(e))) {
+          currentTraduction.indicateur += e.textContent + ' ';
+        }
+        
+        if (e.nodeName == 'SPAN' && ['IndicateurDomaine'].includes(this.getClassValue(e))) {
+          currentTraduction.indicateurDomaine += e.textContent;
+        }
+
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Renvois')) {
+          parseRenvois.bind(this)(e.children);
+        }
+
+        // ZoneExpression
+        if (e.nodeName == 'DIV' && this.hasClassValue(e, 'ZoneExpression')) {
+          parseZoneExpression.bind(this)(e.children);
+        }
+
+        // division-semantique
+        if (e.nodeName == 'DIV' && this.hasClassValue(e, 'division-semantique')) {
+          parseZoneTexte.bind(this)(e.children);
+        }
+      });
+
+    }
+
+    function parseElement(e: Element) {
+      let phoneticOpen: Boolean;
+      let audio: any;
+
 
       /*
 
@@ -145,64 +233,42 @@ export class LarousseService extends genericDico {
 
          */
 
-      // Ex 'grey' & 'goose'
-      if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
-        if (!word.categorie) {
-          if (phoneticOpen) {
-            word.phonetique += e.textContent; // patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
-          } else {
-            word.metalangue = e.textContent.trim(); // (US) vs (UK)
-          }
-        } else {
-          word.initTraduction();
-          word.currentTraduction.indicateur += e.textContent;
-        }
-      }
+      // // Ex 'grey' & 'goose'
+      // if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
+      //   if (!word.categorie) {
+      //     if (phoneticOpen) {
+      //       word.phonetique += e.textContent; // patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
+      //     } else {
+      //       word.metalangue = e.textContent.trim(); // (US) vs (UK)
+      //     }
+      //   } else {
+      //     word.initTraduction();
+      //     word.currentTraduction.indicateur += e.textContent;
+      //   }
+      // }
 
       // Indicateur:
       // <span class="Indicateur"> [car, motorcycle, engine]</span>
-      if (e.nodeName == 'SPAN' && ['Indicateur'].includes(this.getClassValue(e))) {
-        word.initTraduction();
-        word.currentTraduction.indicateur += e.textContent;
-      }
-      if (e.nodeName == 'SPAN' && ['IndicateurDomaine'].includes(this.getClassValue(e))) {
-        word.initTraduction();
-        word.currentTraduction.indicateurDomaine += e.textContent;
-      }
+      // if (e.nodeName == 'SPAN' && ['Indicateur'].includes(this.getClassValue(e))) {
+      //   word.initTraduction();
+      //   word.currentTraduction.indicateur += e.textContent;
+      // }
+      // if (e.nodeName == 'SPAN' && ['IndicateurDomaine'].includes(this.getClassValue(e))) {
+      //   word.initTraduction();
+      //   word.currentTraduction.indicateurDomaine += e.textContent;
+      // }
 
       // Locution:
       // <span class="Locution2" lang="en" xml:lang="en" id="884865">the car roared past</span>
-      if (e.nodeName == 'SPAN' && ['Locution2'].includes(this.getClassValue(e))) {
-        word.initTraduction(true);
-        word.currentTraduction.locution += e.textContent;
-        if (audio && audio.type === 'lienson3' && audio.value) {
-          word.currentTraduction.audio = audio.value;
-          audio = null;
-        }
-      }
+      // if (e.nodeName == 'SPAN' && ['Locution2'].includes(this.getClassValue(e))) {
+      //   word.initTraduction(true);
+      //   word.currentTraduction.locution += e.textContent;
+      //   if (audio && audio.type === 'lienson3' && audio.value) {
+      //     word.currentTraduction.audio = audio.value;
+      //     audio = null;
+      //   }
+      // }
 
-      // Traduction
-      // <span class="Traduction2" lang="fr" xml:lang="fr"> la voiture est passée en vrombissant</span>
-      //
-      // <span class="Traduction" lang="fr" xml:lang="fr">  <a class="lienconj2" href="/conjugaison/francais/rugir/8295">Conjugaison</a>
-      //    <a class="lienarticle2" href="/dictionnaires/francais-anglais/rugir/69459">rugir</a>
-      // </span>
-      var traductions = ['Traduction', 'Traduction2', 'Glose2'];
-      if (e.nodeName == 'SPAN' && traductions.includes(this.getClassValue(e))) {
-        word.initTraduction();
-
-        _.forEach(e.childNodes, ee => {
-          if (ee.nodeName == 'A' && ['lienarticle2'].includes(this.getClassValue(ee))) {
-            word.currentTraduction.traduction += `${this.extraTrim(ee.textContent)}`.trim();
-          } else if (ee.nodeName == 'SPAN' && ['Genre'].includes(this.getClassValue(ee))) {
-            word.currentTraduction.traduction += ee.textContent.includes(',') ? ', ' : '';
-          } else if (ee.nodeName == 'SMALL' && ['oubien'].includes(this.getClassValue(ee))) {
-            word.currentTraduction.traduction += 'OU';
-          } else if (ee.nodeType === 3) {
-            word.currentTraduction.traduction += ee.textContent;
-          }
-        });
-      }
 
       /*
          <a class="lienson" href="/dictionnaires-prononciation/anglais/tts/82585ang2">&nbsp;</a>&nbsp;
@@ -214,30 +280,30 @@ export class LarousseService extends genericDico {
          </span>
          */
 
-      if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'Renvois') {
-        word.initTraduction();
+      // if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'Renvois') {
+      //   word.initTraduction();
 
-        _.forEach(e.children, ee => {
-          if (ee.nodeName == 'A' && this.getClassValue(ee) == 'lienarticle') {
-            word.currentTraduction.lien = this.getHrefValue(ee);
-            word.currentTraduction.traduction = ee.textContent;
-          }
-        });
-      }
+      //   _.forEach(e.children, ee => {
+      //     if (ee.nodeName == 'A' && this.getClassValue(ee) == 'lienarticle') {
+      //       word.currentTraduction.lien = this.getHrefValue(ee);
+      //       word.currentTraduction.traduction = ee.textContent;
+      //     }
+      //   });
+      // }
 
-      // Tables
-      if (e.nodeName == 'TABLE') {
-        // Number
-        const numElement = _.get(e, 'children.0.children.0.children.0.children.0');
-        if (_.get(numElement, 'nodeName') == 'SPAN' && this.getClassValue(numElement) === 'CategorieGrammaticale') {
-          word.initTraduction();
-          word.currentTraduction.number = numElement.textContent;
-        }
+      // // Tables
+      // if (e.nodeName == 'TABLE') {
+      //   // Number
+      //   const numElement = _.get(e, 'children.0.children.0.children.0.children.0');
+      //   if (_.get(numElement, 'nodeName') == 'SPAN' && this.getClassValue(numElement) === 'CategorieGrammaticale') {
+      //     word.initTraduction();
+      //     word.currentTraduction.number = numElement.textContent;
+      //   }
 
-        // Other table elements
-        const domElements = _.get(e, 'children.0.children.0.children.1.children');
-        _.forEach(domElements, parseElement.bind(this));
-      }
+      //   // Other table elements
+      //   const domElements = _.get(e, 'children.0.children.0.children.1.children');
+      //   _.forEach(domElements, parseElement.bind(this));
+      // }
 
       /*
          <a class="lienson3" href="/dictionnaires-prononciation/anglais/tts/108646ang2">&nbsp;</a>
@@ -255,25 +321,25 @@ export class LarousseService extends genericDico {
          </span>
          */
 
-      if (
-        e.nodeName == 'SPAN' &&
-        this.getClassValue(e) === 'CategorieGrammaticale' &&
-        _.get(word, ['currentTraduction', 'locution']) &&
-        !_.get(word, ['currentTraduction', 'traduction'])
-      ) {
-        let tradustion2 = new Traduction();
-        word.currentTraduction.traductionSubList.push(tradustion2);
+      // if (
+      //   e.nodeName == 'SPAN' &&
+      //   this.getClassValue(e) === 'CategorieGrammaticale' &&
+      //   _.get(word, ['currentTraduction', 'locution']) &&
+      //   !_.get(word, ['currentTraduction', 'traduction'])
+      // ) {
+      //   let tradustion2 = new Traduction();
+      //   word.currentTraduction.subExpressions.push(tradustion2);
 
-        _.forEach(e.children, ee => {
-          if (ee.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(ee))) {
-            tradustion2.indicateur = ee.textContent;
-          }
+      //   _.forEach(e.children, ee => {
+      //     if (ee.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(ee))) {
+      //       tradustion2.indicateur = ee.textContent;
+      //     }
 
-          if (ee.nodeName == 'SPAN' && 'Traduction2' === this.getClassValue(ee)) {
-            tradustion2.traduction = ee.textContent;
-          }
-        });
-      }
+      //     if (ee.nodeName == 'SPAN' && 'Traduction2' === this.getClassValue(ee)) {
+      //       tradustion2.traduction = ee.textContent;
+      //     }
+      //   });
+      // }
 
       /*
          <span link="C603420">
@@ -291,38 +357,27 @@ export class LarousseService extends genericDico {
       }
     }
 
-    function parseCorrector(e: Element) {
-      // if (e.nodeName === 'UL') {
-      //     initWord();
-      //     _word.categorie = 'Suggestions';
-      //     _.forEach(e.children, function(ee) {
-      //         var link = ee.getElementsByTagName('a');
-      //         initTraduction();
-      //         _traduction.lien = link[0].attributes.href.value;
-      //         _traduction.traduction = link[0].textContent;
-      //         console.log('link', link, link[0].attributes.href.value);
-      //     })
-      // }
-      // if (e.nodeName === 'P' && this.getClassValue(e) === 'err') {
-      //     initWord();
-      //     _word.categorie = 'Error';
-      //     _word.en = e.textContent;
-      // }
-    }
+    _.forEach(elements, el => {
+      // ZoneEntree
+      if (this.hasClassValue(el, "ZoneEntree"))  parseZoneEntree.bind(this)(el.children);
+      
+      // ZoneTexte
+      if (this.hasClassValue(el, "ZoneTexte")) {
+        if (el.children[0].nodeName == 'OL') {
+          _.forEach(el.children[0].children, (li, idx) => 
+            li.nodeName == 'LI' && parseZoneTexte.bind(this)(li.children, idx + 1)
+          );
+        } else {
+          parseZoneTexte.bind(this)(el.children)
+        }
+      };    
 
-    _.forEach(elements, parseElement.bind(this));
-
-    // Clean dicoWord
-    _.forEach(result, r => {
-      _.forEach(r.traductions, tr => {
-        tr.traduction = this.globalTrim(tr.traduction);
-      });
+      // SousArticle – call recursif
+      if (this.hasClassValue(el, "SousArticle")) this.parseElements(el.children);
     });
-    return result;
 
-    // if (type == 'corrector') {
-    //     _.forEach(elements, parseCorrector);
-    // }
+    console.log('Result', this.result);
+    return this.result;
   }
 
   private parseSearchElements(elements: HTMLCollection) {
@@ -404,35 +459,32 @@ export class LarousseService extends genericDico {
   }
 
   parse(data: string): ParseResult {
+    this.result = [];
+
     const result: ParseResult = { dicoWords: [], otherTradutions: [] };
     const parser = new DOMParser();
     const htmlDoc = parser.parseFromString(data, 'text/html');
 
-    // <article role="article">
-    const articles = htmlDoc.getElementsByTagName('article');
-    const article = _.find(articles, a => this.getRoleValue(a) === 'article');
-    if (article) {
-      // <div class="article_bilingue">
-      const article_bilingue = _.find(article.children, a => this.getClassValue(a) === 'article_bilingue');
-      const domElements = article_bilingue.children;
-      result.dicoWords = this.parseElements(domElements);
+    const article = htmlDoc.getElementsByClassName('article_bilingue')
+    if (article && article[0]) {
+      result.dicoWords = this.parseElements(article[0].children);
     }
 
-    // <div class="wrapper-search">
-    const divs = htmlDoc.getElementsByTagName('div');
-    const wrapperSearch = _.find(divs, a => this.getClassValue(a) === 'wrapper-search');
-    if (wrapperSearch) {
-      const domElements = wrapperSearch.children;
-      result.otherTradutions = this.parseSearchElements(domElements);
-    }
+    // // <div class="wrapper-search">
+    // const divs = htmlDoc.getElementsByTagName('div');
+    // const wrapperSearch = _.find(divs, a => this.getClassValue(a) === 'wrapper-search');
+    // if (wrapperSearch) {
+    //   const domElements = wrapperSearch.children;
+    //   result.otherTradutions = this.parseSearchElements(domElements);
+    // }
 
-    // <div class="corrector">
-    const sections = htmlDoc.getElementsByTagName('section');
-    const corrector = _.find(sections, a => this.getClassValue(a) === 'corrector');
-    const domElements = corrector ? corrector.getElementsByTagName('li') : null; 
-    if (domElements) {
-      result.otherTradutions = this.parseCorrectorElements(domElements);
-    }
+    // // <div class="corrector">
+    // const sections = htmlDoc.getElementsByTagName('section');
+    // const corrector = _.find(sections, a => this.getClassValue(a) === 'corrector');
+    // const domElements = corrector ? corrector.getElementsByTagName('li') : null; 
+    // if (domElements) {
+    //   result.otherTradutions = this.parseCorrectorElements(domElements);
+    // }
 
     // // TBC
     // var error = htmlDoc.getElementsByClassName('err');

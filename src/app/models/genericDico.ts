@@ -16,6 +16,10 @@ export abstract class genericDico {
 
   constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {}
 
+  protected hasClassValue(el: Element | ChildNode, className: string): boolean {
+    return _.get(el, ['attributes', 'class', 'value'], '') === className;
+  }
+
   protected getClassValue(el: Element | ChildNode): string {
     return _.get(el, ['attributes', 'class', 'value'], '');
   }

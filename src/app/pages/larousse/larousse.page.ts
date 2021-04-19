@@ -12,7 +12,7 @@ import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.mo
 import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
 
 import * as _ from 'lodash';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-larousse',
@@ -121,7 +121,7 @@ export class LaroussePage implements OnInit {
 
   async onTraductionClick(traduction: Traduction) {
     // locution => audio
-    if (traduction.traductionSubList.length || traduction.locution) {
+    if (traduction.subExpressions.length || traduction.locution) {
       const audio = traduction.audio;
       if (audio && !this.fetchAudio) {
         const blobURL = await this.audioService.loadAudio(audio);
