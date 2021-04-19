@@ -20,8 +20,8 @@ export class LarousseService extends genericDico {
     this.webSite = 'www.larousse.fr';
   }
 
-  private feedTraductionField(e: Element, currentTraduction: Traduction) {
-    _.forEach(e.childNodes, ee => {
+  protected feedTraductionField(element: Element, currentTraduction: Traduction) {
+    _.forEach(element.childNodes, ee => {
       if (ee.nodeName == 'A' && this.hasClassValue(ee, 'lienarticle2')) {
         currentTraduction.traduction += `${this.extraTrim(ee.textContent)}`.trim();
       } else if (ee.nodeName == 'SPAN' && ['Genre'].includes(this.getClassValue(ee))) {
@@ -34,7 +34,7 @@ export class LarousseService extends genericDico {
     });
   }
 
-  private parseElements(elements: HTMLCollection) {
+  private parseArticleBilingue(elements: HTMLCollection) {
     let word: DicoWord;
     let currentTraduction: Traduction;
 
@@ -80,7 +80,7 @@ export class LarousseService extends genericDico {
 
         // Plurial form : "FormeFlechie2"
         if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'FormeFlechie2')) {
-          word.formeFlechie += e.textContent;
+          word.formeFlechie += this.globalTrim(e.textContent);
           parseFormeFlechie2.bind(this)(e.children);
         }
 
@@ -91,9 +91,9 @@ export class LarousseService extends genericDico {
       });
     }
 
-    function parseDivisionExpression(elements: HTMLCollection, idx: number) {
+    function parseDivisionExpression(elements: HTMLCollection, index: number) {
       let subExpression = new Traduction();
-      subExpression.number = idx.toString();
+      subExpression.number = index.toString();
       currentTraduction.subExpressions.push(subExpression);
 
       _.forEach(elements, e => {
@@ -110,7 +110,6 @@ export class LarousseService extends genericDico {
 
       });
     }
-
 
     function parseZoneExpression(elements: HTMLCollection) {
       try {
@@ -207,156 +206,6 @@ export class LarousseService extends genericDico {
 
     }
 
-    function parseElement(e: Element) {
-      let phoneticOpen: Boolean;
-      let audio: any;
-
-
-      /*
-
-         <span class="Indicateur"> [used lubricant]</span>
-         <a class="lienson2" href="/dictionnaires-prononciation/francais/tts/22595fra2">&nbsp;</a>
-         <span class="Traduction" lang="fr" xml:lang="fr">
-             <a class="lienarticle2" href="/dictionnaires/francais-anglais/cambouis/12322">cambouis</a>
-             <span class="Genre"> m</span>
-         </span>
-
-
-         <span class="IndicateurDomaine"> cars</span>
-         <a class="lienson2" href="/dictionnaires-prononciation/francais/tts/151561fra2">&nbsp;</a>
-         <span class="Traduction" lang="fr" xml:lang="fr">
-             <a class="lienconj2" href="/conjugaison/francais/graisser/5130">Conjugaison</a>
-             <a class="lienarticle2" href="/dictionnaires/francais-anglais/graisser/37734">graisser</a>,
-             <a class="lienconj2" href="/conjugaison/francais/lubrifier/5890">Conjugaison</a>
-             <a class="lienarticle2" href="/dictionnaires/francais-anglais/lubrifier/47892">lubrifier</a>
-         </span>
-
-         */
-
-      // // Ex 'grey' & 'goose'
-      // if (e.nodeName == 'SPAN' && this.getClassValue(e) == 'Metalangue') {
-      //   if (!word.categorie) {
-      //     if (phoneticOpen) {
-      //       word.phonetique += e.textContent; // patent [(UK) ˈpeɪtənt, (US) ˈpætənt]
-      //     } else {
-      //       word.metalangue = e.textContent.trim(); // (US) vs (UK)
-      //     }
-      //   } else {
-      //     word.initTraduction();
-      //     word.currentTraduction.indicateur += e.textContent;
-      //   }
-      // }
-
-      // Indicateur:
-      // <span class="Indicateur"> [car, motorcycle, engine]</span>
-      // if (e.nodeName == 'SPAN' && ['Indicateur'].includes(this.getClassValue(e))) {
-      //   word.initTraduction();
-      //   word.currentTraduction.indicateur += e.textContent;
-      // }
-      // if (e.nodeName == 'SPAN' && ['IndicateurDomaine'].includes(this.getClassValue(e))) {
-      //   word.initTraduction();
-      //   word.currentTraduction.indicateurDomaine += e.textContent;
-      // }
-
-      // Locution:
-      // <span class="Locution2" lang="en" xml:lang="en" id="884865">the car roared past</span>
-      // if (e.nodeName == 'SPAN' && ['Locution2'].includes(this.getClassValue(e))) {
-      //   word.initTraduction(true);
-      //   word.currentTraduction.locution += e.textContent;
-      //   if (audio && audio.type === 'lienson3' && audio.value) {
-      //     word.currentTraduction.audio = audio.value;
-      //     audio = null;
-      //   }
-      // }
-
-
-      /*
-         <a class="lienson" href="/dictionnaires-prononciation/anglais/tts/82585ang2">&nbsp;</a>&nbsp;
-         <h1 class="Adresse" lang="en" xml:lang="en">gray <span class="etcetera">etc.</span></h1>
-         <span class="Metalangue"> (US) </span>
-         <br /> →
-         <span class="Renvois" lang="en" xml:lang="en">
-            <a class="lienarticle" href="/dictionnaires/anglais-francais/grey/584548">grey</a>
-         </span>
-         */
-
-      // if (e.nodeName == 'SPAN' && this.getClassValue(e) === 'Renvois') {
-      //   word.initTraduction();
-
-      //   _.forEach(e.children, ee => {
-      //     if (ee.nodeName == 'A' && this.getClassValue(ee) == 'lienarticle') {
-      //       word.currentTraduction.lien = this.getHrefValue(ee);
-      //       word.currentTraduction.traduction = ee.textContent;
-      //     }
-      //   });
-      // }
-
-      // // Tables
-      // if (e.nodeName == 'TABLE') {
-      //   // Number
-      //   const numElement = _.get(e, 'children.0.children.0.children.0.children.0');
-      //   if (_.get(numElement, 'nodeName') == 'SPAN' && this.getClassValue(numElement) === 'CategorieGrammaticale') {
-      //     word.initTraduction();
-      //     word.currentTraduction.number = numElement.textContent;
-      //   }
-
-      //   // Other table elements
-      //   const domElements = _.get(e, 'children.0.children.0.children.1.children');
-      //   _.forEach(domElements, parseElement.bind(this));
-      // }
-
-      /*
-         <a class="lienson3" href="/dictionnaires-prononciation/anglais/tts/108646ang2">&nbsp;</a>
-         <span class="Locution2" lang="en" xml:lang="en" id="884865">the car roared past</span>
-         <br />
-         <span class="CategorieGrammaticale" lang="en" xml:lang="en">a.
-             <span class="Indicateur"> [noisily]</span>
-             <a class="lienson2" href="/dictionnaires-prononciation/francais/tts/183728fra2">&nbsp;</a>
-             <span class="Traduction2" lang="fr" xml:lang="fr"> la voiture est passée en vrombissant</span>
-         </span>
-         <span class="CategorieGrammaticale" lang="en" xml:lang="en">b.
-             <span class="Indicateur"> [fast]</span>
-             <a class="lienson2" href="/dictionnaires-prononciation/francais/tts/183729fra2">&nbsp;</a>
-             <span class="Traduction2" lang="fr" xml:lang="fr"> la voiture est passée à toute allure</span>
-         </span>
-         */
-
-      // if (
-      //   e.nodeName == 'SPAN' &&
-      //   this.getClassValue(e) === 'CategorieGrammaticale' &&
-      //   _.get(word, ['currentTraduction', 'locution']) &&
-      //   !_.get(word, ['currentTraduction', 'traduction'])
-      // ) {
-      //   let tradustion2 = new Traduction();
-      //   word.currentTraduction.subExpressions.push(tradustion2);
-
-      //   _.forEach(e.children, ee => {
-      //     if (ee.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(ee))) {
-      //       tradustion2.indicateur = ee.textContent;
-      //     }
-
-      //     if (ee.nodeName == 'SPAN' && 'Traduction2' === this.getClassValue(ee)) {
-      //       tradustion2.traduction = ee.textContent;
-      //     }
-      //   });
-      // }
-
-      /*
-         <span link="C603420">
-             <a class="lienson" href="/dictionnaires-prononciation/anglais/tts/103047ang2">&nbsp;</a>&nbsp;
-             <h1 class="Adresse" lang="en" xml:lang="en">pound out</h1>
-             <br />
-             <span class="CategorieGrammaticale" lang="en" xml:lang="en"> transitive verb separable <a class="lienconj" href="/conjugaison/anglais/pound_out/12384">Conjugaison</a></span>
-             <br />
-             ...
-         </span>
-
-         */
-      if (e.nodeName == 'SPAN' && this.getLinkValue(e)) {
-        _.forEach(e.children, parseElement.bind(this));
-      }
-    }
-
     _.forEach(elements, el => {
       // ZoneEntree
       if (this.hasClassValue(el, "ZoneEntree"))  parseZoneEntree.bind(this)(el.children);
@@ -373,11 +222,8 @@ export class LarousseService extends genericDico {
       };    
 
       // SousArticle – call recursif
-      if (this.hasClassValue(el, "SousArticle")) this.parseElements(el.children);
+      if (this.hasClassValue(el, "SousArticle")) this.parseArticleBilingue(el.children);
     });
-
-    console.log('Result', this.result);
-    return this.result;
   }
 
   private parseSearchElements(elements: HTMLCollection) {
@@ -465,32 +311,14 @@ export class LarousseService extends genericDico {
     const parser = new DOMParser();
     const htmlDoc = parser.parseFromString(data, 'text/html');
 
+    // Main dico parsing
     const article = htmlDoc.getElementsByClassName('article_bilingue')
     if (article && article[0]) {
-      result.dicoWords = this.parseElements(article[0].children);
+      this.parseArticleBilingue(article[0].children);
+      result.dicoWords = this.result;
     }
 
-    // // <div class="wrapper-search">
-    // const divs = htmlDoc.getElementsByTagName('div');
-    // const wrapperSearch = _.find(divs, a => this.getClassValue(a) === 'wrapper-search');
-    // if (wrapperSearch) {
-    //   const domElements = wrapperSearch.children;
-    //   result.otherTradutions = this.parseSearchElements(domElements);
-    // }
-
-    // // <div class="corrector">
-    // const sections = htmlDoc.getElementsByTagName('section');
-    // const corrector = _.find(sections, a => this.getClassValue(a) === 'corrector');
-    // const domElements = corrector ? corrector.getElementsByTagName('li') : null; 
-    // if (domElements) {
-    //   result.otherTradutions = this.parseCorrectorElements(domElements);
-    // }
-
-    // // TBC
-    // var error = htmlDoc.getElementsByClassName('err');
-    // if (error && error[0]) {
-    //   throw error[0].textContent || 'Parsing error';
-    // }
+    // Other translation parsing ?
 
     return result;
   }
