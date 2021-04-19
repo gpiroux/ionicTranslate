@@ -58,7 +58,7 @@ export class Traduction {
   subExpressions: Traduction[] = [];
 
   public empty() {
-    return !this.locution && !this.traduction && !this.lien && !this.indicateur;
+    return !this.locution && !this.traduction && !this.lien && !this.indicateur && !this.indicateurDomaine;
   }
 }
 
