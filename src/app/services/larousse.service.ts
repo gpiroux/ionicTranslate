@@ -12,7 +12,7 @@ import { genericDico, ParseResult } from '../models/genericDico';
 })
 export class LarousseService extends genericDico {
   result: DicoWord[];
-  
+
   constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
     super(httpNative, httpClient, platform);
     this.webSite = 'www.larousse.fr';
@@ -21,7 +21,7 @@ export class LarousseService extends genericDico {
   protected feedTraductionField(element: Element, currentTraduction: Traduction) {
     _.forEach(element.childNodes, ee => {
       if (ee.nodeName == 'A' && this.hasClassValue(ee, 'lienarticle2')) {
-        currentTraduction.traduction += `${this.extraTrim(ee.textContent)}`.trim();
+        currentTraduction.traduction += this.extraTrim(ee.textContent);
       } else if (ee.nodeName == 'SPAN' && ['Genre'].includes(this.getClassValue(ee))) {
         currentTraduction.traduction += ee.textContent.includes(',') ? ', ' : '';
       } else if (ee.nodeName == 'SMALL' && ['oubien'].includes(this.getClassValue(ee))) {
@@ -42,7 +42,7 @@ export class LarousseService extends genericDico {
           word.categorie += e.textContent.trim();
           console.log('CategorieGrammaticale', word.categorie);
         }
-      })
+      });
     }
 
     function parseFormeFlechie2(elements: HTMLCollection) {
@@ -58,7 +58,6 @@ export class LarousseService extends genericDico {
       this.result.push(word);
 
       _.forEach(elements, e => {
-  
         if (e.nodeName == 'AUDIO' && this.getSrcValue(e).includes('anglais')) {
           word.audio.push(this.getSrcValue(e).split('/').pop());
         }
@@ -78,14 +77,13 @@ export class LarousseService extends genericDico {
 
         // Plurial form : "FormeFlechie2"
         if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'FormeFlechie2')) {
-          word.formeFlechie += this.globalTrim(e.textContent);
+          word.formeFlechie += this.trim(e.textContent);
           parseFormeFlechie2.bind(this)(e.children);
         }
 
         if (e.nodeName == 'DIV' && this.hasClassValue(e, 'ZoneGram')) {
           parseZoneGram.bind(this)(e.children);
         }
-
       });
     }
 
@@ -95,7 +93,6 @@ export class LarousseService extends genericDico {
       currentTraduction.subExpressions.push(subExpression);
 
       _.forEach(elements, e => {
-
         // Metalangue
         if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Indicateur')) {
           subExpression.indicateur += e.textContent;
@@ -105,7 +102,6 @@ export class LarousseService extends genericDico {
         if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Traduction2')) {
           this.feedTraductionField(e, subExpression);
         }
-
       });
     }
 
@@ -116,7 +112,6 @@ export class LarousseService extends genericDico {
       }
 
       _.forEach(elements, e => {
-        
         // Locution
         if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Locution2')) {
           currentTraduction.locution += e.textContent;
@@ -139,11 +134,12 @@ export class LarousseService extends genericDico {
 
         // DivisionExpression
         if (e.nodeName == 'OL' && this.hasClassValue(e, 'DivisionExpression')) {
-          _.forEach(e.children, (li, idx) => 
-            li.nodeName == 'LI' && parseDivisionExpression.bind(this)(li.children, idx + 1)
+          _.forEach(
+            e.children,
+            (li, idx) => li.nodeName == 'LI' && parseDivisionExpression.bind(this)(li.children, idx + 1)
           );
         }
-      })
+      });
     }
 
     function parseRenvois(elements: HTMLCollection) {
@@ -153,12 +149,10 @@ export class LarousseService extends genericDico {
       }
 
       _.forEach(elements, ee => {
-
         if (ee.nodeName == 'A' && this.hasClassValue(ee, 'lienarticle')) {
           currentTraduction.lien = this.getHrefValue(ee);
           currentTraduction.traduction = ee.textContent;
         }
-
       });
     }
 
@@ -166,9 +160,8 @@ export class LarousseService extends genericDico {
       currentTraduction = new Traduction();
       index && (currentTraduction.number = `${index}.`);
       word.traductions.push(currentTraduction);
-      
+
       _.forEach(elements, e => {
-        
         // Traduction
         if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Traduction')) {
           this.feedTraductionField(e, currentTraduction);
@@ -178,7 +171,7 @@ export class LarousseService extends genericDico {
         if (e.nodeName == 'SPAN' && ['Indicateur', 'Metalangue'].includes(this.getClassValue(e))) {
           currentTraduction.indicateur += e.textContent + ' ';
         }
-        
+
         if (e.nodeName == 'SPAN' && ['IndicateurDomaine'].includes(this.getClassValue(e))) {
           currentTraduction.indicateurDomaine += e.textContent;
         }
@@ -197,26 +190,26 @@ export class LarousseService extends genericDico {
           parseZoneTexte.bind(this)(e.children);
         }
       });
-
     }
 
     _.forEach(elements, el => {
       // ZoneEntree
-      if (this.hasClassValue(el, "ZoneEntree"))  parseZoneEntree.bind(this)(el.children);
-      
+      if (this.hasClassValue(el, 'ZoneEntree')) parseZoneEntree.bind(this)(el.children);
+
       // ZoneTexte
-      if (this.hasClassValue(el, "ZoneTexte")) {
+      if (this.hasClassValue(el, 'ZoneTexte')) {
         if (el.children[0].nodeName == 'OL') {
-          _.forEach(el.children[0].children, (li, idx) => 
-            li.nodeName == 'LI' && parseZoneTexte.bind(this)(li.children, idx + 1)
+          _.forEach(
+            el.children[0].children,
+            (li, idx) => li.nodeName == 'LI' && parseZoneTexte.bind(this)(li.children, idx + 1)
           );
         } else {
-          parseZoneTexte.bind(this)(el.children)
+          parseZoneTexte.bind(this)(el.children);
         }
-      };    
+      }
 
       // SousArticle – call recursif
-      if (this.hasClassValue(el, "SousArticle")) this.parseArticleBilingue(el.children);
+      if (this.hasClassValue(el, 'SousArticle')) this.parseArticleBilingue(el.children);
     });
   }
 
@@ -224,7 +217,6 @@ export class LarousseService extends genericDico {
     let result: OtherTraduction[] = [];
 
     function parseElement(e: Element) {
-
       if (e.nodeName === 'SECTION') {
         _.forEach(e.children, parseElement.bind(this));
       }
@@ -258,13 +250,19 @@ export class LarousseService extends genericDico {
     const htmlDoc = parser.parseFromString(data, 'text/html');
 
     // Main dico parsing
-    const article = htmlDoc.getElementsByClassName('article_bilingue')
+    const article = htmlDoc.getElementsByClassName('article_bilingue');
     if (article && article[0]) {
       this.parseArticleBilingue(article[0].children);
+      this.result.map(r => {
+        r.en = this.globalTrim(r.en);
+        r.traductions.map(rr => {
+          rr.traduction = this.globalTrim(rr.traduction);
+        });
+      });
       result.dicoWords = this.result;
     }
 
-    const nav = htmlDoc.getElementsByClassName('search')
+    const nav = htmlDoc.getElementsByClassName('search');
     if (nav && nav[0] && nav[0].children && nav[0].children[0]) {
       result.otherTradutions = this.parseSearchElements(nav[0].children[0].children);
     }

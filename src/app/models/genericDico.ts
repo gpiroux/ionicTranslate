@@ -60,11 +60,16 @@ export abstract class genericDico {
       .replace(/ +/g, ' ');
   }
 
-  protected globalTrim(str: string) {
-    return this.extraTrim(str)
+  protected trim(str: string) {
+    return str
+      .replace(new RegExp(String.fromCharCode(160), 'g'), ' ') // &nbsp
       .replace(/ *, *, */g, ', ') // replace    " , , " => ", "
       .replace(/ *, */g, ', ') // replace    " , " => ", "
       .replace(/ *, *$/, ''); // remove end "," => ""
+  }
+
+  protected globalTrim(str: string) {
+    return this.trim(this.extraTrim(str));
   }
 
   abstract parse(data: string): ParseResult;
