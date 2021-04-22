@@ -65,7 +65,8 @@ export abstract class genericDico {
       .replace(new RegExp(String.fromCharCode(160), 'g'), ' ') // &nbsp
       .replace(/ *, *, */g, ', ') // replace    " , , " => ", "
       .replace(/ *, */g, ', ') // replace    " , " => ", "
-      .replace(/ *, *$/, ''); // remove end "," => ""
+      .replace(/ *, *$/, '') // remove end "," => ""
+      .replace(/ +/g, ' ');
   }
 
   protected globalTrim(str: string) {
