@@ -47,7 +47,7 @@ export class DetailPage implements OnInit {
   isVandaleDico: boolean;
 
   typeOptions: string[] = wordTypes;
-  categoryOptions = ['other', 'novel', 'conv', 'net', 'lyrics', 'check', 'Caving', 'Collins', 'XP', 'ESL'];
+  categoryOptions = ['other', 'tech', 'novel', 'conv', 'net', 'lyrics', 'check', 'Caving', 'Collins', 'XP', 'ESL'];
 
   constructor(
     private activatedRoute: ActivatedRoute,
