@@ -29,14 +29,20 @@ export class DetailPage implements OnInit {
     if (event.getModifierState && event.getModifierState('Meta') && event.keyCode === 83 && this.isActualView) {
       this.onSave()
         .then(() => this.router.navigate([''], { relativeTo: this.route }))
-        .catch(err => this.notificationService.error(err.message || err))
+        .catch(err => this.notificationService.error(err.message || err));
     }
     // Cmd+L
-    if (event.getModifierState && event.getModifierState('Meta') && event.keyCode === 76 && this.isActualView && this.isLarousseDico) {
+    if (
+      event.getModifierState &&
+      event.getModifierState('Meta') &&
+      event.keyCode === 76 &&
+      this.isActualView &&
+      this.isLarousseDico
+    ) {
       this.router.navigate(['larousse'], { relativeTo: this.route });
     }
   }
-  
+
   traductions: DicoWord[];
   newWord: Word;
 
@@ -47,7 +53,20 @@ export class DetailPage implements OnInit {
   isVandaleDico: boolean;
 
   typeOptions: string[] = wordTypes;
-  categoryOptions = ['other', 'tech', 'novel', 'conv', 'net', 'lyrics', 'check', 'Caving', 'Collins', 'XP', 'ESL'];
+  categoryOptions = [
+    'other',
+    'guiare',
+    'tech',
+    'novel',
+    'conv',
+    'net',
+    'lyrics',
+    'check',
+    'Caving',
+    'Collins',
+    'XP',
+    'ESL',
+  ];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -56,7 +75,7 @@ export class DetailPage implements OnInit {
     private navCtrl: NavController,
     private notificationService: NotificationsService,
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {
     // html page initialwed before ngOnInit()
     this.newWord = new Word();
@@ -86,11 +105,11 @@ export class DetailPage implements OnInit {
     console.log('Detail world', this.newWord);
   }
 
-  ionViewWillEnter(){
+  ionViewWillEnter() {
     this.isActualView = true;
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.isActualView = false;
   }
 
