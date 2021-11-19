@@ -1,6 +1,19 @@
 <ion-list>
-    <ion-item>
-        <ion-label>Random</ion-label>
-        <ion-toggle slot="end" [checked]="isFilterRandom" (ionChange)="onRandomToggleChange($event)"></ion-toggle>
-    </ion-item>
+    <ion-item-group>
+        <ion-item>
+            <ion-label>Random</ion-label>
+            <ion-toggle slot="end" [checked]="isFilterRandom" (ionChange)="onRandomToggleChange($event)"></ion-toggle>
+        </ion-item>
+    </ion-item-group>
+    
+    <ion-item-group>
+        <ion-item-divider>
+            <ion-label>Categories</ion-label>
+        </ion-item-divider>
+        <ion-item *ngFor="let cat of wordService.categories" button (click)="onCategoryClick($event, cat)"> 
+            <ion-label>{{cat}}</ion-label>
+            <ion-icon *ngIf="cat == categoryFilter" name="checkmark-outline" slot="end"></ion-icon>
+        </ion-item>
+    </ion-item-group>
 </ion-list>
+

@@ -6,7 +6,7 @@ import { WordService, Dico, dicoList } from '../../services/word.service';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
 
 import * as _ from 'lodash';
-import { combineLatest, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -48,6 +48,10 @@ export class FolderPage implements OnInit {
 
   private popover: HTMLIonPopoverElement;
   private destroy$: Subject<void> = new Subject();
+  private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
+
+  private isFilterRandom: boolean = false;
+  private categoryFilter: string = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -66,10 +70,10 @@ export class FolderPage implements OnInit {
     await this.wordService.initialise(this.dico);
     localStorage.setItem('folder', dicoName);
 
-    combineLatest(this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$)
+    combineLatest([this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$, this.refresh$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([words, searchWords, randomWords]) => {
-        console.log('combineLatest');
+        console.log('combineLatest', words, searchWords, randomWords);
         this.displayedWords = this.searchString ? searchWords : this.isFilterRandom ? randomWords : words;
         this.wordService.displayedWords = this.displayedWords;
       });
@@ -89,14 +93,6 @@ export class FolderPage implements OnInit {
     this.isActualView = false;
   }
 
-  get isFilterRandom() {
-    return this.wordService.isFilterRandom;
-  }
-
-  set isFilterRandom(val) {
-    this.wordService.isFilterRandom = val;
-  }
-
   trackByFn(index: number, item: Word) {
     return item.id;
   }
@@ -105,10 +101,18 @@ export class FolderPage implements OnInit {
     this.popover = await this.popoverController.create({
       component: FilterPopoverComponent,
       componentProps: {
-        dismiss: (isFilterRandom: boolean) => {
+        isFilterRandom: this.isFilterRandom,
+        categoryFilter: this.categoryFilter,
+        dismiss: (isFilterRandom: boolean, categoryFilter: string) => {
+          if (isFilterRandom && !this.isFilterRandom) {
+            this.wordService.random$.next(null);
+          }
+          if (categoryFilter && this.categoryFilter !== categoryFilter) {
+            this.wordService.category$.next(categoryFilter);
+          }
           this.isFilterRandom = isFilterRandom;
-          if (isFilterRandom) this.wordService.random$.next(null);
-          else this.wordService.search$.next(this.searchString);
+          this.categoryFilter = categoryFilter;
+          this.refresh$.next(null);
           this.popover.dismiss();
         },
       },
@@ -120,6 +124,12 @@ export class FolderPage implements OnInit {
 
   onReloadClick() {
     this.wordService.random$.next(null);
+  }
+
+  onResetFilterClick() {
+    this.categoryFilter = null;
+    this.isFilterRandom = false;
+    this.wordService.category$.next(null);
   }
 
   onSearchChange(event) {

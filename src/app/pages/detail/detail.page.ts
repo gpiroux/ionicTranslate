@@ -45,6 +45,7 @@ export class DetailPage implements OnInit {
 
   traductions: DicoWord[];
   newWord: Word;
+  categoryOptions: string[];
 
   audioIdx = 0;
   fetchAudio = false;
@@ -53,20 +54,6 @@ export class DetailPage implements OnInit {
   isVandaleDico: boolean;
 
   typeOptions: string[] = wordTypes;
-  categoryOptions = [
-    'other',
-    'guiare',
-    'tech',
-    'novel',
-    'conv',
-    'net',
-    'lyrics',
-    'check',
-    'Caving',
-    'Collins',
-    'XP',
-    'ESL',
-  ];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -79,6 +66,7 @@ export class DetailPage implements OnInit {
   ) {
     // html page initialwed before ngOnInit()
     this.newWord = new Word();
+    this.categoryOptions = this.wordService.categories;
   }
 
   ngOnInit() {

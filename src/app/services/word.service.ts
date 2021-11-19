@@ -49,6 +49,8 @@ export const dicoList: DicoList = {
 
 @Injectable()
 export class WordService implements OnDestroy {
+  
+  private _category$ = new BehaviorSubject<string | null>(null);
   private _search$ = new BehaviorSubject<string | null>(null);
   private _random$ = new BehaviorSubject<string | null>(null);
 
@@ -57,7 +59,6 @@ export class WordService implements OnDestroy {
   private _randomWords$: Observable<Word[]>;
 
   private _lastWords: Word[];
-  private _isFilterRandom: boolean = false;
 
   private randomCount: number = 6;
   private searchCount: number = 50;
@@ -66,6 +67,21 @@ export class WordService implements OnDestroy {
   private dicoCollection: string;
   public selectedWord: Word;
   public userDoc: AngularFirestoreDocument;
+
+  public categories = [
+    'other',
+    'guitare',
+    'tech',
+    'novel',
+    'conv',
+    'net',
+    'lyrics',
+    'check',
+    'Caving',
+    'Collins',
+    'XP',
+    'ESL',
+  ];
 
   constructor(private auth: AuthService) {}
 
@@ -79,15 +95,19 @@ export class WordService implements OnDestroy {
       throw new Error('No user found!');
     }
 
-    this._words$ = this.userDoc
-      .collection<Word>(this.dicoCollection, ref => ref.orderBy('date', 'desc').limit(this.wordsCount))
-      .snapshotChanges()
-      .pipe(
-        map(actions => {
-          console.log('_words$', actions.length);
-          return this.mapToWords(actions);
-        })
-      );
+    this._words$ = this._category$.pipe(
+      switchMap(category => {
+        return this.userDoc
+          .collection<Word>(this.dicoCollection, this.wordQuery(category, this))
+          .snapshotChanges()
+          .pipe(
+            map(actions => {
+              console.log('_words$', category, actions.length);
+              return this.mapToWords(actions);
+            })
+          );
+      })
+    );
 
     this._randomWords$ = this._random$.pipe(
       switchMap(() => this.getLastKey()),
@@ -160,6 +180,16 @@ export class WordService implements OnDestroy {
       ref.where('en', '>=', search).where('en', '<', `${search}\uf8ff`).orderBy('en').limit(self.searchCount);
   }
 
+  private wordQuery(
+    category: string, 
+    self: WordService
+  ): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
+    if (category) {
+      return ref => ref.where('category', 'array-contains', category).orderBy('date', 'desc').limit(self.wordsCount);
+    }
+    return ref => ref.orderBy('date', 'desc').limit(self.wordsCount);
+  }
+
   private filterEnSearch(
     search: string,
     self: WordService
@@ -209,19 +239,16 @@ export class WordService implements OnDestroy {
     return this.userDoc.collection<Word>(this.dicoCollection).doc(id).delete();
   }
 
-  get isFilterRandom() {
-    return this._isFilterRandom;
-  }
-  set isFilterRandom(val) {
-    this._isFilterRandom = val;
-  }
-
   get words$() {
     return this._words$;
   }
 
   get searchedWords$() {
     return this._searchedWords$;
+  }
+
+  get category$() {
+    return this._category$;
   }
 
   get search$() {
