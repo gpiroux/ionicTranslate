@@ -3,7 +3,10 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>{{dico.title}} <span *ngIf="categoryFilter" class="title-cat"> – {{categoryFilter}}</span></ion-title>
+        <ion-title>
+            {{dico.title}}
+            <span *ngIf="categoryFilter" class="title-cat">– {{categoryFilter}}</span>
+        </ion-title>
         <ion-buttons slot="primary">
             <ion-button (click)="onResetFilterClick()" *ngIf="categoryFilter || isFilterRandom">
                 <ion-icon slot="icon-only" ios="close-circle" md="close-circle"></ion-icon>
@@ -31,7 +34,9 @@
                         <div class="type">{{item.type}}</div>
                     </div>
                     <div class="flex-row">
-                        <div class="fr" innerHTML="{{item.fr | highlight}}"></div>
+                        <div *ngIf="!displayRandom; then thenBlock else elseBlock"></div>
+                        <ng-template #thenBlock><div class="fr" innerHTML="{{item.fr | highlight}}"></div></ng-template>
+                        <ng-template #elseBlock><div class="fr">...</div></ng-template>
                         <div class="cat">{{item.category | join:' '}}</div>
                     </div>
                 </div>

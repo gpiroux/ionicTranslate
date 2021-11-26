@@ -23,7 +23,7 @@ export class FolderPage implements OnInit {
   onKeyDown(event: KeyboardEvent): void {
     // Btn "Enter"
     if (event.keyCode === 13 && this.isActualView) {
-      const selectedItem = this.refElement.nativeElement.querySelector('ion-item.ion-focused')
+      const selectedItem = this.refElement.nativeElement.querySelector('ion-item.ion-focused');
       if (selectedItem) {
         const attr = selectedItem.getAttribute('ng-reflect-router-link') || '';
         const splitAttr = attr.split(',');
@@ -51,6 +51,7 @@ export class FolderPage implements OnInit {
   private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
 
   private isFilterRandom: boolean = false;
+  private displayRandom: boolean = false;
   private categoryFilter: string = '';
 
   constructor(
@@ -70,11 +71,24 @@ export class FolderPage implements OnInit {
     await this.wordService.initialise(this.dico);
     localStorage.setItem('folder', dicoName);
 
-    combineLatest([this.wordService.words$, this.wordService.searchedWords$, this.wordService.randomWords$, this.refresh$])
+    combineLatest([
+      this.wordService.words$,
+      this.wordService.searchedWords$,
+      this.wordService.randomWords$,
+      this.refresh$,
+    ])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([words, searchWords, randomWords]) => {
         console.log('combineLatest', words, searchWords, randomWords);
-        this.displayedWords = this.searchString ? searchWords : this.isFilterRandom ? randomWords : words;
+        this.displayRandom = false;
+        if (this.searchString) {
+          this.displayedWords = searchWords;
+        } else if (this.isFilterRandom) {
+          this.displayedWords = randomWords;
+          this.displayRandom = true;
+        } else {
+          this.displayedWords = words;
+        }
         this.wordService.displayedWords = this.displayedWords;
       });
   }
@@ -85,11 +99,11 @@ export class FolderPage implements OnInit {
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(){
+  ionViewWillEnter() {
     this.isActualView = true;
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.isActualView = false;
   }
 
@@ -127,9 +141,9 @@ export class FolderPage implements OnInit {
   }
 
   onResetFilterClick() {
+    this.wordService.category$.next(null);
     this.categoryFilter = null;
     this.isFilterRandom = false;
-    this.wordService.category$.next(null);
   }
 
   onSearchChange(event) {
@@ -147,6 +161,6 @@ export class FolderPage implements OnInit {
   }
 
   focusSearchField() {
-    console.log('Focus Search !!!!')
+    console.log('Focus Search !!!!');
   }
 }
