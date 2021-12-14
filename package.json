@@ -10,7 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-ios": "ionic cordova build ios --prod",
+    "build-ios": "ionic cordova build ios --configuration production",
     "prettier": "prettier --write \"./src/{app,environments,assets}/**/*.{ts,js,css,scss,html}\"",
     "pretty-quick": "pretty-quick --staged"
   },
@@ -21,14 +21,14 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "~11.2.14",
-    "@angular/core": "~11.2.14",
+    "@angular/common": "~12.2.14",
+    "@angular/core": "~12.2.14",
     "@angular/fire": "^6.1.5",
-    "@angular/forms": "~11.2.14",
-    "@angular/platform-browser": "~11.2.14",
-    "@angular/platform-browser-dynamic": "~11.2.14",
-    "@angular/router": "~11.2.14",
-    "@angular/service-worker": "~11.2.14",
+    "@angular/forms": "~12.2.14",
+    "@angular/platform-browser": "~12.2.14",
+    "@angular/platform-browser-dynamic": "~12.2.14",
+    "@angular/router": "~12.2.14",
+    "@angular/service-worker": "~12.2.14",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/file": "^5.24.0",
     "@ionic-native/http": "^5.23.0",
@@ -48,14 +48,14 @@
     "lodash": "^4.17.15",
     "rxjs": "~6.5.1",
     "tslib": "^2.0.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.1102.15",
-    "@angular/cli": "~11.2.15",
-    "@angular/compiler": "~11.2.14",
-    "@angular/compiler-cli": "~11.2.14",
-    "@angular/language-service": "~11.2.14",
+    "@angular-devkit/build-angular": "~12.2.14",
+    "@angular/cli": "~12.2.14",
+    "@angular/compiler": "~12.2.14",
+    "@angular/compiler-cli": "~12.2.14",
+    "@angular/language-service": "~12.2.14",
     "@babel/compat-data": "7.8.0",
     "@ionic/angular-toolkit": "^2.1.1",
     "@types/jasmine": "~3.6.0",
@@ -81,7 +81,7 @@
     "protractor": "~7.0.0",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.0.8"
+    "typescript": "~4.3.5"
   },
   "description": "An Ionic project",
   "cordova": {
