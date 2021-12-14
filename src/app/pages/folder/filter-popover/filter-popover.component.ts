@@ -11,7 +11,7 @@ export class FilterPopoverComponent implements OnInit {
   @Input() isFilterRandom: boolean;
   @Input() categoryFilter:string;
 
-  constructor(private wordService: WordService) {}
+  constructor(public wordService: WordService) {}
 
   ngOnInit() {}
 

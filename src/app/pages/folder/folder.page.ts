@@ -45,14 +45,13 @@ export class FolderPage implements OnInit {
   public displayedWords: Word[] = [];
   public searchString: string = '';
   public dico: Dico;
+  public categoryFilter: string = '';
+  public displayRandom: boolean = false;
+  public isFilterRandom: boolean = false; 
 
   private popover: HTMLIonPopoverElement;
   private destroy$: Subject<void> = new Subject();
   private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
-
-  private isFilterRandom: boolean = false;
-  private displayRandom: boolean = false;
-  private categoryFilter: string = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
