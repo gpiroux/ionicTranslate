@@ -14,7 +14,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import * as _ from 'lodash';
-import packageJson from '../../package.json';
+import versionInfo from '../../version.json';
 
 @Component({
   selector: 'app-root',
@@ -84,7 +84,7 @@ export class AppComponent implements OnInit {
       }
     });
 
-    this.version = packageJson.version;
+    this.version = versionInfo.version;
   }
 
   ngOnInit() {}
