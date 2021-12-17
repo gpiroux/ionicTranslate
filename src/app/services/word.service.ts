@@ -5,7 +5,11 @@ import {
   DocumentChangeAction,
   AngularFirestoreDocument,
   DocumentReference,
-} from '@angular/fire/firestore';
+} from '@angular/fire/compat/firestore';
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+
 import { Word } from 'src/app/models/word.model';
 
 import { Observable, BehaviorSubject } from 'rxjs';

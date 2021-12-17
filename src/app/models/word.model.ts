@@ -1,4 +1,6 @@
-import { firestore } from 'firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+
 import * as _ from 'lodash';
 
 export const wordTypes = [
@@ -39,12 +41,12 @@ export class Word {
   audio: string[];
   href: string;
   category: string[];
-  date: firestore.Timestamp;
+  date: firebase.firestore.Timestamp;
   search: string[];
 
   constructor(word?) {
     if (!word) {
-      this.date = firestore.Timestamp.fromDate(new Date());
+      this.date = firebase.firestore.Timestamp.fromDate(new Date());
       return;
     }
     this.id = word.id;
@@ -66,12 +68,12 @@ export class Word {
     this.key = word.key;
     this.audio = word.audio && word.audio !== 'Not defined' ? word.audio.split(' ') : [];
     this.category = word.cat ? word.cat.split(', ') : [];
-    this.date = firestore.Timestamp.fromDate(new Date(word.date));
+    this.date = firebase.firestore.Timestamp.fromDate(new Date(word.date));
     this.search = word.search || [];
   }
 
   updateTimestamp() {
-    this.date = firestore.Timestamp.fromDate(new Date());
+    this.date = firebase.firestore.Timestamp.fromDate(new Date());
   }
 
   generateSearchStrings() {

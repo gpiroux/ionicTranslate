@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { NotificationsService } from '../services/notifications.service';
 
 @Injectable({
@@ -12,7 +11,7 @@ export class LogoutGuard implements CanActivate {
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
     console.log('CanActivate logout guard !');
-    return this.fireauth.auth
+    return this.fireauth
       .signOut()
       .then(() => {
         console.log('logout sucess');

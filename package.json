@@ -1,6 +1,6 @@
 {
   "name": "iTranslate",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -23,7 +23,7 @@
   "dependencies": {
     "@angular/common": "~12.2.14",
     "@angular/core": "~12.2.14",
-    "@angular/fire": "^6.1.5",
+    "@angular/fire": "^7",
     "@angular/forms": "~12.2.14",
     "@angular/platform-browser": "~12.2.14",
     "@angular/platform-browser-dynamic": "~12.2.14",
@@ -43,10 +43,10 @@
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-ionic": "^5.4.7",
     "core-js": "^2.5.4",
-    "firebase": "^7.14.5",
-    "firebaseui": "^4.5.0",
+    "firebase": "^9",
+    "firebaseui": "^6",
     "lodash": "^4.17.15",
-    "rxjs": "~6.5.1",
+    "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },

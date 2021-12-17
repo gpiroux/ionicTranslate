@@ -10,8 +10,11 @@ import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
 import { AuthService } from './services/auth.service';
 import { NotificationsService } from './services/notifications.service';
 
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+
 import * as _ from 'lodash';
-import * as packageJson from '../../package.json';
+import packageJson from '../../package.json';
 
 @Component({
   selector: 'app-root',

@@ -1,9 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { firestore } from 'firebase';
 import { DicoWord } from '../models/dicoResult.model';
 import { CategoryMapType } from '../models/word.model';
 
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 @Pipe({
   name: 'join',
 })
@@ -26,7 +27,7 @@ export class WordTypeMapPipe implements PipeTransform {
   name: 'firebaseDate',
 })
 export class FirebaseDatePipe implements PipeTransform {
-  transform(value: firestore.Timestamp, ...args: any[]): Date {
+  transform(value: firebase.firestore.Timestamp, ...args: any[]): Date {
     return value && value.toDate && value.toDate();
   }
 }

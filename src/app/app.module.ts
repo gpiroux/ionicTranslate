@@ -14,10 +14,11 @@ import { File } from '@ionic-native/file/ngx';
 import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
 
 import { PipesModule } from './pipes/pipe.module';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireDatabaseModule } from '@angular/fire/database';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
+
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { environment } from '../environments/environment';
 

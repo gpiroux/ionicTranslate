@@ -1,9 +1,11 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 
-import { AngularFireAuth } from '@angular/fire/auth';
-import * as firebase from 'firebase/app';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+
 import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
@@ -23,7 +25,7 @@ export class LoginPage implements OnInit {
   ngOnInit() {}
 
   signInWithEmailAndPassword(email, password) {
-    return this.fireauth.auth
+    return this.fireauth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         this.router.navigateByUrl('');
@@ -35,14 +37,14 @@ export class LoginPage implements OnInit {
   }
 
   sendResetPawword(email: string) {
-    return this.fireauth.auth.sendPasswordResetEmail(email);
+    return this.fireauth.sendPasswordResetEmail(email);
   }
 
   signInWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
+    const provider = new firebase.auth.GoogleAuthProvider(); 
     provider.addScope('profile');
     provider.addScope('email');
-    return this.fireauth.auth
+    return this.fireauth
       .signInWithPopup(provider)
       .then(() => {
         this.ngZone.run(() => this.router.navigateByUrl(''));
