@@ -9,7 +9,7 @@ import { WordService } from 'src/app/services/word.service';
 export class FilterPopoverComponent implements OnInit {
   @Input() dismiss: (val: boolean, cat: string) => {};
   @Input() isFilterRandom: boolean;
-  @Input() categoryFilter:string;
+  @Input() categoryFilter: string;
 
   constructor(public wordService: WordService) {}
 
@@ -20,7 +20,7 @@ export class FilterPopoverComponent implements OnInit {
   }
 
   onCategoryClick(event, cat) {
+    this.wordService.categoryFilter = cat;
     this.dismiss(false, cat);
   }
-
 }

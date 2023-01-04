@@ -53,7 +53,6 @@ export const dicoList: DicoList = {
 
 @Injectable()
 export class WordService implements OnDestroy {
-  
   private _category$ = new BehaviorSubject<string | null>(null);
   private _search$ = new BehaviorSubject<string | null>(null);
   private _random$ = new BehaviorSubject<string | null>(null);
@@ -68,24 +67,12 @@ export class WordService implements OnDestroy {
   private searchCount: number = 50;
   private wordsCount: number = 100;
 
+  private _categoryFilter: string;
   private dicoCollection: string;
   public selectedWord: Word;
   public userDoc: AngularFirestoreDocument;
 
-  public categories = [
-    'other',
-    'guitare',
-    'tech',
-    'novel',
-    'conv',
-    'net',
-    'lyrics',
-    'check',
-    'Caving',
-    'Collins',
-    'XP',
-    'ESL',
-  ];
+  public categories = ['other', 'book', 'lyrics', 'guitare', 'tech', 'conv', 'net', 'Caving', 'check'];
 
   constructor(private auth: AuthService) {}
 
@@ -185,7 +172,7 @@ export class WordService implements OnDestroy {
   }
 
   private wordQuery(
-    category: string, 
+    category: string,
     self: WordService
   ): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
     if (category) {
@@ -272,5 +259,13 @@ export class WordService implements OnDestroy {
   }
   set displayedWords(val) {
     this._lastWords = val;
+  }
+
+  get categoryFilter() {
+    return this._categoryFilter;
+  }
+
+  set categoryFilter(val: string) {
+    this._categoryFilter = val;
   }
 }

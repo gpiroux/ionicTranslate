@@ -47,7 +47,8 @@ export class FolderPage implements OnInit {
   public dico: Dico;
   public categoryFilter: string = '';
   public displayRandom: boolean = false;
-  public isFilterRandom: boolean = false; 
+  public isFilterRandom: boolean = false;
+  public showDate: boolean = false;
 
   private popover: HTMLIonPopoverElement;
   private destroy$: Subject<void> = new Subject();
@@ -143,6 +144,7 @@ export class FolderPage implements OnInit {
     this.wordService.category$.next(null);
     this.categoryFilter = null;
     this.isFilterRandom = false;
+    this.wordService.categoryFilter = null;
   }
 
   onSearchChange(event) {

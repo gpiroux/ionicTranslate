@@ -30,7 +30,6 @@ mark {
     .flex-row {
         padding: 2px 0px;
         display: flex;
-        //flex-wrap: nowrap;
         justify-content: space-between;
         width: 100%;
 
@@ -63,5 +62,15 @@ mark {
         //         color: rgb(185, 0, 71);
         //     }
         // }
+    }
+    .flex-end {
+        display: flex;
+        justify-content: end;
+        width: 100%;
+        .date {
+            font-size: 70%;
+            color: grey;
+            padding: 0 2px;
+        }
     }
 }

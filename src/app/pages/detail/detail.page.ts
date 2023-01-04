@@ -81,6 +81,9 @@ export class DetailPage implements OnInit {
     if (wordId) {
       let word = displayedWords.find(w => w.id === wordId);
       this.newWord = _.cloneDeep(word);
+
+      // Add cathegory if not present in the list
+      word.category.forEach(c => !this.categoryOptions.includes(c) && this.categoryOptions.push(c));
     } else {
       this.newWord = new Word();
       this.newWord.en = (searchString || '')
@@ -88,6 +91,9 @@ export class DetailPage implements OnInit {
         .replace(/^\^|\$$/g, '')
         .toLowerCase();
       this.newWord.fr = '';
+
+      // Add automatically the filtered category !
+      if (this.wordService.categoryFilter) this.newWord.category = [this.wordService.categoryFilter];
     }
     this.wordService.selectedWord = this.newWord;
     console.log('Detail world', this.newWord);
