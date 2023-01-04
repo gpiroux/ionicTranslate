@@ -3,9 +3,12 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>
+        <ion-title style="padding-inline: 10px;">
             {{dico.title}}
-            <span *ngIf="categoryFilter" class="title-cat">– {{categoryFilter}}</span>
+            <span *ngIf="categoryFilter">
+                –
+                <span class="title-cat"><em>{{categoryFilter}}</em></span>
+            </span>
         </ion-title>
         <ion-buttons slot="primary">
             <ion-button (click)="onReloadClick()" *ngIf="isFilterRandom">
