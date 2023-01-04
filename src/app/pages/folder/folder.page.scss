@@ -9,11 +9,11 @@ mark {
     color: green;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --ion-color-primary: #428cff;
-    }
-}
+// @media (prefers-color-scheme: dark) {
+//     :root {
+//         --ion-color-primary: #428cff;
+//     }
+// }
 
 .no-click:active {
     --ripple-color: transparent;
@@ -55,13 +55,13 @@ mark {
             color: darkred;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .type {
-                color: #4cabfa;
-            }
-            .cat {
-                color: rgb(185, 0, 71);
-            }
-        }
+        // @media (prefers-color-scheme: dark) {
+        //     .type {
+        //         color: #4cabfa;
+        //     }
+        //     .cat {
+        //         color: rgb(185, 0, 71);
+        //     }
+        // }
     }
 }
