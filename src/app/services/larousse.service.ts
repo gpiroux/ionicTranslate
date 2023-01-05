@@ -122,6 +122,11 @@ export class LarousseService extends genericDico {
           this.feedTraductionField(e, currentTraduction);
         }
 
+        // Goose
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Glose2')) {
+          this.feedTraductionField(e, currentTraduction);
+        }
+
         // Metalangue
         if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Metalangue')) {
           currentTraduction.indicateur += e.textContent;
@@ -156,7 +161,7 @@ export class LarousseService extends genericDico {
       });
     }
 
-    function parseZoneTexte(elements: HTMLCollection, index?: number) {
+    function parseZoneTexte(elements: HTMLCollection, index?: string) {
       currentTraduction = new Traduction();
       index && (currentTraduction.number = `${index}.`);
       word.traductions.push(currentTraduction);
@@ -188,6 +193,18 @@ export class LarousseService extends genericDico {
         // division-semantique
         if (e.nodeName == 'DIV' && this.hasClassValue(e, 'division-semantique')) {
           parseZoneTexte.bind(this)(e.children);
+        }
+
+        // Ash
+        if (e.nodeName == 'SPAN' && this.hasClassValue(e, 'Glose2')) {
+          currentTraduction.traduction += e.textContent;
+        }
+
+        if (e.nodeName == 'OL' && this.hasClassValue(e, 'ZoneSemantique')) {
+          _.forEach(
+            e.children,
+            (li, idx) => li.nodeName == 'LI' && parseZoneTexte.bind(this)(li.children, `${index}.${idx + 1}`)
+          );
         }
       });
     }
