@@ -1,6 +1,6 @@
 {
   "name": "iTranslate",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "author": "gpiroux",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -97,7 +97,7 @@
       "cordova-plugin-file": {},
       "cordova-plugin-ionic": {
         "APP_ID": "802d7b13",
-        "CHANNEL_NAME": "Master",
+        "CHANNEL_NAME": "Production",
         "UPDATE_METHOD": "background",
         "MAX_STORE": "2",
         "MIN_BACKGROUND_DURATION": "30",
