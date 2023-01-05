@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
       icon: 'log-out',
     },
   ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+  //public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
 
   public user: firebase.User;
   public progress: number = null;

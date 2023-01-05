@@ -1,6 +1,6 @@
 {
   "name": "iTranslate",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "author": "gpiroux",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -10,9 +10,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-ios": "ionic cordova build ios --configuration production",
     "prettier": "prettier --write \"./src/{app,environments,assets}/**/*.{ts,js,css,scss,html}\"",
-    "pretty-quick": "pretty-quick --staged"
+    "pretty-quick": "pretty-quick --staged",
+    "build-ios": "ionic cordova build ios --configuration production",
+    "run-ios": "ionic cordova run ios --configuration production"
   },
   "husky": {
     "hooks": {
