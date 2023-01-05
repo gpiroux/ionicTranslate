@@ -83,7 +83,7 @@ export class DetailPage implements OnInit {
       this.newWord = _.cloneDeep(word);
 
       // Add cathegory if not present in the list
-      word.category.forEach(c => !this.categoryOptions.includes(c) && this.categoryOptions.push(c));
+      _.forEach(word.category, c => !this.categoryOptions.includes(c) && this.categoryOptions.push(c));
     } else {
       this.newWord = new Word();
       this.newWord.en = (searchString || '')

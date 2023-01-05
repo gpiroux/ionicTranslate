@@ -34,7 +34,12 @@ export class DicoWord {
   mapWordType(type: CategoryMapType): string {
     const intransitive = 'intransitive';
     const transitive = 'transitive';
-    let shortCategory = _.find(wordTypes, c => this.categorie.includes(c));
+
+    // Try to find exact match
+    let shortCategory = _.find(wordTypes, c => this.categorie === c);
+
+    // Not not found try to find a category that include short cat list item
+    if (!shortCategory) shortCategory = _.find(wordTypes, c => this.categorie.includes(c));
 
     if (type === CategoryMapType.short) {
       return shortCategory;
