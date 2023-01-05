@@ -1,7 +1,7 @@
 {
   "name": "iTranslate",
   "version": "0.3.4",
-  "author": "Ionic Framework",
+  "author": "gpiroux",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
