@@ -75,6 +75,7 @@ export class AppComponent implements OnInit {
       loginPage.hidden = !!user;
       logoutPage.hidden = !user;
       this.user = user;
+      document.title = !!user ? `Ionic Translate - ${user.displayName}` : `Ionic Translate`;
     });
 
     this.router.events.subscribe(val => {
