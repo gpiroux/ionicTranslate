@@ -72,7 +72,7 @@ export class WordService implements OnDestroy {
   public selectedWord: Word;
   public userDoc: AngularFirestoreDocument;
 
-  public categories = ['other', 'book', 'lyrics', 'guitare', 'tech', 'conv', 'net', 'Caving', 'check'];
+  public categories = ['other', 'book', 'lyrics', 'travel', 'guitare', 'tech', 'conv', 'net', 'Caving', 'check'];
 
   constructor(private auth: AuthService) {}
 
