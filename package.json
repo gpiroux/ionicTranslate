@@ -37,7 +37,7 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^6.0.0",
     "@ionic/cli": "^6.18.1",
-    "@types/lodash": "^4.14.149",
+    "@types/lodash": "^4.17.20",
     "cordova": "^9.0.0",
     "cordova-ios": "^5.1.1",
     "cordova-plugin-advanced-http": "^2.4.1",
@@ -46,7 +46,7 @@
     "core-js": "^2.5.4",
     "firebase": "^9",
     "firebaseui": "^6",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
