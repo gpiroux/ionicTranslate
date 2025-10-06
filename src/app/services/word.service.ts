@@ -12,8 +12,8 @@ import 'firebase/compat/firestore';
 
 import { Word } from 'src/app/models/word.model';
 
-import { Observable, BehaviorSubject, lastValueFrom } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, lastValueFrom, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import _ from 'lodash';
 
 import { AuthService } from './auth.service';
@@ -93,9 +93,17 @@ export class WordService implements OnDestroy {
           .collection<Word>(this.dicoCollection, this.wordQuery(category, this))
           .snapshotChanges()
           .pipe(
+            tap({
+              next: actions => console.log('snapshot next', category, actions.length),
+              error: err => console.error('snapshot error', category, err),
+            }),
             map(actions => {
               console.log('_words$', category, actions.length);
               return this.mapToWords(actions);
+            }),
+            catchError(err => {
+              console.error('words$ pipeline failed', err);
+              return of([]); // allow template to keep running
             })
           );
       })
