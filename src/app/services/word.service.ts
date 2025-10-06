@@ -85,6 +85,7 @@ export class WordService implements OnDestroy {
       this.dicoCollection = null;
       throw new Error('No user found!');
     }
+    console.log('userDoc', this.userDoc.ref.path);
 
     this._words$ = this._category$.pipe(
       switchMap(category => {
