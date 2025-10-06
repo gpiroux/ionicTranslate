@@ -12,7 +12,6 @@ import { OtherTraductionPopoverComponent } from './other-traduction-popover/othe
 
 @NgModule({
   imports: [PipesModule, CommonModule, FormsModule, IonicModule, LaroussePageRoutingModule],
-  entryComponents: [OtherTraductionPopoverComponent],
   declarations: [LaroussePage, OtherTraductionPopoverComponent],
 })
 export class LaroussePageModule {}

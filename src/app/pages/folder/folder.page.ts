@@ -5,7 +5,7 @@ import { Word } from '../../models/word.model';
 import { WordService, Dico, dicoList } from '../../services/word.service';
 import { FilterPopoverComponent } from './filter-popover/filter-popover.component';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';

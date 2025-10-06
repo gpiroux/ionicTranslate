@@ -11,7 +11,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 import { Word, CategoryMapType as WordTypeMapType } from 'src/app/models/word.model';
 import { DicoWord, OtherTraduction, Traduction } from 'src/app/models/dicoResult.model';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Router } from '@angular/router';
 
 @Component({
@@ -88,9 +88,9 @@ export class LaroussePage implements OnInit {
             href: this.onInitWordHref,
             word: this.onInitStrippedWord,
             selected: this.onInitWordHref === href,
-            current: true
+            current: true,
           },
-          ...result.otherTradutions
+          ...result.otherTradutions,
         ];
 
         console.log('otherTraductions', this.otherTraductions);
@@ -152,7 +152,9 @@ export class LaroussePage implements OnInit {
     }
 
     const frSplit = _.map(this.selectedWord.fr.split(','), s => s.trim());
-    const tradSplit = _.map([traduction.indicateur.trim(), traduction.traduction.trim()].join(' ').split(','), s => s.trim());
+    const tradSplit = _.map([traduction.indicateur.trim(), traduction.traduction.trim()].join(' ').split(','), s =>
+      s.trim()
+    );
     _.forEach(tradSplit, t => {
       if (frSplit.includes(t)) return;
       frSplit.push(t);

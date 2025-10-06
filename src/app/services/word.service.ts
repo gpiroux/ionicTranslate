@@ -12,9 +12,9 @@ import 'firebase/compat/firestore';
 
 import { Word } from 'src/app/models/word.model';
 
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, lastValueFrom } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { AuthService } from './auth.service';
 
@@ -210,7 +210,7 @@ export class WordService implements OnDestroy {
   }
 
   async createWord(word: Word): Promise<DocumentReference> {
-    const lastKey = await this.getLastKey().toPromise();
+    const lastKey = await lastValueFrom(this.getLastKey());
     word.updateTimestamp();
     word.generateSearchStrings();
     word.key = lastKey + 1;

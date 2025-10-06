@@ -12,11 +12,6 @@ import { FocusOnCmdFDetectorDirective } from 'src/app/directives/ctrl-f.directiv
 
 @NgModule({
   imports: [PipesModule, CommonModule, FormsModule, IonicModule, FolderPageRoutingModule],
-  entryComponents: [FilterPopoverComponent],
-  declarations: [
-    FolderPage, 
-    FilterPopoverComponent, 
-    FocusOnCmdFDetectorDirective
-  ],
+  declarations: [FolderPage, FilterPopoverComponent, FocusOnCmdFDetectorDirective],
 })
 export class FolderPageModule {}

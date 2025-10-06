@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HTTP } from '@ionic-native/http/ngx';
 import { HttpClient } from '@angular/common/http';
 import { Platform } from '@ionic/angular';
 
 import { DicoWord, Traduction, OtherTraduction } from '../models/dicoResult.model';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { genericDico, ParseResult } from '../models/genericDico';
 
 @Injectable({
@@ -13,8 +12,8 @@ import { genericDico, ParseResult } from '../models/genericDico';
 export class LarousseService extends genericDico {
   result: DicoWord[];
 
-  constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
-    super(httpNative, httpClient, platform);
+  constructor(protected httpClient: HttpClient, protected platform: Platform) {
+    super(httpClient, platform);
     this.webSite = 'www.larousse.fr';
   }
 

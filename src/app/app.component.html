@@ -33,19 +33,6 @@
                         <ion-label>{{ label }}</ion-label>
                     </ion-item>
                 </ion-list> -->
-
-                <!-- Update App controls -->
-                <br />
-                <ion-button color="medium" expand="full" *ngIf="!progress && isCordova" (click)="checkForUpdate()">
-                    Check for update
-                </ion-button>
-                <div *ngIf="progress">
-                    <ion-item>
-                        Update progress &nbsp;&nbsp;
-                        <ion-spinner name="dots"></ion-spinner>
-                    </ion-item>
-                    <ion-progress-bar *ngIf="progress" color="medium" [value]="progress"></ion-progress-bar>
-                </div>
             </ion-content>
         </ion-menu>
         <ion-router-outlet id="main-content"></ion-router-outlet>

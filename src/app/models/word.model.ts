@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 export const wordTypes = [
   'noun',

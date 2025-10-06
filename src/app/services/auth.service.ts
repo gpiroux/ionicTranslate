@@ -6,9 +6,8 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { NotificationsService } from './notifications.service';
-
 
 @Injectable({
   providedIn: 'root',

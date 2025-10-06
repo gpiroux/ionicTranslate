@@ -1,10 +1,9 @@
-import { Injectable, ANALYZE_FOR_ENTRY_COMPONENTS } from '@angular/core';
-import { HTTP } from '@ionic-native/http/ngx';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Platform } from '@ionic/angular';
 
 import { DicoWord, Traduction } from '../models/dicoResult.model';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { genericDico, ParseResult } from '../models/genericDico';
 
 interface Result {
@@ -26,8 +25,8 @@ enum Color {
   providedIn: 'root',
 })
 export class ReversoService extends genericDico {
-  constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {
-    super(httpNative, httpClient, platform);
+  constructor(protected httpClient: HttpClient, protected platform: Platform) {
+    super(httpClient, platform);
     this.webSite = 'dictionnaire.reverso.net';
   }
 
@@ -150,9 +149,11 @@ export class ReversoService extends genericDico {
     // eg: visser
     const mainResultsElement = htmlDoc.getElementById('DivMainResults');
 
-    result.dicoWords = fontElement 
-      ? this.parseElements(fontElement) : mainResultsElement 
-        ? this.parseElements(mainResultsElement) : []
+    result.dicoWords = fontElement
+      ? this.parseElements(fontElement)
+      : mainResultsElement
+      ? this.parseElements(mainResultsElement)
+      : [];
 
     return result;
   }

@@ -1,5 +1,5 @@
 import { CategoryMapType, wordTypes } from './word.model';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 export class DicoWord {
   audio: string[] = [];

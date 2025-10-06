@@ -7,7 +7,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 import { Word } from 'src/app/models/word.model';
 import { DicoWord, Traduction } from 'src/app/models/dicoResult.model';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-vandale',
@@ -47,7 +47,7 @@ export class VandalePage implements OnInit {
       .catch(err => {
         console.error(err);
         this.notification.error(err.message || err);
-        this.wordTraductions = []; 
+        this.wordTraductions = [];
       });
   }
 

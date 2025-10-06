@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { HTTP } from '@ionic-native/http/ngx';
 import { Platform } from '@ionic/angular';
+import { Http as CapacitorHttp } from '@capacitor-community/http';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { DicoWord, OtherTraduction } from './dicoResult.model';
+import { firstValueFrom } from 'rxjs';
 
 export interface ParseResult {
   dicoWords: DicoWord[];
@@ -14,7 +15,7 @@ export abstract class genericDico {
   cache: { [key: string]: string } = {};
   webSite: string;
 
-  constructor(protected httpNative: HTTP, protected httpClient: HttpClient, protected platform: Platform) {}
+  constructor(protected httpClient: HttpClient, protected platform: Platform) {}
 
   protected hasClassValue(el: Element | ChildNode, className: string): boolean {
     return _.get(el, ['attributes', 'class', 'value'], '') === className;
@@ -78,7 +79,7 @@ export abstract class genericDico {
   async load(href: string, proxy = false): Promise<ParseResult> {
     let url;
 
-    if (proxy && !this.platform.is('cordova') && !window['isElectron']) {
+    if (proxy && !this.platform.is('hybrid') && !window['isElectron']) {
       const proxyUrl = 'us-central1-ionictranslate5.cloudfunctions.net/forward?url=';
       url = `https://${proxyUrl}${this.webSite}/${href}`;
     } else {
@@ -88,9 +89,12 @@ export abstract class genericDico {
     let data: string = this.cache[href];
 
     if (!data) {
-      data = this.platform.is('cordova')
-        ? await this.httpNative.get(url, {}, {}).then(res => res.data)
-        : await this.httpClient.get(url, { responseType: 'text' }).toPromise();
+      if (this.platform.is('hybrid')) {
+        const response = await CapacitorHttp.get({ url, responseType: 'text' });
+        data = response.data as string;
+      } else {
+        data = await firstValueFrom(this.httpClient.get(url, { responseType: 'text' }));
+      }
     }
 
     // Clear cache

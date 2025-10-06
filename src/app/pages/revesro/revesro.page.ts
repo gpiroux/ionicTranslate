@@ -4,7 +4,7 @@ import { DicoWord, Traduction } from 'src/app/models/dicoResult.model';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { WordService } from 'src/app/services/word.service';
 import { ReversoService } from 'src/app/services/reverso.service';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-revesro',

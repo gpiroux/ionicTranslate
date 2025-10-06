@@ -1,7 +1,7 @@
 {
   "name": "iTranslate",
   "integrations": {
-    "cordova": {}
+    "capacitor": {}
   },
   "type": "angular",
   "id": "802d7b13"

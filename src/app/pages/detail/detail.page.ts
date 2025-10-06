@@ -9,7 +9,7 @@ import { AudioService } from 'src/app/services/audio.service';
 import { WordService, dicoList, DicoWebsite } from 'src/app/services/word.service';
 import { NotificationsService } from 'src/app/services/notifications.service';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-detail',

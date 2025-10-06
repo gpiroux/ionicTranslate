@@ -1,61 +1,53 @@
 import { Injectable } from '@angular/core';
-import { File } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileSystemService {
-  constructor(private file: File, private platform: Platform) {}
+  constructor(private platform: Platform) {}
 
   async loadMP3(fileName: string): Promise<string> {
-    if (!this.platform.is('cordova')) {
-      return Promise.reject('Cordiva not installed');
+    if (!this.platform.is('hybrid')) {
+      return Promise.reject(new Error('Native filesystem not available'));
     }
 
-    const deferred = new Deferred<string>();
+    const path = `${fileName}.mp3`;
     try {
-      const directoryEntry = await this.file.resolveDirectoryUrl(this.file.documentsDirectory);
-      const fileEntry = await this.file.getFile(directoryEntry, `${fileName}.mp3`, {});
-      fileEntry.file(file => {
-        const reader = new FileReader();
-        reader.onloadend = () => deferred.resolve(reader.result as string);
-        reader.readAsDataURL(file);
+      const { data } = await Filesystem.readFile({
+        path,
+        directory: Directory.Documents,
       });
+      return `data:audio/mpeg;base64,${data}`;
     } catch (err) {
-      deferred.reject(err);
+      return Promise.reject(err);
     }
-    return deferred.promise;
   }
 
   async writeMP3(fileName: string, blob: Blob): Promise<void> {
-    if (!this.platform.is('cordova')) {
-      return Promise.reject('Cordiva not installed');
+    if (!this.platform.is('hybrid')) {
+      return Promise.reject(new Error('Native filesystem not available'));
     }
 
-    const deferred = new Deferred<void>();
-    try {
-      const directoryEntry = await this.file.resolveDirectoryUrl(this.file.documentsDirectory);
-      const fileEntry = await this.file.getFile(directoryEntry, `${fileName}.mp3`, { create: true });
-      fileEntry.createWriter(fileWriter => {
-        fileWriter.onwriteend = () => deferred.resolve();
-        fileWriter.write(blob);
-      });
-    } catch (err) {
-      deferred.reject(err);
-    }
-    return deferred.promise;
-  }
-}
+    const arrayBuffer = await blob.arrayBuffer();
+    const base64Data = this.arrayBufferToBase64(arrayBuffer);
+    const path = `${fileName}.mp3`;
 
-export class Deferred<T> {
-  promise: Promise<T>;
-  resolve: (arg: T) => void;
-  reject: (err: Error) => void;
-  constructor() {
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
+    await Filesystem.writeFile({
+      path,
+      directory: Directory.Documents,
+      data: base64Data,
     });
+  }
+
+  private arrayBufferToBase64(buffer: ArrayBuffer): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
   }
 }
