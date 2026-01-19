@@ -25,7 +25,7 @@
   "dependencies": {
     "@angular/common": "^17.3.0",
     "@angular/core": "^17.3.0",
-    "@angular/fire": "^17.0.1",
+    "@angular/fire": "^20.0.1",
     "@angular/forms": "^17.3.0",
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
@@ -38,7 +38,7 @@
     "@capacitor/status-bar": "^5.0.7",
     "@ionic/angular": "^7.2.0",
     "@ionic/cli": "^7.2.0",
-    "firebase": "^10.7.2",
+    "firebase": "^12.8.0",
     "firebaseui": "^6.1.0",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1",
