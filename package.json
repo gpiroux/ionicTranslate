@@ -9,6 +9,7 @@
     "build": "ng build",
     "build:prod": "ng build --configuration production",
     "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI",
     "lint": "ng lint",
     "prettier": "prettier --write \"./src/{app,environments,assets}/**/*.{ts,js,css,scss,html}\"",
     "pretty-quick": "pretty-quick --staged",
