@@ -105,6 +105,11 @@
                 "input": "src/assets",
                 "output": "assets"
               },
+              {
+                "glob": "*.html",
+                "input": "larousse_example",
+                "output": "fixtures/larousse"
+              },
               "src/manifest.webmanifest"
             ],
             "styles": []

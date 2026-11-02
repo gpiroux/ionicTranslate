@@ -51,26 +51,70 @@ export const dicoList: DicoList = {
   },
 };
 
+export interface SearchQuery {
+  querySearch: string; // value matched against the `search` array in Firestore
+  nakedSearch: string; // user search without ^ and $ anchors, used to filter results
+}
+
+/**
+ * Builds the Firestore query string from the user search.
+ * `^` anchors on the start of a word, `$` on the end; queries are capped to the
+ * 4 (or 5 with an anchor) characters stored by Word.generateSearchStrings().
+ */
+export function buildSearchQuery(rawSearch: string | null): SearchQuery {
+  const search = (rawSearch || '').trim();
+  const len = search.length;
+  let querySearch: string;
+  const nakedSearch = search.replace(/[\^\$]/g, '');
+
+  if (search[0] === '^' && search[len - 1] === '$') {
+    querySearch = search;
+  } else if (search[0] === '^') {
+    querySearch = search.length > 5 ? search.slice(0, 5) : search;
+  } else if (search[len - 1] === '$') {
+    querySearch = search.length > 5 ? search.slice(-5) : search;
+  } else if (search.length > 4) {
+    querySearch = search.slice(0, 4);
+  } else {
+    querySearch = search;
+  }
+
+  return { querySearch, nakedSearch };
+}
+
+/**
+ * Keeps the words containing `nakedSearch`, sorted by first word, with the
+ * words containing `nakedSearch` as a whole word first.
+ */
+export function filterSearchResults(words: Word[], nakedSearch: string): Word[] {
+  return _(words)
+    .filter(w => w.en.includes(nakedSearch))
+    .orderBy(w => w.en.split(' ')[0])
+    .orderBy(w => _.find(w.en.split(' '), sw => sw === nakedSearch))
+    .value();
+}
+
 @Injectable()
 export class WordService implements OnDestroy {
   private _category$ = new BehaviorSubject<string | null>(null);
   private _search$ = new BehaviorSubject<string | null>(null);
   private _random$ = new BehaviorSubject<string | null>(null);
 
-  private _words$: Observable<Word[]>;
-  private _searchedWords$: Observable<Word[]>;
-  private _randomWords$: Observable<Word[]>;
+  // Assigned in initialise()
+  private _words$!: Observable<Word[]>;
+  private _searchedWords$!: Observable<Word[]>;
+  private _randomWords$!: Observable<Word[]>;
 
-  private _lastWords: Word[];
+  private _lastWords: Word[] = [];
 
   private randomCount: number = 6;
   private searchCount: number = 50;
   private wordsCount: number = 100;
 
-  private _categoryFilter: string;
-  private dicoCollection: string;
-  public selectedWord: Word;
-  public userDoc: AngularFirestoreDocument;
+  private _categoryFilter: string | null = null;
+  private dicoCollection!: string;
+  public selectedWord!: Word;
+  public userDoc!: AngularFirestoreDocument;
 
   public categories = ['other', 'book', 'lyrics', 'travel', 'guitare', 'tech', 'conv', 'net', 'Caving', 'check'];
 
@@ -82,7 +126,7 @@ export class WordService implements OnDestroy {
 
     this.userDoc = await this.auth.getUserDoc();
     if (!this.userDoc) {
-      this.dicoCollection = null;
+      this.dicoCollection = '';
       throw new Error('No user found!');
     }
     console.log('userDoc', this.userDoc.ref.path);
@@ -126,22 +170,7 @@ export class WordService implements OnDestroy {
 
     this._searchedWords$ = this._search$.pipe(
       switchMap(_search => {
-        const search = (_search || '').trim();
-        const len = search.length;
-        let querySearch = search;
-        const nakedSearch = search.replace(/[\^\$]/g, '');
-
-        if (search[0] === '^' && search[len - 1] === '$') {
-          querySearch = search;
-        } else if (search[0] === '^') {
-          querySearch = search.length > 5 ? search.substr(0, 5) : (querySearch = search);
-        } else if (search[len - 1] === '$') {
-          querySearch = search.length > 5 ? search.substr(len - 5, 5) : (querySearch = search);
-        } else if (search.length > 4) {
-          querySearch = search.substr(0, 4);
-        } else {
-          querySearch = search;
-        }
+        const { querySearch, nakedSearch } = buildSearchQuery(_search);
 
         console.log('search', querySearch, nakedSearch);
         return this.userDoc
@@ -150,12 +179,7 @@ export class WordService implements OnDestroy {
           .pipe(
             map(actions => {
               console.log('_searchedWords$', actions.length);
-              const words = this.mapToWords(actions);
-              return _(words)
-                .filter(w => w.en.includes(nakedSearch))
-                .orderBy(w => w.en.split(' ')[0])
-                .orderBy(w => _.find(w.en.split(' '), sw => sw === nakedSearch))
-                .value();
+              return filterSearchResults(this.mapToWords(actions), nakedSearch);
             })
           );
       })
@@ -168,7 +192,7 @@ export class WordService implements OnDestroy {
     return _.map(actions, a => {
       const data = a.payload.doc.data();
       const id = a.payload.doc.id;
-      return new Word({ id, ...data });
+      return new Word({ ...data, id });
     });
   }
 
@@ -181,7 +205,7 @@ export class WordService implements OnDestroy {
   }
 
   private wordQuery(
-    category: string,
+    category: string | null,
     self: WordService
   ): (ref: CollectionReference) => firebase.firestore.Query<firebase.firestore.DocumentData> {
     if (category) {
@@ -274,7 +298,7 @@ export class WordService implements OnDestroy {
     return this._categoryFilter;
   }
 
-  set categoryFilter(val: string) {
+  set categoryFilter(val: string | null) {
     this._categoryFilter = val;
   }
 }
