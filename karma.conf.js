@@ -28,6 +28,13 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
+    customLaunchers: {
+      // Headless Chrome for CI: the Chrome sandbox is not available on GitHub Actions Ubuntu runners
+      ChromeHeadlessCI: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox'],
+      },
+    },
     singleRun: false,
     restartOnFileChange: true,
   });

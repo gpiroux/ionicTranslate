@@ -244,7 +244,12 @@ export class LarousseService extends genericDico {
         if (this.getClassValue(e) === 'sel') {
           trad.selected = true;
         }
-        let link = e.childNodes[0].childNodes[0];
+        // First link of the article (not childNodes[0]: may be a whitespace text node)
+        let link = e.querySelector('a');
+        if (!link) {
+          result.pop();
+          return;
+        }
         trad.word = link.textContent;
         trad.href = this.getHrefValue(link);
 

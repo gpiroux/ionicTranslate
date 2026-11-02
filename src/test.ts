@@ -2,18 +2,5 @@ import 'zone.js/testing';
 import { getTestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 
-declare const require: {
-  context(
-    path: string,
-    deep?: boolean,
-    filter?: RegExp
-  ): {
-    <T>(id: string): T;
-    keys(): string[];
-  };
-};
-
+// Spec files are discovered by the Angular CLI (`include` in tsconfig.spec.json)
 getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
-
-const context = require.context('./', true, /\.spec\.ts$/);
-context.keys().forEach(context);
