@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 
 import { Platform } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
@@ -87,6 +88,7 @@ export class AppComponent implements OnInit {
       if (Capacitor.isNativePlatform()) {
         void StatusBar.setStyle({ style: Style.Default }).catch(() => undefined);
         void SplashScreen.hide().catch(() => undefined);
+        void Keyboard.setAccessoryBarVisible({ isVisible: false }).catch(() => undefined);
       }
     });
   }
